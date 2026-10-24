@@ -959,7 +959,8 @@ ul {
 
   .estimate-card {
     right: 8px;
-    width: min(320px, calc(100% - 96px));
+    z-index: 3;
+    width: min(320px, calc(100% - 120px));
   }
 
   .history-bar {

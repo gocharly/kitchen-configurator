@@ -8,11 +8,12 @@ export default defineConfig(({ mode }) => {
       root: 'pages',
       base: './',
       publicDir: false,
-      build: { outDir: '../dist-pages', emptyOutDir: true },
+      build: { outDir: '../dist-pages', emptyOutDir: true, sourcemap: false },
     };
   }
   return {
     plugins: [react()],
+    build: { sourcemap: false },
     server: {
       port: 5180,
       host: '127.0.0.1',

@@ -174,7 +174,7 @@ function paintPlain(option: SurfaceOption, flecks: number, speckleSpread: number
   const { canvas, context } = createCanvas(TEXTURE_SIZE_PX, TEXTURE_SIZE_PX);
   context.fillStyle = option.color;
   context.fillRect(0, 0, canvas.width, canvas.height);
-  scatterSpeckles(context, canvas, 6000, speckleSpread);
+  if (speckleSpread > 0) scatterSpeckles(context, canvas, 6000, speckleSpread);
   scatterFlecks(context, canvas, option.accent, flecks);
   return { canvas, metersX: 1, metersY: 1 };
 }
@@ -269,13 +269,15 @@ const PAINTERS: Record<SurfaceKind, (option: SurfaceOption) => Painted> = {
   brick: (option) => paintCourses(option, BRICK_JOINT_MM, true),
   sheet: (option) => paintPlain(option, 900, 0.03),
   concrete: paintConcrete,
-  paint: (option) => paintPlain(option, 0, 0.05),
+  paint: (option) => paintPlain(option, 0, option.roughness < GLOSSY_ROUGHNESS ? 0 : PAINT_SPECKLE_SPREAD),
   stripes: paintStripes,
   dots: paintDots,
   linen: paintLinen,
   slats: paintSlats,
 };
 
+const GLOSSY_ROUGHNESS = 0.3;
+const PAINT_SPECKLE_SPREAD = 0.05;
 const cache = new Map<string, SurfaceTexture>();
 
 export function getSurfaceTexture(option: SurfaceOption): SurfaceTexture {
