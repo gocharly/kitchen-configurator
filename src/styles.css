@@ -967,7 +967,20 @@ ul {
   }
 
   .view-bar {
+    top: 76px;
+    right: 8px;
+    bottom: auto;
+    left: auto;
+    flex-direction: column;
+    transform: none;
+  }
+
+  .view-bar .bar-button-label {
     display: none;
+  }
+
+  .view-bar .bar-button-text {
+    padding: 0;
   }
 
   .drawing-pane {

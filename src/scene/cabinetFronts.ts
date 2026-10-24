@@ -64,6 +64,7 @@ export interface Materials extends ApplianceMaterials, FurnitureMaterials {
   countertop: THREE.MeshStandardMaterial;
   wall: THREE.MeshStandardMaterial;
   backsplash: THREE.MeshStandardMaterial;
+  ledStrip: THREE.MeshBasicMaterial;
   floor: THREE.MeshStandardMaterial;
   openingFrame: THREE.MeshStandardMaterial;
   doorLeaf: THREE.MeshStandardMaterial;

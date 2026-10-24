@@ -18,7 +18,15 @@ import {
 import { findModuleHolder, pickPointOnHorizontalPlane } from './moduleDragging';
 
 const MM = 0.001;
-const BACKGROUND_COLOR = '#e9ebee';
+const DEFAULT_FIELD_OF_VIEW_DEG = 40;
+const EYE_FIELD_OF_VIEW_DEG = 62;
+const EYE_HEIGHT_M = 1.6;
+const EYE_TARGET_HEIGHT_M = 1.25;
+const EYE_INSET_FROM_FRONT_M = 0.25;
+const LIGHTING = {
+  day: { background: '#e9ebee', environment: 0.55, sun: 1.5, sunColor: '#fff4e6', fill: 0.55 },
+  evening: { background: '#1d2128', environment: 0.1, sun: 0.22, sunColor: '#9db1ff', fill: 0.1 },
+} as const;
 const SHADOW_SOFTNESS = 6;
 const MULTISAMPLE_COUNT = 4;
 const OCCLUSION_RADIUS_M = 0.45;
@@ -47,6 +55,7 @@ interface ViewportRig {
   controls: OrbitControls;
   composer: EffectComposer;
   light: THREE.DirectionalLight;
+  fill: THREE.HemisphereLight;
   render: () => void;
   onRendered: (() => void) | null;
   cameraFrame: number;
@@ -65,6 +74,8 @@ export interface ViewInset {
 export interface ViewportHandle {
   showPerspective: () => void;
   showTop: () => void;
+  showEye: () => void;
+  captureImage: () => Promise<Blob | null>;
   zoomBy: (factor: number) => void;
 }
 
@@ -90,7 +101,7 @@ function createRig(container: HTMLElement): ViewportRig {
   container.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(BACKGROUND_COLOR);
+  scene.background = new THREE.Color(LIGHTING.day.background);
   const environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04);
   scene.environment = environment.texture;
   scene.environmentIntensity = 0.55;
@@ -104,14 +115,14 @@ function createRig(container: HTMLElement): ViewportRig {
   const fill = new THREE.HemisphereLight('#f4f7ff', '#cfc8bc', 0.55);
   scene.add(light, light.target, fill);
 
-  const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 60);
+  const camera = new THREE.PerspectiveCamera(DEFAULT_FIELD_OF_VIEW_DEG, 1, 0.1, 60);
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.maxPolarAngle = Math.PI / 2 - 0.02;
   controls.minDistance = 1;
   controls.maxDistance = 14;
 
   const composer = createComposer(renderer, scene, camera);
-  const rig: ViewportRig = { renderer, scene, camera, controls, composer, light, render: () => undefined, onRendered: null, cameraFrame: 0, insetFrame: 0, inset: { left: 0, bottom: 0 }, insetTarget: { left: 0, bottom: 0 }, hasUserMovedCamera: false, kitchenGroup: null };
+  const rig: ViewportRig = { renderer, scene, camera, controls, composer, light, fill, render: () => undefined, onRendered: null, cameraFrame: 0, insetFrame: 0, inset: { left: 0, bottom: 0 }, insetTarget: { left: 0, bottom: 0 }, hasUserMovedCamera: false, kitchenGroup: null };
   rig.render = () => {
     composer.render();
     rig.onRendered?.();
@@ -161,6 +172,26 @@ function measureTopView(room: Kitchen['room']): CameraView {
   const center = new THREE.Vector3((room.length / 2) * MM, 0, (room.width / 2) * MM);
   const height = Math.max(room.length, room.width) * MM * TOP_VIEW_HEIGHT_FACTOR + 1;
   return { target: center, position: new THREE.Vector3(center.x, height, center.z + TOP_VIEW_TILT_M) };
+}
+
+function measureEyeView(room: Kitchen['room']): CameraView {
+  const centerX = (room.length / 2) * MM;
+  const frontZ = room.width * MM - EYE_INSET_FROM_FRONT_M;
+  return { target: new THREE.Vector3(centerX, EYE_TARGET_HEIGHT_M, 0), position: new THREE.Vector3(centerX, EYE_HEIGHT_M, frontZ) };
+}
+
+function setFieldOfView(rig: ViewportRig, degrees: number): void {
+  rig.camera.fov = degrees;
+  rig.camera.updateProjectionMatrix();
+}
+
+function applyLighting(rig: ViewportRig, isEvening: boolean): void {
+  const preset = isEvening ? LIGHTING.evening : LIGHTING.day;
+  rig.scene.background = new THREE.Color(preset.background);
+  rig.scene.environmentIntensity = preset.environment;
+  rig.light.intensity = preset.sun;
+  rig.light.color.set(preset.sunColor);
+  rig.fill.intensity = preset.fill;
 }
 
 function measureZoomView(rig: ViewportRig, factor: number): CameraView {
@@ -365,6 +396,7 @@ interface KitchenViewportProps {
   selectionToolbar?: ReactNode;
   leftInsetPx: number;
   bottomInsetPx: number;
+  isEvening: boolean;
 }
 
 function findOpenableAt(rig: ViewportRig, event: PointerEvent): THREE.Object3D | null {
@@ -384,7 +416,7 @@ function restoreOpenPanels(group: THREE.Group, openKeys: Set<string>): void {
 }
 
 export const KitchenViewport = forwardRef<ViewportHandle, KitchenViewportProps>(function KitchenViewport(
-  { kitchen, selectedModuleId, onSelect, onDragModule, onMoveOpening, selectionToolbar, leftInsetPx, bottomInsetPx },
+  { kitchen, selectedModuleId, onSelect, onDragModule, onMoveOpening, selectionToolbar, leftInsetPx, bottomInsetPx, isEvening },
   handleRef,
 ) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -553,7 +585,7 @@ export const KitchenViewport = forwardRef<ViewportHandle, KitchenViewportProps>(
       rig.scene.remove(rig.kitchenGroup);
       disposeKitchenGroup(rig.kitchenGroup);
     }
-    rig.kitchenGroup = buildKitchenGroup(kitchen, selectedModuleId);
+    rig.kitchenGroup = buildKitchenGroup(kitchen, selectedModuleId, isEvening);
     restoreOpenPanels(rig.kitchenGroup, openKeysRef.current);
     rig.scene.add(rig.kitchenGroup);
     frameLight(rig, kitchen.room);
@@ -561,8 +593,9 @@ export const KitchenViewport = forwardRef<ViewportHandle, KitchenViewportProps>(
     if (fittedSpanRef.current === 0) fitCameraToKitchen(rig, kitchen);
     else if (span !== fittedSpanRef.current) refocusCameraOnRoom(rig, kitchen.room, fittedSpanRef.current);
     fittedSpanRef.current = span;
+    applyLighting(rig, isEvening);
     rig.render();
-  }, [kitchen, selectedModuleId]);
+  }, [kitchen, selectedModuleId, isEvening]);
 
   useEffect(() => {
     const rig = rigRef.current;
@@ -577,13 +610,28 @@ export const KitchenViewport = forwardRef<ViewportHandle, KitchenViewportProps>(
       showPerspective: () => {
         const rig = rigRef.current;
         if (!rig) return;
+        setFieldOfView(rig, DEFAULT_FIELD_OF_VIEW_DEG);
         rig.hasUserMovedCamera = false;
         flyCameraTo(rig, measureFitView(rig, kitchenRef.current));
       },
       showTop: () => {
         const rig = rigRef.current;
         if (!rig) return;
+        setFieldOfView(rig, DEFAULT_FIELD_OF_VIEW_DEG);
         flyCameraTo(rig, measureTopView(kitchenRef.current.room));
+      },
+      showEye: () => {
+        const rig = rigRef.current;
+        if (!rig) return;
+        setFieldOfView(rig, EYE_FIELD_OF_VIEW_DEG);
+        rig.hasUserMovedCamera = true;
+        flyCameraTo(rig, measureEyeView(kitchenRef.current.room));
+      },
+      captureImage: () => {
+        const rig = rigRef.current;
+        if (!rig) return Promise.resolve(null);
+        rig.composer.render();
+        return new Promise((resolve) => rig.renderer.domElement.toBlob(resolve, 'image/png'));
       },
       zoomBy: (factor) => {
         const rig = rigRef.current;

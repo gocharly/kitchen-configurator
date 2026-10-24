@@ -36,6 +36,7 @@ import { SurfacePicker } from './ui/SurfacePicker';
 import { TemplatePanel } from './ui/TemplatePanel';
 import { ViewBar, type ViewMode } from './ui/ViewBar';
 import { readKitchenFromAddress, writeKitchenToAddress } from './ui/kitchenUrl';
+import { downloadBlob } from './ui/downloadFile';
 import { useKitchenHistory } from './ui/useKitchenHistory';
 
 type SectionId = 'templates' | 'room' | 'openings' | 'decor' | 'modules' | 'composition' | 'drawing' | 'checkout';
@@ -81,6 +82,7 @@ export function App() {
   const [activeSheet, setActiveSheet] = useState<SheetId>('plan');
   const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
   const [view, setView] = useState<ViewMode>('perspective');
+  const [isEvening, setIsEvening] = useState(false);
   const [shownSection, setShownSection] = useState<SectionId | null>(activeSection);
   const [leftInsetPx, setLeftInsetPx] = useState(0);
   const [bottomInsetPx, setBottomInsetPx] = useState(0);
@@ -113,7 +115,17 @@ export function App() {
   const changeView = (next: ViewMode) => {
     setView(next);
     if (next === 'top') viewportRef.current?.showTop();
+    else if (next === 'eye') viewportRef.current?.showEye();
     else viewportRef.current?.showPerspective();
+  };
+  const saveSnapshot = () => {
+    setSelectedModuleId(null);
+    window.requestAnimationFrame(() =>
+      window.requestAnimationFrame(async () => {
+        const image = await viewportRef.current?.captureImage();
+        if (image) downloadBlob(image, `kuhnya-${new Date().toISOString().slice(0, 10)}.png`);
+      }),
+    );
   };
   const resizeSelected = (moduleId: string, width: number) => setKitchen((current) => resizeModule(current, moduleId, width));
   const moveSelected = (moduleId: string, direction: -1 | 1) => setKitchen((current) => moveModule(current, moduleId, direction));
@@ -137,6 +149,7 @@ export function App() {
             selectedModuleId={selectedModuleId}
             leftInsetPx={leftInsetPx}
             bottomInsetPx={bottomInsetPx}
+            isEvening={isEvening}
             onSelect={setSelectedModuleId}
             onDragModule={(moduleId, cx, cz) => setKitchen((current) => dragModule(current, moduleId, { cx, cz }))}
             onMoveOpening={(openingId, offset) =>
@@ -264,7 +277,14 @@ export function App() {
       </div>
       <EstimateCard kitchen={kitchen} onOrder={() => setActiveSection('checkout')} />
       {activeSection !== 'drawing' && (
-        <ViewBar view={view} onViewChange={changeView} onZoom={(factor) => viewportRef.current?.zoomBy(factor)} />
+        <ViewBar
+          view={view}
+          isEvening={isEvening}
+          onViewChange={changeView}
+          onToggleEvening={() => setIsEvening((current) => !current)}
+          onSnapshot={saveSnapshot}
+          onZoom={(factor) => viewportRef.current?.zoomBy(factor)}
+        />
       )}
     </div>
   );

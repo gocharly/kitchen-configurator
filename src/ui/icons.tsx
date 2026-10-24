@@ -22,6 +22,13 @@ const ICON_PATHS = {
   zoomIn: 'M11 4a7 7 0 100 14 7 7 0 000-14zM21 21l-5-5M11 8v6M8 11h6',
   rotate: 'M20 12a8 8 0 11-2.6-5.9M20 4v5h-5',
   zoomOut: 'M11 4a7 7 0 100 14 7 7 0 000-14zM21 21l-5-5M8 11h6',
+  eye: 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 9a3 3 0 100 6 3 3 0 000-6z',
+  moon: 'M20 14.5A8 8 0 019.5 4a8 8 0 1010.5 10.5z',
+  camera: 'M4 8h4l2-3h4l2 3h4v11H4zM12 11a3.5 3.5 0 100 7 3.5 3.5 0 000-7z',
+  save: 'M12 4v11M7 11l5 5 5-5M5 20h14',
+  open: 'M12 16V5M7 9l5-5 5 5M5 20h14',
+  print: 'M7 9V4h10v5M7 17H4v-7h16v7h-3M7 14h10v6H7z',
+  table: 'M4 5h16v14H4zM4 10h16M10 5v14',
 } as const;
 
 export type IconName = keyof typeof ICON_PATHS;

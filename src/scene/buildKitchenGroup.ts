@@ -51,6 +51,17 @@ import { createStoneTexture, createWoodGrainTexture, getSurfaceTexture } from '.
 
 const PLINTH_RECESS_MM = 50;
 const SLAB_JOIN_TOLERANCE_MM = 1;
+const LIT_CABINET_MIN_ELEVATION_MM = 1000;
+const LIGHT_STRIP_HEIGHT_MM = 8;
+const LIGHT_STRIP_DEPTH_MM = 18;
+const LIGHT_STRIP_INSET_MM = 30;
+const LIGHT_STRIP_FRONT_GAP_MM = 40;
+const MAX_CABINET_LIGHTS = 6;
+const LED_LIGHT_COLOR = '#ffd9a3';
+const LED_LIGHT_INTENSITY = 2.2;
+const LED_LIGHT_DISTANCE_M = 2.4;
+const LED_LIGHT_DROP_MM = 60;
+const LED_LIGHT_DEPTH_RATIO = 0.7;
 const WALL_THICKNESS_MM = 100;
 const SKIRTING_HEIGHT_MM = 90;
 const SKIRTING_THICKNESS_MM = 14;
@@ -113,6 +124,7 @@ function createMaterials(kitchen: Kitchen): Materials {
     glass,
     countertop: Object.assign(standard('#d8d4cb', 0.32), { map: getStoneTexture() }),
     wall: createSurfaceMaterial(findSurface(WALL_FINISHES, kitchen.wallFinishId)),
+    ledStrip: new THREE.MeshBasicMaterial({ color: '#ffe3b0' }),
     backsplash: createSurfaceMaterial(findSurface(BACKSPLASHES, kitchen.backsplashId)),
     floor: createSurfaceMaterial(findSurface(FLOORS, kitchen.floorId)),
     openingFrame: standard('#f4f3ef', 0.5),
@@ -431,6 +443,31 @@ function joinTouchingSlabs(spans: SlabSpan[]): SlabSpan[] {
     }, []);
 }
 
+function isLitCabinet(item: LayoutItem): boolean {
+  return item.spec.row === 'upper' && item.spec.type !== 'standing' && item.spec.elevation >= LIT_CABINET_MIN_ELEVATION_MM && item.spec.role !== 'hood';
+}
+
+function buildCabinetLights(kitchen: Kitchen, materials: Materials): THREE.Group {
+  const group = new THREE.Group();
+  const lit = layoutKitchen(kitchen).filter(isLitCabinet);
+  lit.forEach((item) => {
+    const strip = createBox([item.module.width - 2 * LIGHT_STRIP_INSET_MM, LIGHT_STRIP_HEIGHT_MM, LIGHT_STRIP_DEPTH_MM], [LIGHT_STRIP_INSET_MM, item.spec.elevation - LIGHT_STRIP_HEIGHT_MM, item.spec.depth - LIGHT_STRIP_DEPTH_MM - LIGHT_STRIP_FRONT_GAP_MM], materials.ledStrip);
+    strip.castShadow = false;
+    const holder = new THREE.Group().add(strip);
+    positionOnWall(holder, { wall: item.wall, offset: item.offset, width: item.module.width }, kitchen.room);
+    group.add(holder);
+  });
+  const step = Math.max(1, Math.ceil(lit.length / MAX_CABINET_LIGHTS));
+  lit.filter((_, index) => index % step === 0).forEach((item) => {
+    const light = new THREE.PointLight(LED_LIGHT_COLOR, LED_LIGHT_INTENSITY, LED_LIGHT_DISTANCE_M, 2);
+    light.position.set((item.module.width / 2) * MM, (item.spec.elevation - LED_LIGHT_DROP_MM) * MM, item.spec.depth * LED_LIGHT_DEPTH_RATIO * MM);
+    const holder = new THREE.Group().add(light);
+    positionOnWall(holder, { wall: item.wall, offset: item.offset, width: item.module.width }, kitchen.room);
+    group.add(holder);
+  });
+  return group;
+}
+
 function buildSharedCountertops(kitchen: Kitchen, materials: Materials): THREE.Group {
   const group = new THREE.Group();
   WALLS.forEach(({ id: wall }) => {
@@ -445,12 +482,13 @@ function buildSharedCountertops(kitchen: Kitchen, materials: Materials): THREE.G
   return group;
 }
 
-export function buildKitchenGroup(kitchen: Kitchen, selectedModuleId: string | null = null): THREE.Group {
+export function buildKitchenGroup(kitchen: Kitchen, selectedModuleId: string | null = null, isEvening = false): THREE.Group {
   const materials = createMaterials(kitchen);
   const group = new THREE.Group();
   group.add(buildRoom(kitchen, materials));
   group.add(buildBacksplash(kitchen, materials));
   group.add(buildSharedCountertops(kitchen, materials));
+  if (isEvening) group.add(buildCabinetLights(kitchen, materials));
   const tinted: THREE.Material[] = [];
   const context = { materials, room: kitchen.room, tinted, selectedId: selectedModuleId };
   layoutKitchen(kitchen).forEach((item) => group.add(buildModule(item, context)));
@@ -476,6 +514,8 @@ export function disposeKitchenGroup(group: THREE.Group): void {
   group.traverse((object) => {
     if (object instanceof THREE.Mesh) object.geometry.dispose();
   });
-  Object.values(group.userData.materials as Materials).forEach((material) => material.dispose());
+  Object.values(group.userData.materials as Materials).forEach((value) => {
+    if (value instanceof THREE.Material) value.dispose();
+  });
   (group.userData.tintedMaterials as THREE.Material[]).forEach((material) => material.dispose());
 }
