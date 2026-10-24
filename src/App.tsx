@@ -81,6 +81,7 @@ export function App() {
   const [view, setView] = useState<ViewMode>('perspective');
   const [shownSection, setShownSection] = useState<SectionId | null>(activeSection);
   const [leftInsetPx, setLeftInsetPx] = useState(0);
+  const [bottomInsetPx, setBottomInsetPx] = useState(0);
   const overlayRef = useRef<HTMLDivElement>(null);
   const drawingRef = useRef<SVGSVGElement>(null);
   const viewportRef = useRef<ViewportHandle>(null);
@@ -89,12 +90,12 @@ export function App() {
 
   useLayoutEffect(() => {
     const overlay = overlayRef.current;
-    if (!overlay || window.innerWidth <= PHONE_MAX_WIDTH_PX) {
-      setLeftInsetPx(0);
-      return;
-    }
+    if (!overlay) return;
     const edge = activeSection ? overlay.querySelector('.flyout') : overlay.querySelector('.rail');
-    setLeftInsetPx(edge ? edge.getBoundingClientRect().right : 0);
+    const box = edge?.getBoundingClientRect();
+    const isPhone = window.innerWidth <= PHONE_MAX_WIDTH_PX;
+    setLeftInsetPx(box && !isPhone ? box.right : 0);
+    setBottomInsetPx(box && isPhone ? window.innerHeight - box.top : 0);
   }, [activeSection, shownSection]);
 
   useEffect(() => {
@@ -133,6 +134,7 @@ export function App() {
             kitchen={kitchen}
             selectedModuleId={selectedModuleId}
             leftInsetPx={leftInsetPx}
+            bottomInsetPx={bottomInsetPx}
             onSelect={setSelectedModuleId}
             onDragModule={(moduleId, cx, cz) => setKitchen((current) => dragModule(current, moduleId, { cx, cz }))}
             onMoveOpening={(openingId, offset) =>

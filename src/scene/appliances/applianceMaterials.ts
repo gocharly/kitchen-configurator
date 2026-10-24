@@ -15,6 +15,7 @@ export interface ApplianceMaterials {
 const STEEL_METALNESS = 0.75;
 const STEEL_ENV_INTENSITY = 1.8;
 const CHROME_ENV_INTENSITY = 1.5;
+const BLACK_GLASS_ENV_INTENSITY = 2.4;
 
 let steelTexture: THREE.CanvasTexture | null = null;
 
@@ -28,7 +29,7 @@ function createSteel(color: string, roughness: number): THREE.MeshStandardMateri
 }
 
 function createBlackGlass(): THREE.MeshPhysicalMaterial {
-  return new THREE.MeshPhysicalMaterial({ color: '#0c0e10', roughness: 0.08, clearcoat: 1, clearcoatRoughness: 0.04 });
+  return new THREE.MeshPhysicalMaterial({ color: '#12161b', roughness: 0.06, clearcoat: 1, clearcoatRoughness: 0.03, envMapIntensity: BLACK_GLASS_ENV_INTENSITY });
 }
 
 function createEnamel(): THREE.MeshPhysicalMaterial {

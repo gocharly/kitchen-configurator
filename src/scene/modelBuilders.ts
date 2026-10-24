@@ -9,7 +9,7 @@ import { buildElectricStove, buildGasStove } from './appliances/stoves';
 import { buildWasher } from './appliances/washer';
 import { buildWineCooler } from './appliances/wineCooler';
 import { buildBarStool, buildBench, buildKitchenSofa, buildLowStool, buildPaddedChair, buildWoodChair } from './furniture/seating';
-import { buildOpenShelving, buildTrolley, buildWineRack } from './furniture/storage';
+import { buildHangingRail, buildOpenShelving, buildTrolley, buildWallShelf, buildWineRack } from './furniture/storage';
 import { buildBarTable, buildRectTable, buildRoundTable } from './furniture/tables';
 
 type ApplianceBuilder = (frame: ModelFrame, context: ModelContext) => THREE.Group;
@@ -45,6 +45,8 @@ const MODEL_BUILDERS: Record<string, ApplianceBuilder> = {
   shelvingOpen: buildOpenShelving,
   trolley: buildTrolley,
   wineRack: buildWineRack,
+  wallShelf: buildWallShelf,
+  hangingRail: buildHangingRail,
 };
 
 export function hasModelBuilder(modelName: string): boolean {

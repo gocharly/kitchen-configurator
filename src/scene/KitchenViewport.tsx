@@ -23,6 +23,10 @@ const SHADOW_SOFTNESS = 6;
 const MULTISAMPLE_COUNT = 4;
 const OCCLUSION_RADIUS_M = 0.45;
 const OCCLUSION_SCALE = 1.4;
+const OCCLUSION_SAMPLES = 24;
+const DENOISE_RADIUS_PX = 10;
+const DENOISE_RINGS = 3;
+const DENOISE_SAMPLES = 24;
 const TOP_VIEW_HEIGHT_FACTOR = 1.15;
 const TOP_VIEW_TILT_M = 0.05;
 const MIN_ANCHOR_TOP_PX = 64;
@@ -43,10 +47,15 @@ interface ViewportRig {
   onRendered: (() => void) | null;
   cameraFrame: number;
   insetFrame: number;
-  insetPx: number;
-  insetTargetPx: number;
+  inset: ViewInset;
+  insetTarget: ViewInset;
   hasUserMovedCamera: boolean;
   kitchenGroup: THREE.Group | null;
+}
+
+export interface ViewInset {
+  left: number;
+  bottom: number;
 }
 
 export interface ViewportHandle {
@@ -59,7 +68,8 @@ function createComposer(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camer
   const target = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: MULTISAMPLE_COUNT });
   const composer = new EffectComposer(renderer, target);
   const occlusion = new GTAOPass(scene, camera, 1, 1);
-  occlusion.updateGtaoMaterial({ radius: OCCLUSION_RADIUS_M, scale: OCCLUSION_SCALE });
+  occlusion.updateGtaoMaterial({ radius: OCCLUSION_RADIUS_M, scale: OCCLUSION_SCALE, samples: OCCLUSION_SAMPLES });
+  occlusion.updatePdMaterial({ radius: DENOISE_RADIUS_PX, rings: DENOISE_RINGS, samples: DENOISE_SAMPLES });
   composer.addPass(new RenderPass(scene, camera));
   composer.addPass(occlusion);
   composer.addPass(new OutputPass());
@@ -96,7 +106,7 @@ function createRig(container: HTMLElement): ViewportRig {
   controls.maxDistance = 14;
 
   const composer = createComposer(renderer, scene, camera);
-  const rig: ViewportRig = { renderer, scene, camera, controls, composer, light, render: () => undefined, onRendered: null, cameraFrame: 0, insetFrame: 0, insetPx: 0, insetTargetPx: 0, hasUserMovedCamera: false, kitchenGroup: null };
+  const rig: ViewportRig = { renderer, scene, camera, controls, composer, light, render: () => undefined, onRendered: null, cameraFrame: 0, insetFrame: 0, inset: { left: 0, bottom: 0 }, insetTarget: { left: 0, bottom: 0 }, hasUserMovedCamera: false, kitchenGroup: null };
   rig.render = () => {
     composer.render();
     rig.onRendered?.();
@@ -134,8 +144,10 @@ function measureFitView(rig: ViewportRig, kitchen: Kitchen): CameraView {
   const radius = bounds.getSize(new THREE.Vector3()).length() / 2;
   const halfFieldOfView = THREE.MathUtils.degToRad(rig.camera.fov) / 2;
   const { clientWidth, clientHeight } = rig.renderer.domElement;
-  const freeAspect = clientHeight === 0 ? rig.camera.aspect : Math.max(clientWidth - rig.insetTargetPx, 1) / clientHeight;
-  const distance = (radius / Math.sin(halfFieldOfView) / Math.min(1, freeAspect)) * FIT_MARGIN;
+  const freeWidth = Math.max(clientWidth - rig.insetTarget.left, 1);
+  const freeHeight = Math.max(clientHeight - rig.insetTarget.bottom, 1);
+  const shrink = clientHeight === 0 ? 1 : Math.max(1, clientHeight / freeWidth, clientHeight / freeHeight);
+  const distance = (radius / Math.sin(halfFieldOfView)) * shrink * FIT_MARGIN;
   const direction = new THREE.Vector3(0.35, 0.32, 1).normalize();
   return { target, position: target.clone().addScaledVector(direction, Math.max(distance, rig.controls.minDistance * 2)) };
 }
@@ -223,22 +235,22 @@ function frameLight(rig: ViewportRig, room: Kitchen['room']): void {
   rig.light.position.set(target.x + 0.8, room.height * MM + 1.8, target.z + 3.2);
 }
 
-function applyViewInset(rig: ViewportRig, insetPx: number): void {
+function applyViewInset(rig: ViewportRig, inset: ViewInset): void {
   const { clientWidth, clientHeight } = rig.renderer.domElement;
-  rig.insetPx = insetPx;
+  rig.inset = inset;
   if (clientWidth === 0 || clientHeight === 0) return;
-  rig.camera.setViewOffset(clientWidth, clientHeight, -insetPx / 2, 0, clientWidth, clientHeight);
+  rig.camera.setViewOffset(clientWidth, clientHeight, -inset.left / 2, inset.bottom / 2, clientWidth, clientHeight);
   rig.camera.updateProjectionMatrix();
 }
 
-function slideViewInset(rig: ViewportRig, targetPx: number): void {
+function slideViewInset(rig: ViewportRig, target: ViewInset): void {
   window.cancelAnimationFrame(rig.insetFrame);
-  rig.insetTargetPx = targetPx;
-  const from = rig.insetPx;
+  rig.insetTarget = target;
+  const from = rig.inset;
   const startTime = performance.now();
   const step = (now: number) => {
     const eased = easeOutCubic(Math.min(1, (now - startTime) / VIEW_INSET_ANIMATION_MS));
-    applyViewInset(rig, from + (targetPx - from) * eased);
+    applyViewInset(rig, { left: from.left + (target.left - from.left) * eased, bottom: from.bottom + (target.bottom - from.bottom) * eased });
     rig.render();
     if (eased < 1) rig.insetFrame = window.requestAnimationFrame(step);
   };
@@ -252,7 +264,7 @@ function resizeRig(rig: ViewportRig, container: HTMLElement): void {
   rig.composer.setSize(clientWidth, clientHeight);
   rig.camera.aspect = clientWidth / clientHeight;
   rig.camera.updateProjectionMatrix();
-  applyViewInset(rig, rig.insetPx);
+  applyViewInset(rig, rig.inset);
   rig.render();
 }
 
@@ -347,6 +359,7 @@ interface KitchenViewportProps {
   onMoveOpening: (openingId: string, offset: number) => void;
   selectionToolbar?: ReactNode;
   leftInsetPx: number;
+  bottomInsetPx: number;
 }
 
 function findOpenableAt(rig: ViewportRig, event: PointerEvent): THREE.Object3D | null {
@@ -366,7 +379,7 @@ function restoreOpenPanels(group: THREE.Group, openKeys: Set<string>): void {
 }
 
 export const KitchenViewport = forwardRef<ViewportHandle, KitchenViewportProps>(function KitchenViewport(
-  { kitchen, selectedModuleId, onSelect, onDragModule, onMoveOpening, selectionToolbar, leftInsetPx },
+  { kitchen, selectedModuleId, onSelect, onDragModule, onMoveOpening, selectionToolbar, leftInsetPx, bottomInsetPx },
   handleRef,
 ) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -549,9 +562,9 @@ export const KitchenViewport = forwardRef<ViewportHandle, KitchenViewportProps>(
   useEffect(() => {
     const rig = rigRef.current;
     if (!rig) return;
-    slideViewInset(rig, leftInsetPx);
+    slideViewInset(rig, { left: leftInsetPx, bottom: bottomInsetPx });
     if (!rig.hasUserMovedCamera) flyCameraTo(rig, measureFitView(rig, kitchenRef.current));
-  }, [leftInsetPx]);
+  }, [leftInsetPx, bottomInsetPx]);
 
   useImperativeHandle(
     handleRef,

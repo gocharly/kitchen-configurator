@@ -77,3 +77,30 @@ export function buildWineRack(frame: ModelFrame, context: ModelContext): THREE.G
   }
   return group;
 }
+
+const WALL_SHELF_THICKNESS_MM = 32;
+const RAIL_ROD_RADIUS_MM = 9;
+const RAIL_BRACKET_MM = 14;
+const RAIL_BRACKET_DEPTH_MM = 90;
+const RAIL_HOOK_SPACING_MM = 140;
+const RAIL_HOOK_DROP_MM = 70;
+const RAIL_HOOK_RADIUS_MM = 3;
+const RAIL_HOOK_MARGIN_MM = 120;
+
+export function buildWallShelf(frame: ModelFrame, context: ModelContext): THREE.Group {
+  const group = new THREE.Group();
+  group.add(createBox([frame.width, WALL_SHELF_THICKNESS_MM, frame.depth], [0, frame.elevation + frame.height - WALL_SHELF_THICKNESS_MM, 0], context.materials.wood, 3));
+  return group;
+}
+
+export function buildHangingRail(frame: ModelFrame, context: ModelContext): THREE.Group {
+  const { chrome } = context.materials;
+  const group = new THREE.Group();
+  const y = frame.elevation + frame.height / 2;
+  group.add(createRod(RAIL_ROD_RADIUS_MM, frame.width, [frame.width / 2, y, RAIL_BRACKET_DEPTH_MM], 'x', chrome));
+  [RAIL_BRACKET_MM, frame.width - 2 * RAIL_BRACKET_MM].forEach((x) => group.add(createBox([RAIL_BRACKET_MM, RAIL_BRACKET_MM, RAIL_BRACKET_DEPTH_MM], [x, y - RAIL_BRACKET_MM / 2, 0], chrome)));
+  for (let x = RAIL_HOOK_MARGIN_MM; x <= frame.width - RAIL_HOOK_MARGIN_MM; x += RAIL_HOOK_SPACING_MM) {
+    group.add(createRod(RAIL_HOOK_RADIUS_MM, RAIL_HOOK_DROP_MM, [x, y - RAIL_HOOK_DROP_MM / 2, RAIL_BRACKET_DEPTH_MM], 'y', chrome));
+  }
+  return group;
+}

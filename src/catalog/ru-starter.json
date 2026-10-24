@@ -3107,6 +3107,643 @@
       "sku": "TOP-MICROWAVE-{width}",
       "price": "width * 12",
       "model": "insetAppliances"
+    },
+    {
+      "id": "base-1-drawer",
+      "type": "base",
+      "category": "bottom",
+      "title": "Нижний с 1 ящиком",
+      "row": "lower",
+      "widths": {
+        "min": 300,
+        "max": 900,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "drawer",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "BASE-1-DRAWER-{width}",
+      "price": "width * 7"
+    },
+    {
+      "id": "base-open",
+      "type": "base",
+      "category": "bottom",
+      "title": "Нижний открытый",
+      "row": "lower",
+      "widths": {
+        "min": 300,
+        "max": 1000,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "BASE-OPEN-{width}",
+      "price": "width * 5"
+    },
+    {
+      "id": "base-open-drawer",
+      "type": "base",
+      "category": "bottom",
+      "title": "Нижний открытый с ящиком",
+      "row": "lower",
+      "widths": {
+        "min": 300,
+        "max": 1000,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "drawer",
+          "ratio": 0.2
+        },
+        {
+          "kind": "opening",
+          "ratio": 0.8
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "BASE-OPEN-DRAWER-{width}",
+      "price": "width * 6"
+    },
+    {
+      "id": "base-flap",
+      "type": "base",
+      "category": "bottom",
+      "title": "Нижний с откидной дверцей",
+      "row": "lower",
+      "widths": {
+        "min": 300,
+        "max": 900,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "flap",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "BASE-FLAP-{width}",
+      "price": "width * 6"
+    },
+    {
+      "id": "base-pullout",
+      "type": "base",
+      "category": "bottom",
+      "title": "Нижний узкий с выдвижной корзиной",
+      "row": "lower",
+      "widths": {
+        "min": 150,
+        "max": 300,
+        "step": 50
+      },
+      "defaultWidth": 200,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "drawer",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "BASE-PULLOUT-{width}",
+      "price": "width * 11"
+    },
+    {
+      "id": "base-3-drawers-wide",
+      "type": "base",
+      "category": "bottom",
+      "title": "Нижний с тремя ящиками широкий",
+      "row": "lower",
+      "widths": {
+        "min": 900,
+        "max": 1200,
+        "step": 50
+      },
+      "defaultWidth": 900,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "drawer",
+          "ratio": 0.28
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.36
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.36
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "BASE-3-DRAWERS-WIDE-{width}",
+      "price": "width * 8"
+    },
+    {
+      "id": "top-open-wide",
+      "type": "wall",
+      "category": "top",
+      "title": "Верхний открытый",
+      "row": "upper",
+      "widths": {
+        "min": 300,
+        "max": 1000,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 716,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TOP-OPEN-WIDE-{width}",
+      "price": "width * 4"
+    },
+    {
+      "id": "top-open-shelves",
+      "type": "wall",
+      "category": "top",
+      "title": "Верхний открытый с полками",
+      "row": "upper",
+      "widths": {
+        "min": 300,
+        "max": 1000,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 716,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 0.5
+        },
+        {
+          "kind": "opening",
+          "ratio": 0.5
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TOP-OPEN-SHELVES-{width}",
+      "price": "width * 5"
+    },
+    {
+      "id": "top-open-low",
+      "type": "wall",
+      "category": "top",
+      "title": "Верхний открытый низкий",
+      "row": "upper",
+      "widths": {
+        "min": 300,
+        "max": 1000,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 358,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TOP-OPEN-LOW-{width}",
+      "price": "width * 3"
+    },
+    {
+      "id": "top-glass-low",
+      "type": "wall",
+      "category": "top",
+      "title": "Верхний низкий со стеклом",
+      "row": "upper",
+      "widths": {
+        "min": 300,
+        "max": 1000,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 358,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": true,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TOP-GLASS-LOW-{width}",
+      "price": "width * 6"
+    },
+    {
+      "id": "top-doors-open",
+      "type": "wall",
+      "category": "top",
+      "title": "Верхний с дверцей и открытой полкой",
+      "row": "upper",
+      "widths": {
+        "min": 600,
+        "max": 1000,
+        "step": 50
+      },
+      "defaultWidth": 800,
+      "height": 716,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 0.6
+        },
+        {
+          "kind": "opening",
+          "ratio": 0.4
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TOP-DOORS-OPEN-{width}",
+      "price": "width * 6"
+    },
+    {
+      "id": "tall-pantry",
+      "type": "tall",
+      "category": "tall",
+      "title": "Пенал-кладовая",
+      "row": "lower",
+      "widths": {
+        "min": 400,
+        "max": 900,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 2132,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 0.5
+        },
+        {
+          "kind": "doors",
+          "ratio": 0.5
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TALL-PANTRY-{width}",
+      "price": "width * 15"
+    },
+    {
+      "id": "tall-open",
+      "type": "tall",
+      "category": "tall",
+      "title": "Пенал открытый",
+      "row": "lower",
+      "widths": {
+        "min": 300,
+        "max": 800,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 2132,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 0.25
+        },
+        {
+          "kind": "opening",
+          "ratio": 0.25
+        },
+        {
+          "kind": "opening",
+          "ratio": 0.25
+        },
+        {
+          "kind": "opening",
+          "ratio": 0.25
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TALL-OPEN-{width}",
+      "price": "width * 12"
+    },
+    {
+      "id": "tall-glass",
+      "type": "tall",
+      "category": "tall",
+      "title": "Пенал со стеклом",
+      "row": "lower",
+      "widths": {
+        "min": 400,
+        "max": 800,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 2132,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": true,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TALL-GLASS-{width}",
+      "price": "width * 16"
+    },
+    {
+      "id": "tall-pullouts",
+      "type": "tall",
+      "category": "tall",
+      "title": "Пенал с выдвижными корзинами",
+      "row": "lower",
+      "widths": {
+        "min": 300,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 450,
+      "height": 2132,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "drawer",
+          "ratio": 0.2
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.2
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.2
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.2
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.2
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TALL-PULLOUTS-{width}",
+      "price": "width * 22"
+    },
+    {
+      "id": "tall-drawers-doors",
+      "type": "tall",
+      "category": "tall",
+      "title": "Пенал с ящиками и дверцами",
+      "row": "lower",
+      "widths": {
+        "min": 400,
+        "max": 900,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 2132,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 0.55
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.15
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.15
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.15
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TALL-DRAWERS-DOORS-{width}",
+      "price": "width * 14"
+    },
+    {
+      "id": "wall-shelf",
+      "type": "wall",
+      "category": "top",
+      "title": "Полка навесная",
+      "row": "upper",
+      "widths": {
+        "min": 400,
+        "max": 1600,
+        "step": 100
+      },
+      "defaultWidth": 800,
+      "height": 40,
+      "depths": [
+        250
+      ],
+      "elevation": 1500,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "WALL-SHELF-{width}",
+      "price": "width * 3",
+      "model": "wallShelf"
+    },
+    {
+      "id": "wall-shelf-deep",
+      "type": "wall",
+      "category": "top",
+      "title": "Полка навесная глубокая",
+      "row": "upper",
+      "widths": {
+        "min": 400,
+        "max": 1600,
+        "step": 100
+      },
+      "defaultWidth": 800,
+      "height": 40,
+      "depths": [
+        350
+      ],
+      "elevation": 1500,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "WALL-SHELF-DEEP-{width}",
+      "price": "width * 4",
+      "model": "wallShelf"
+    },
+    {
+      "id": "wall-rail",
+      "type": "wall",
+      "category": "top",
+      "title": "Рейлинг с крючками",
+      "row": "upper",
+      "widths": {
+        "min": 400,
+        "max": 1200,
+        "step": 100
+      },
+      "defaultWidth": 800,
+      "height": 100,
+      "depths": [
+        100
+      ],
+      "elevation": 1500,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "WALL-RAIL-{width}",
+      "price": "width * 4",
+      "model": "hangingRail"
     }
   ],
   "finishes": {

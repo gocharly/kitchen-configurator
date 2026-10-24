@@ -130,6 +130,13 @@ ul {
     background-color 0.15s ease;
 }
 
+@media (pointer: coarse) {
+  .bar-button {
+    min-width: 44px;
+    height: 44px;
+  }
+}
+
 .bar-button:hover:not(:disabled) {
   background: var(--bg-control-hover);
   transform: scale(1.04);
@@ -880,7 +887,7 @@ ul {
 
 .opening-add {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
   margin-bottom: 16px;
 }
@@ -1306,5 +1313,43 @@ ul {
   to {
     opacity: 0;
     transform: scale(0.97);
+  }
+}
+
+@media (pointer: coarse) {
+  .stepper-button,
+  .stepper-compact .stepper-button,
+  .row-button {
+    width: 44px;
+    height: 44px;
+  }
+
+  .wall-button,
+  .module-tab {
+    min-height: 44px;
+    height: 44px;
+  }
+
+  .swatch {
+    width: 44px;
+    height: 44px;
+  }
+
+  .module-search {
+    min-height: 44px;
+  }
+
+  .module-search,
+  .stepper-input,
+  .field-input {
+    font-size: 16px;
+  }
+
+  .stepper-input {
+    height: 44px;
+  }
+
+  .opening-add .catalog-button {
+    min-height: 48px;
   }
 }
