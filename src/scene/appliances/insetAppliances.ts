@@ -17,6 +17,7 @@ const OVEN_HANDLE_DROP_MM = 45;
 const MICROWAVE_PANEL_RATIO = 0.26;
 const MICROWAVE_MARGIN_MM = 20;
 const PLINTH_RECESS_MM = 50;
+const PROUD_OF_FACADE_MM = 3;
 
 interface Slot {
   x: number;
@@ -33,7 +34,7 @@ function measureSlot(rect: FrontBandRect, frame: ModelFrame, moduleId: string): 
     y: rect.y + SLOT_GAP_MM,
     width: rect.width - 2 * SLOT_GAP_MM,
     height: rect.height - 2 * SLOT_GAP_MM,
-    frontZ: frame.depth,
+    frontZ: frame.depth + PROUD_OF_FACADE_MM,
     key: `${moduleId}:slot${rect.bandIndex}`,
   };
 }
