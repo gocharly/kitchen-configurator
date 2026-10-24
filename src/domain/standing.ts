@@ -30,9 +30,17 @@ function readSpaceTaken(kitchen: Kitchen): SpaceTaken[] {
   return taken;
 }
 
+function listWallSearchPoints(room: Kitchen['room'], depth: number): Point[] {
+  const centerX = room.length / 2;
+  const points: Point[] = [];
+  for (let cx = 0; cx <= room.length; cx += SEARCH_STEP_MM) points.push({ cx, cz: depth / 2 });
+  return points.sort((a, b) => Math.abs(a.cx - centerX) - Math.abs(b.cx - centerX));
+}
+
 function isSpotFree(kitchen: Kitchen, spec: ModuleSpec, point: Point): boolean {
   const rect = measureRotatedFootprint(spec.defaultWidth, spec.depth, 0, point.cx, point.cz);
   if (!isRectInsideRoom(rect, kitchen.room)) return false;
+  if (spec.isFlat) return true;
   const space: SpaceTaken = { rect, bottom: spec.elevation, top: spec.elevation + spec.height };
   return !readSpaceTaken(kitchen).some((other) => overlapsInSpace(space, other));
 }
@@ -40,7 +48,8 @@ function isSpotFree(kitchen: Kitchen, spec: ModuleSpec, point: Point): boolean {
 function placeOnNearestFreeSpot(kitchen: Kitchen, specId: string, id: string): Kitchen {
   const spec = getModuleSpec(specId);
   const module = { id, specId, width: spec.defaultWidth };
-  for (const point of listSearchPoints(kitchen.room)) {
+  const points = spec.row === 'upper' ? listWallSearchPoints(kitchen.room, spec.depth) : listSearchPoints(kitchen.room);
+  for (const point of points) {
     if (!isSpotFree(kitchen, spec, point)) continue;
     const next = addFreeModule(kitchen, module, point, 0);
     if (next !== kitchen) return next;

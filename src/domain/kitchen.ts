@@ -262,8 +262,8 @@ function measureFreeSpace(free: FreeModule): SpaceTaken {
   return { rect: measureFreeModuleRect(free), bottom: spec.elevation, top: spec.elevation + spec.height };
 }
 
-export function listSpaceTaken(kitchen: Kitchen, excludedModuleId: string | null = null): SpaceTaken[] {
-  const onWalls = layoutKitchen(kitchen)
+function listWallSpaceTaken(kitchen: Kitchen, excludedModuleId: string | null): SpaceTaken[] {
+  return layoutKitchen(kitchen)
     .filter((item) => item.module.id !== excludedModuleId)
     .flatMap((item) =>
       listItemFootprints(item).map((footprint) => ({
@@ -272,8 +272,15 @@ export function listSpaceTaken(kitchen: Kitchen, excludedModuleId: string | null
         top: footprint.top,
       })),
     );
-  const standing = kitchen.freeModules.filter((free) => free.module.id !== excludedModuleId).map(measureFreeSpace);
-  return [...onWalls, ...standing];
+}
+
+function isSolidFree(free: FreeModule): boolean {
+  return !getModuleSpec(free.module.specId).isFlat;
+}
+
+export function listSpaceTaken(kitchen: Kitchen, excludedModuleId: string | null = null): SpaceTaken[] {
+  const standing = kitchen.freeModules.filter((free) => free.module.id !== excludedModuleId && isSolidFree(free)).map(measureFreeSpace);
+  return [...listWallSpaceTaken(kitchen, excludedModuleId), ...standing];
 }
 
 export function overlapsInSpace(a: SpaceTaken, b: SpaceTaken): boolean {
@@ -319,18 +326,14 @@ function isHangingOnWall(free: FreeModule, room: Room): boolean {
 }
 
 function hasInvalidFreeModules(kitchen: Kitchen): boolean {
-  const standing = kitchen.freeModules.map(measureFreeSpace);
-  const everything = listSpaceTaken(kitchen);
-  const onWalls = everything.slice(0, everything.length - standing.length);
+  const onWalls = listWallSpaceTaken(kitchen, null);
   return kitchen.freeModules.some((free, index) => {
-    const space = standing[index];
+    const space = measureFreeSpace(free);
     const needsWall = getModuleSpec(free.module.specId).row === 'upper';
-    return (
-      !isRectInsideRoom(space.rect, kitchen.room) ||
-      (needsWall && !isHangingOnWall(free, kitchen.room)) ||
-      onWalls.some((other) => overlapsInSpace(space, other)) ||
-      standing.slice(index + 1).some((other) => overlapsInSpace(space, other))
-    );
+    if (!isRectInsideRoom(space.rect, kitchen.room) || (needsWall && !isHangingOnWall(free, kitchen.room))) return true;
+    if (!isSolidFree(free)) return false;
+    const laterSolids = kitchen.freeModules.slice(index + 1).filter(isSolidFree).map(measureFreeSpace);
+    return onWalls.some((other) => overlapsInSpace(space, other)) || laterSolids.some((other) => overlapsInSpace(space, other));
   });
 }
 

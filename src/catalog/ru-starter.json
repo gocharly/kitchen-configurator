@@ -54,6 +54,10 @@
     {
       "id": "storage",
       "title": "Стеллажи и комоды"
+    },
+    {
+      "id": "interior",
+      "title": "Декор интерьера"
     }
   ],
   "families": [
@@ -3833,6 +3837,288 @@
       "sku": "BASE-SINK-PULLOUT-{width}",
       "price": "width * 8",
       "faucet": "pullout"
+    },
+    {
+      "id": "plant-small",
+      "type": "standing",
+      "category": "interior",
+      "title": "Растение малое",
+      "row": "lower",
+      "widths": {
+        "min": 300,
+        "max": 300,
+        "step": 50
+      },
+      "defaultWidth": 300,
+      "height": 500,
+      "depths": [
+        300
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "PLANT-SMALL-{width}",
+      "price": "width * 4",
+      "model": "plant"
+    },
+    {
+      "id": "plant-tall",
+      "type": "standing",
+      "category": "interior",
+      "title": "Растение высокое",
+      "row": "lower",
+      "widths": {
+        "min": 450,
+        "max": 450,
+        "step": 50
+      },
+      "defaultWidth": 450,
+      "height": 1500,
+      "depths": [
+        450
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "PLANT-TALL-{width}",
+      "price": "width * 8",
+      "model": "plant"
+    },
+    {
+      "id": "rug-rect",
+      "type": "standing",
+      "category": "interior",
+      "title": "Ковёр",
+      "row": "lower",
+      "widths": {
+        "min": 1200,
+        "max": 3000,
+        "step": 100
+      },
+      "defaultWidth": 2000,
+      "height": 12,
+      "depths": [
+        1400
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "RUG-RECT-{width}",
+      "price": "width * 2",
+      "model": "rugRect",
+      "flat": true
+    },
+    {
+      "id": "rug-runner",
+      "type": "standing",
+      "category": "interior",
+      "title": "Ковровая дорожка",
+      "row": "lower",
+      "widths": {
+        "min": 1500,
+        "max": 3600,
+        "step": 100
+      },
+      "defaultWidth": 2400,
+      "height": 12,
+      "depths": [
+        600
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "RUG-RUNNER-{width}",
+      "price": "width * 1",
+      "model": "rugRect",
+      "flat": true
+    },
+    {
+      "id": "rug-round",
+      "type": "standing",
+      "category": "interior",
+      "title": "Ковёр круглый",
+      "row": "lower",
+      "widths": {
+        "min": 1500,
+        "max": 1500,
+        "step": 50
+      },
+      "defaultWidth": 1500,
+      "height": 12,
+      "depths": [
+        1500
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "RUG-ROUND-{width}",
+      "price": "width * 2",
+      "model": "rugRound",
+      "flat": true
+    },
+    {
+      "id": "floor-lamp",
+      "type": "standing",
+      "category": "interior",
+      "title": "Торшер",
+      "row": "lower",
+      "widths": {
+        "min": 400,
+        "max": 400,
+        "step": 50
+      },
+      "defaultWidth": 400,
+      "height": 1600,
+      "depths": [
+        400
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "FLOOR-LAMP-{width}",
+      "price": "width * 10",
+      "model": "floorLamp"
+    },
+    {
+      "id": "pendant-lamp",
+      "type": "standing",
+      "category": "interior",
+      "title": "Подвесной светильник",
+      "row": "lower",
+      "widths": {
+        "min": 500,
+        "max": 500,
+        "step": 50
+      },
+      "defaultWidth": 500,
+      "height": 900,
+      "depths": [
+        500
+      ],
+      "elevation": 1500,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "PENDANT-LAMP-{width}",
+      "price": "width * 8",
+      "model": "pendantLamp"
+    },
+    {
+      "id": "trash-bin",
+      "type": "standing",
+      "category": "interior",
+      "title": "Мусорное ведро",
+      "row": "lower",
+      "widths": {
+        "min": 350,
+        "max": 350,
+        "step": 50
+      },
+      "defaultWidth": 350,
+      "height": 650,
+      "depths": [
+        350
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TRASH-BIN-{width}",
+      "price": "width * 5",
+      "model": "trashBin"
+    },
+    {
+      "id": "curtain",
+      "type": "standing",
+      "category": "interior",
+      "title": "Штора",
+      "row": "upper",
+      "widths": {
+        "min": 600,
+        "max": 2400,
+        "step": 100
+      },
+      "defaultWidth": 1200,
+      "height": 2300,
+      "depths": [
+        100
+      ],
+      "elevation": 200,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "CURTAIN-{width}",
+      "price": "width * 3",
+      "model": "curtain"
     }
   ],
   "finishes": {

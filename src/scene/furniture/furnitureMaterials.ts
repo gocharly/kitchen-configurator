@@ -7,6 +7,11 @@ export interface FurnitureMaterials {
   fabric: THREE.MeshStandardMaterial;
   leather: THREE.MeshStandardMaterial;
   bottleGlass: THREE.MeshStandardMaterial;
+  leaf: THREE.MeshStandardMaterial;
+  ceramic: THREE.MeshStandardMaterial;
+  rug: THREE.MeshStandardMaterial;
+  curtain: THREE.MeshStandardMaterial;
+  lampShade: THREE.MeshStandardMaterial;
 }
 
 let woodTexture: THREE.CanvasTexture | null = null;
@@ -27,5 +32,10 @@ export function createFurnitureMaterials(): FurnitureMaterials {
     fabric: new THREE.MeshStandardMaterial({ color: '#8d9399', roughness: 0.95 }),
     leather: new THREE.MeshStandardMaterial({ color: '#2f2b29', roughness: 0.5 }),
     bottleGlass: new THREE.MeshStandardMaterial({ color: '#1d3a2a', roughness: 0.12, metalness: 0.1 }),
+    leaf: new THREE.MeshStandardMaterial({ color: '#4f7d4d', roughness: 0.75 }),
+    ceramic: new THREE.MeshStandardMaterial({ color: '#ecebe6', roughness: 0.35 }),
+    rug: new THREE.MeshStandardMaterial({ color: '#a99f90', roughness: 1 }),
+    curtain: new THREE.MeshStandardMaterial({ color: '#ddd5c5', roughness: 0.95, side: THREE.DoubleSide }),
+    lampShade: new THREE.MeshStandardMaterial({ color: '#f3ead7', roughness: 0.9, emissive: '#f3ead7', emissiveIntensity: 0.12, side: THREE.DoubleSide }),
   };
 }

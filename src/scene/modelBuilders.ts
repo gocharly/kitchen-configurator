@@ -8,6 +8,7 @@ import { buildInsetAppliances } from './appliances/insetAppliances';
 import { buildElectricStove, buildGasStove } from './appliances/stoves';
 import { buildWasher } from './appliances/washer';
 import { buildWineCooler } from './appliances/wineCooler';
+import { buildCurtain, buildFloorLamp, buildPendantLamp, buildPlant, buildRugRect, buildRugRound, buildTrashBin } from './furniture/decor';
 import { buildBarStool, buildBench, buildKitchenSofa, buildLowStool, buildPaddedChair, buildWoodChair } from './furniture/seating';
 import { buildHangingRail, buildOpenShelving, buildTrolley, buildWallShelf, buildWineRack } from './furniture/storage';
 import { buildBarTable, buildRectTable, buildRoundTable } from './furniture/tables';
@@ -45,6 +46,13 @@ const MODEL_BUILDERS: Record<string, ApplianceBuilder> = {
   shelvingOpen: buildOpenShelving,
   trolley: buildTrolley,
   wineRack: buildWineRack,
+  plant: buildPlant,
+  rugRect: buildRugRect,
+  rugRound: buildRugRound,
+  floorLamp: buildFloorLamp,
+  pendantLamp: buildPendantLamp,
+  trashBin: buildTrashBin,
+  curtain: buildCurtain,
   wallShelf: buildWallShelf,
   hangingRail: buildHangingRail,
 };

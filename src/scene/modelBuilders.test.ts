@@ -11,6 +11,6 @@ describe('catalog models', () => {
   it('draws standing modules from a model or from the cabinet body', () => {
     const standing = MODULE_SPECS.filter((spec) => spec.type === 'standing');
     expect(standing.length).toBeGreaterThan(0);
-    standing.forEach((spec) => expect(spec.row).toBe('lower'));
+    standing.filter((spec) => spec.row === 'upper').forEach((spec) => expect(spec.category).toBe('interior'));
   });
 });

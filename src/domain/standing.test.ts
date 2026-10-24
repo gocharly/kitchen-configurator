@@ -50,3 +50,29 @@ describe('standing modules', () => {
     expect(measureOccupiedLength(next)).toBeGreaterThan(0);
   });
 });
+
+describe('flat and hanging decor', () => {
+  it('lets a rug lie under a table and chairs', () => {
+    const withTable = addCatalogModule(wideKitchen, 'table-dining', 'table', 'back');
+    const withRug = addCatalogModule(withTable, 'rug-rect', 'rug', 'back');
+    expect(withRug.freeModules).toHaveLength(2);
+    const rugRect = measureFreeModuleRect(withRug.freeModules[1]);
+    const tableRect = measureFreeModuleRect(withRug.freeModules[0]);
+    expect(rugRect.x0).toBeLessThan(tableRect.x1);
+    expect(rugRect.x1).toBeGreaterThan(tableRect.x0);
+    expect(fitsInRoom(withRug)).toBe(true);
+  });
+
+  it('hangs a curtain on the back wall', () => {
+    const next = addCatalogModule(wideKitchen, 'curtain', 'c', 'back');
+    expect(next.freeModules).toHaveLength(1);
+    expect(measureFreeModuleRect(next.freeModules[0]).z0).toBe(0);
+  });
+
+  it('hangs a pendant lamp above a table', () => {
+    const withTable = addCatalogModule(wideKitchen, 'table-dining', 'table', 'back');
+    const withLamp = addCatalogModule(withTable, 'pendant-lamp', 'lamp', 'back');
+    expect(withLamp.freeModules).toHaveLength(2);
+    expect(fitsInRoom(withLamp)).toBe(true);
+  });
+});

@@ -33,6 +33,7 @@ export interface ModuleSpec {
   hasCountertop: boolean;
   isCorner: boolean;
   clearance: number;
+  isFlat: boolean;
   role?: ModuleRole;
   model?: string;
   sku: (width: number) => string;
@@ -398,6 +399,7 @@ function readFamily(value: unknown, index: number, categoryIds: Set<string>): Mo
     faucet: family.faucet === undefined ? 'arc' : asOneOf(family.faucet, at('faucet'), FAUCET_KINDS),
     hasCountertop: asFlag(family.countertop, at('countertop')),
     isCorner,
+    isFlat: asFlag(family.flat, at('flat')),
     clearance: family.clearance === undefined ? 0 : asNumber(family.clearance, at('clearance'), 0),
     role: family.role === undefined ? undefined : asOneOf(family.role, at('role'), MODULE_ROLES),
     model: family.model === undefined ? undefined : asText(family.model, at('model')),
