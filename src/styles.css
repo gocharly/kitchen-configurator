@@ -1055,7 +1055,7 @@ ul {
   .estimate-card {
     right: 8px;
     z-index: 3;
-    width: min(320px, calc(100% - 120px));
+    width: min(320px, calc(100% - 168px));
   }
 
   .history-bar {
@@ -1071,8 +1071,13 @@ ul {
     transform: none;
   }
 
-  .view-bar .bar-button-label {
+  .view-bar .bar-button-label,
+  .history-share .bar-button-label {
     display: none;
+  }
+
+  .history-share {
+    padding: 0;
   }
 
   .view-bar .bar-button-text {

@@ -40,6 +40,7 @@ import { SurfacePicker } from './ui/SurfacePicker';
 import { TemplatePanel } from './ui/TemplatePanel';
 import { ViewBar } from './ui/ViewBar';
 import { readKitchenFromAddress, readShareIdFromAddress, writeKitchenToAddress } from './ui/kitchenUrl';
+import { useShareLink } from './ui/useShareLink';
 import { useViewControls } from './ui/useViewControls';
 import { SharedKitchenPage } from './SharedKitchenPage';
 import { useKitchenHistory } from './ui/useKitchenHistory';
@@ -95,6 +96,7 @@ function KitchenEditor({ initialKitchen }: { initialKitchen: Kitchen | null }) {
   const drawingRef = useRef<SVGSVGElement>(null);
   const viewportRef = useRef<ViewportHandle>(null);
   const controls = useViewControls(viewportRef, () => setSelectedModuleId(null));
+  const share = useShareLink(kitchen, setNotice);
 
   useEffect(() => writeKitchenToAddress(kitchen), [kitchen]);
 
@@ -196,7 +198,7 @@ function KitchenEditor({ initialKitchen }: { initialKitchen: Kitchen | null }) {
           />
         </div>
       </main>
-      <HistoryBar canUndo={canUndo} canRedo={canRedo} onUndo={undo} onRedo={redo} />
+      <HistoryBar canUndo={canUndo} canRedo={canRedo} onUndo={undo} onRedo={redo} isSharing={share.isCreating} onShare={share.createLink} />
       <div className="overlay-left" ref={overlayRef}>
         <SectionRail
           sections={RAIL_SECTIONS}

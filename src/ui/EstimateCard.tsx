@@ -4,7 +4,6 @@ import { buildEstimateCsv } from '../domain/estimateCsv';
 import { calculateEstimate, listPlacedModules, type Kitchen } from '../domain/kitchen';
 import { CopyLinkButton } from './CopyLinkButton';
 import { downloadBlob } from './downloadFile';
-import { ShareLinkButton } from './ShareLinkButton';
 import { formatRubles } from './formatRubles';
 import { Icon } from './icons';
 import { ModulePreview } from './ModulePreview';
@@ -60,7 +59,6 @@ export function EstimateCard({ kitchen, onOrder, onPrint, isReadOnly = false }: 
           {!isReadOnly && (
           <div className="estimate-actions">
             <CopyLinkButton kitchen={kitchen} />
-            <ShareLinkButton kitchen={kitchen} />
             <div className="estimate-file-actions">
               <button
                 type="button"
