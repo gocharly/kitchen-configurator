@@ -5,9 +5,10 @@ const DOOR_OPEN_ANGLE = THREE.MathUtils.degToRad(70);
 const FLAP_OPEN_ANGLE = THREE.MathUtils.degToRad(75);
 const HATCH_OPEN_ANGLE = THREE.MathUtils.degToRad(80);
 const DRAWER_TRAVEL_RATIO = 0.75;
+const CURTAIN_GATHER_RATIO = 0.78;
 export const PANEL_ANIMATION_MS = 300;
 
-export type PanelKind = 'door' | 'flap' | 'hatch' | 'drawer';
+export type PanelKind = 'door' | 'flap' | 'hatch' | 'drawer' | 'curtain';
 
 export interface OpenablePanel {
   key: string;
@@ -33,6 +34,7 @@ export function wrapOpenable(
 
 function measureTravel(kind: PanelKind, drawerDepthMm: number): number {
   if (kind === 'door') return DOOR_OPEN_ANGLE;
+  if (kind === 'curtain') return CURTAIN_GATHER_RATIO;
   if (kind === 'flap') return FLAP_OPEN_ANGLE;
   if (kind === 'hatch') return HATCH_OPEN_ANGLE;
   return drawerDepthMm * DRAWER_TRAVEL_RATIO * MM;
@@ -49,6 +51,7 @@ export function applyPanelProgress(wrapper: THREE.Object3D, progress: number): v
   if (panel.kind === 'flap') wrapper.rotation.x = -panel.travel * progress;
   if (panel.kind === 'hatch') wrapper.rotation.x = panel.travel * progress;
   if (panel.kind === 'drawer') wrapper.position.z = progress * panel.travel;
+  if (panel.kind === 'curtain') wrapper.scale.x = 1 - panel.travel * progress;
 }
 
 export function findOpenableWrapper(object: THREE.Object3D | null): THREE.Object3D | null {

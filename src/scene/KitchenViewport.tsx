@@ -547,7 +547,7 @@ export const KitchenViewport = forwardRef<ViewportHandle, KitchenViewportProps>(
       const finishedPress = press;
       press = null;
       if (drag) {
-        if (!drag.moved && drag.itemKind === 'module') togglePanelAt(event);
+        if (!drag.moved) togglePanelAt(event);
         drag = null;
         isDraggingRef.current = false;
         rig.render();

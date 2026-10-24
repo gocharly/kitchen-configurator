@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { MM, createBox } from '../cabinetFronts';
+import { wrapOpenable } from '../openablePanels';
 import { createRod, type ModelContext, type ModelFrame } from '../appliances/applianceShapes';
 
 const POT_HEIGHT_RATIO = 0.3;
@@ -107,9 +108,13 @@ export function buildCurtain(frame: ModelFrame, context: ModelContext): THREE.Gr
   const folds = Math.max(2, Math.round(frame.width / CURTAIN_FOLD_WIDTH_MM));
   const foldWidth = frame.width / folds;
   const length = frame.height - CURTAIN_ROD_DROP_MM;
+  const drapery = new THREE.Group();
   for (let fold = 0; fold < folds; fold += 1) {
     const z = hangZ + (fold % 2 === 0 ? -CURTAIN_FOLD_OFFSET_MM : CURTAIN_FOLD_OFFSET_MM);
-    group.add(createBox([foldWidth + 2 * CURTAIN_FOLD_OVERLAP_MM, length, 6], [fold * foldWidth - CURTAIN_FOLD_OVERLAP_MM, frame.elevation, z], curtain));
+    const panel = createBox([foldWidth + 2 * CURTAIN_FOLD_OVERLAP_MM, length, 6], [fold * foldWidth - CURTAIN_FOLD_OVERLAP_MM, frame.elevation, z], curtain);
+    drapery.add(panel);
   }
+  const key = context.item.module.id;
+  group.add(wrapOpenable(drapery, [0, 0, hangZ], { key: `${key}:curtain`, kind: 'curtain', hingeSign: 1 }));
   return group;
 }

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OPENING_SPECS, countOpeningLeaves, type Opening } from '../domain/openings';
+import { wrapOpenable } from './openablePanels';
 import { HANDLE_EDGE_OFFSET_MM, HANDLE_LENGTH_MM, HANDLE_SIZE_MM, createBox, type Materials } from './cabinetFronts';
 
 const FRAME_MM = 50;
@@ -77,6 +78,10 @@ function buildDoorFrame(opening: Opening, materials: Materials): THREE.Group {
   return group;
 }
 
+function wrapDoorLeaf(leaf: THREE.Group, hinge: { x: number; isOnLeft: boolean }, key: string): THREE.Group {
+  return wrapOpenable(leaf, [hinge.x, 0, 0], { key, kind: 'door', hingeSign: hinge.isOnLeft ? 1 : -1 });
+}
+
 function buildDoorLeaves(opening: Opening, materials: Materials): THREE.Group {
   const { width, height } = opening;
   const group = new THREE.Group();
@@ -84,10 +89,12 @@ function buildDoorLeaves(opening: Opening, materials: Materials): THREE.Group {
   const leafWidth = (width - 2 * FRAME_MM) / leaves;
   for (let leaf = 0; leaf < leaves; leaf += 1) {
     const x = FRAME_MM + leaf * leafWidth;
-    const isHandleOnRight = leaf < leaves / 2;
-    const handleX = isHandleOnRight ? x + leafWidth - HANDLE_EDGE_OFFSET_MM : x + HANDLE_EDGE_OFFSET_MM - HANDLE_SIZE_MM;
-    group.add(createBox([leafWidth, height - FRAME_MM, DOOR_LEAF_THICKNESS_MM], [x, 0, -DOOR_LEAF_THICKNESS_MM / 2], materials.doorLeaf));
-    group.add(createDoorHandle(handleX, materials));
+    const isHingedLeft = leaf < leaves / 2;
+    const handleX = isHingedLeft ? x + leafWidth - HANDLE_EDGE_OFFSET_MM : x + HANDLE_EDGE_OFFSET_MM - HANDLE_SIZE_MM;
+    const swinging = new THREE.Group();
+    swinging.add(createBox([leafWidth, height - FRAME_MM, DOOR_LEAF_THICKNESS_MM], [x, 0, -DOOR_LEAF_THICKNESS_MM / 2], materials.doorLeaf));
+    swinging.add(createDoorHandle(handleX, materials));
+    group.add(wrapDoorLeaf(swinging, { x: isHingedLeft ? x : x + leafWidth, isOnLeft: isHingedLeft }, `${opening.id}:leaf${leaf}`));
   }
   return group;
 }
@@ -127,8 +134,10 @@ function buildBalcony(opening: Opening, materials: Materials): THREE.Group {
   const windowX = FRAME_MM + doorWidth;
   const windowWidth = width - FRAME_MM - windowX;
   group.add(buildDoorFrame(opening, materials));
-  group.add(buildGlazedLeaf({ x: FRAME_MM, y: 0, width: doorWidth, height: height - FRAME_MM }, materials));
-  group.add(createDoorHandle(FRAME_MM + doorWidth - HANDLE_EDGE_OFFSET_MM, materials));
+  const swinging = new THREE.Group();
+  swinging.add(buildGlazedLeaf({ x: FRAME_MM, y: 0, width: doorWidth, height: height - FRAME_MM }, materials));
+  swinging.add(createDoorHandle(FRAME_MM + doorWidth - HANDLE_EDGE_OFFSET_MM, materials));
+  group.add(wrapDoorLeaf(swinging, { x: FRAME_MM, isOnLeft: true }, `${opening.id}:leaf0`));
   group.add(createFrameBar(materials, [FRAME_MM, height - 2 * FRAME_MM, FRAME_DEPTH_MM], [windowX, 0, FRAME_Z_MM]));
   group.add(createFrameBar(materials, [windowWidth, BALCONY_SILL_MM, FRAME_DEPTH_MM], [windowX + FRAME_MM, 0, FRAME_Z_MM]));
   const upper: LeafRect = { x: windowX + FRAME_MM, y: BALCONY_SILL_MM, width: windowWidth - FRAME_MM, height: height - FRAME_MM - BALCONY_SILL_MM };
