@@ -7,15 +7,15 @@ export interface QualityLevel {
 }
 
 export const QUALITY_LEVELS: QualityLevel[] = [
-  { pixelRatio: 2, hasOcclusion: true, occlusionScale: 0.6, occlusionSamples: 16, shadowMapSize: 2048 },
-  { pixelRatio: 1.5, hasOcclusion: true, occlusionScale: 0.5, occlusionSamples: 12, shadowMapSize: 1024 },
-  { pixelRatio: 1, hasOcclusion: true, occlusionScale: 0.4, occlusionSamples: 10, shadowMapSize: 1024 },
-  { pixelRatio: 1, hasOcclusion: false, occlusionScale: 0.4, occlusionSamples: 8, shadowMapSize: 1024 },
+  { pixelRatio: 2, hasOcclusion: true, occlusionScale: 1, occlusionSamples: 24, shadowMapSize: 2048 },
+  { pixelRatio: 2, hasOcclusion: false, occlusionScale: 1, occlusionSamples: 24, shadowMapSize: 2048 },
+  { pixelRatio: 1.5, hasOcclusion: false, occlusionScale: 1, occlusionSamples: 24, shadowMapSize: 1024 },
+  { pixelRatio: 1, hasOcclusion: false, occlusionScale: 1, occlusionSamples: 24, shadowMapSize: 1024 },
 ];
 
 export const LAST_QUALITY_LEVEL = QUALITY_LEVELS.length - 1;
 
-const STORAGE_KEY = 'kitchen-render-quality';
+const STORAGE_KEY = 'kitchen-render-quality-v2';
 const SLOW_FRAME_MS = 30;
 const SAMPLE_COUNT = 8;
 const COOLDOWN_MS = 1500;
@@ -25,9 +25,9 @@ export function pickStartQualityLevel(): number {
     const stored = Number(window.localStorage.getItem(STORAGE_KEY));
     if (Number.isInteger(stored) && stored >= 0 && stored <= LAST_QUALITY_LEVEL) return stored;
   } catch {
-    return window.matchMedia('(pointer: coarse)').matches ? 1 : 0;
+    return 0;
   }
-  return window.matchMedia('(pointer: coarse)').matches ? 1 : 0;
+  return 0;
 }
 
 export function rememberQualityLevel(level: number): void {

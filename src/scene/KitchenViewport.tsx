@@ -30,12 +30,12 @@ const LIGHTING = {
   evening: { background: '#1d2128', environment: 0.1, sun: 0.22, sunColor: '#9db1ff', fill: 0.1 },
 } as const;
 const SHADOW_SOFTNESS = 6;
-const MULTISAMPLE_COUNT = 2;
+const MULTISAMPLE_COUNT = 4;
 const OCCLUSION_RADIUS_M = 0.45;
 const OCCLUSION_SCALE = 1.4;
-const DENOISE_RADIUS_PX = 8;
-const DENOISE_RINGS = 2;
-const DENOISE_SAMPLES = 16;
+const DENOISE_RADIUS_PX = 10;
+const DENOISE_RINGS = 3;
+const DENOISE_SAMPLES = 24;
 const TOP_VIEW_HEIGHT_FACTOR = 1.15;
 const TOP_VIEW_TILT_M = 0.05;
 const MIN_ANCHOR_TOP_PX = 64;

@@ -48,12 +48,20 @@ describe('frame cost monitor', () => {
 });
 
 describe('quality levels', () => {
+  it('drops the occlusion pass before it lowers the resolution', () => {
+    const firstCheaperLevel = QUALITY_LEVELS.findIndex((level) => !level.hasOcclusion);
+    expect(firstCheaperLevel).toBe(1);
+    expect(QUALITY_LEVELS[firstCheaperLevel].pixelRatio).toBe(QUALITY_LEVELS[0].pixelRatio);
+  });
+
+
   it('only get cheaper from one level to the next', () => {
     QUALITY_LEVELS.slice(1).forEach((level, index) => {
       const previous = QUALITY_LEVELS[index];
       expect(level.pixelRatio).toBeLessThanOrEqual(previous.pixelRatio);
       expect(level.shadowMapSize).toBeLessThanOrEqual(previous.shadowMapSize);
       expect(level.occlusionSamples).toBeLessThanOrEqual(previous.occlusionSamples);
+      expect(Number(level.hasOcclusion)).toBeLessThanOrEqual(Number(previous.hasOcclusion));
     });
     expect(LAST_QUALITY_LEVEL).toBe(QUALITY_LEVELS.length - 1);
   });
