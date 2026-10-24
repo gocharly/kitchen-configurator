@@ -22,6 +22,7 @@ import {
   type FootprintRect,
   type FreeModule,
 } from './freeModules';
+import { hasPlacementViolation } from './placementRules';
 import { OPENING_SPECS, OPENING_STEP_MM, type Opening, type OpeningKind } from './openings';
 
 export type WallId = 'back' | 'left' | 'right';
@@ -460,6 +461,7 @@ export function fitsInRoom(kitchen: Kitchen): boolean {
     !hasOverlappingOpenings(kitchen) &&
     !hasMovedStartCorner(tightItems) &&
     !hasInvalidFreeModules(kitchen) &&
+    !hasPlacementViolation(layoutKitchen(kitchen)) &&
     !hasOpeningCollision(kitchen, layoutKitchen(kitchen))
   );
 }

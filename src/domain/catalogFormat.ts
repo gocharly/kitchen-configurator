@@ -2,6 +2,7 @@ export const CATALOG_SCHEMA = 'openkitchen3d/catalog@0.1';
 
 export type RowName = 'lower' | 'upper';
 export type FamilyType = 'base' | 'wall' | 'tall' | 'corner' | 'specialty' | 'standing';
+export type ModuleRole = 'hob' | 'hood' | 'fridge';
 export type FrontBandKind = 'doors' | 'flap' | 'drawer' | 'opening';
 
 export interface FrontBand {
@@ -29,6 +30,7 @@ export interface ModuleSpec {
   hasCountertop: boolean;
   isCorner: boolean;
   clearance: number;
+  role?: ModuleRole;
   model?: string;
   sku: (width: number) => string;
   priceFor: (width: number) => number;
@@ -151,6 +153,7 @@ const FLOOR_KINDS: SurfaceKind[] = ['planks', 'herringbone', 'tiles', 'sheet', '
 const WALL_KINDS: SurfaceKind[] = ['paint', 'stripes', 'dots', 'linen', 'brick', 'metro', 'tiles', 'slats'];
 const SURFACE_SIZE_LIMITS = { min: 1, max: 3000 };
 const DEFAULT_SURFACE_ROUGHNESS = 0.7;
+const MODULE_ROLES: ModuleRole[] = ['hob', 'hood', 'fridge'];
 const FRONT_KINDS: FrontBandKind[] = ['doors', 'flap', 'drawer', 'opening'];
 const HANDLE_KINDS: HandleKind[] = ['bar', 'knob', 'profile', 'none'];
 const FACADE_STYLE_KINDS: FacadeStyleKind[] = ['flat', 'framed'];
@@ -390,6 +393,7 @@ function readFamily(value: unknown, index: number, categoryIds: Set<string>): Mo
     hasCountertop: asFlag(family.countertop, at('countertop')),
     isCorner,
     clearance: family.clearance === undefined ? 0 : asNumber(family.clearance, at('clearance'), 0),
+    role: family.role === undefined ? undefined : asOneOf(family.role, at('role'), MODULE_ROLES),
     model: family.model === undefined ? undefined : asText(family.model, at('model')),
     sku: (width) => skuTemplate.replaceAll('{width}', String(width)),
     priceFor: readPriceFunction(family.price, 'width', at('price'), [minWidth, maxWidth]),

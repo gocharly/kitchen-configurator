@@ -11,6 +11,7 @@ export type {
   FamilyType,
   FrontBand,
   FrontBandKind,
+  ModuleRole,
   ModuleSpec,
   RowName,
   SurfaceKind,
