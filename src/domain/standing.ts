@@ -1,9 +1,10 @@
 import { getModuleSpec, type ModuleSpec } from './catalog';
 import { addFreeModule, type Point } from './dragging';
-import { isRectInsideRoom, measureRotatedFootprint } from './freeModules';
-import { addModule, canAddModule, listSpaceTaken, overlapsInSpace, pickWallForModule, type Kitchen, type SpaceTaken, type WallId } from './kitchen';
+import { isRectInsideRoom, measureRotatedFootprint, type Rotation } from './freeModules';
+import { addModule, canAddModule, listCountertopSurfaces, listSpaceTaken, overlapsInSpace, pickWallForModule, type Kitchen, type SpaceTaken, type WallId } from './kitchen';
 
 const SEARCH_STEP_MM = 100;
+const BACKSPLASH_GAP_MM = 10;
 
 const searchPointsByRoom = new Map<string, Point[]>();
 const spaceTakenByKitchen = new WeakMap<Kitchen, SpaceTaken[]>();
@@ -45,8 +46,46 @@ function isSpotFree(kitchen: Kitchen, spec: ModuleSpec, point: Point): boolean {
   return !readSpaceTaken(kitchen).some((other) => overlapsInSpace(space, other));
 }
 
+interface Placement {
+  point: Point;
+  rotation: Rotation;
+}
+
+const ROTATION_BY_WALL: Record<WallId, Rotation> = { back: 0, left: 90, right: 270 };
+
+function listSurfacePlacements(kitchen: Kitchen, spec: ModuleSpec): Placement[] {
+  return listCountertopSurfaces(kitchen).flatMap(({ rect: surface, wall }) => {
+    const rotation = wall ? ROTATION_BY_WALL[wall] : 0;
+    const isSideways = rotation !== 0;
+    const alongWidth = isSideways ? surface.z1 - surface.z0 : surface.x1 - surface.x0;
+    const crossDepth = isSideways ? surface.x1 - surface.x0 : surface.z1 - surface.z0;
+    if (alongWidth < spec.defaultWidth || crossDepth < spec.depth) return [];
+    const centerAlong = (isSideways ? surface.z0 + surface.z1 : surface.x0 + surface.x1) / 2;
+    const near = BACKSPLASH_GAP_MM + spec.depth / 2;
+    const placements: Placement[] = [];
+    for (let offset = 0; offset <= (alongWidth - spec.defaultWidth) / 2; offset += SEARCH_STEP_MM) {
+      [centerAlong - offset, centerAlong + offset].forEach((along) => {
+        const point = rotation === 0 ? { cx: along, cz: surface.z0 + near } : rotation === 90 ? { cx: surface.x0 + near, cz: along } : { cx: surface.x1 - near, cz: along };
+        placements.push({ point, rotation });
+      });
+    }
+    return placements;
+  });
+}
+
+function placeOnSurface(kitchen: Kitchen, specId: string, id: string): Kitchen {
+  const spec = getModuleSpec(specId);
+  const module = { id, specId, width: spec.defaultWidth };
+  for (const { point, rotation } of listSurfacePlacements(kitchen, spec)) {
+    const next = addFreeModule(kitchen, module, point, rotation);
+    if (next !== kitchen) return next;
+  }
+  return kitchen;
+}
+
 function placeOnNearestFreeSpot(kitchen: Kitchen, specId: string, id: string): Kitchen {
   const spec = getModuleSpec(specId);
+  if (spec.placeOn === 'countertop') return placeOnSurface(kitchen, specId, id);
   const module = { id, specId, width: spec.defaultWidth };
   const points = spec.row === 'upper' ? listWallSearchPoints(kitchen.room, spec.depth) : listSearchPoints(kitchen.room);
   for (const point of points) {

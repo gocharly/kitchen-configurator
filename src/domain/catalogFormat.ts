@@ -3,6 +3,7 @@ export const CATALOG_SCHEMA = 'openkitchen3d/catalog@0.1';
 export type RowName = 'lower' | 'upper';
 export type FamilyType = 'base' | 'wall' | 'tall' | 'corner' | 'specialty' | 'standing';
 export type FaucetKind = 'arc' | 'pullout';
+export type PlacementSurface = 'countertop';
 export type ModuleRole = 'hob' | 'hood' | 'fridge';
 export type FrontBandKind = 'doors' | 'flap' | 'drawer' | 'opening';
 
@@ -34,6 +35,8 @@ export interface ModuleSpec {
   isCorner: boolean;
   clearance: number;
   isFlat: boolean;
+  emitsLight: boolean;
+  placeOn?: PlacementSurface;
   role?: ModuleRole;
   model?: string;
   sku: (width: number) => string;
@@ -158,6 +161,7 @@ const WALL_KINDS: SurfaceKind[] = ['paint', 'stripes', 'dots', 'linen', 'brick',
 const SURFACE_SIZE_LIMITS = { min: 1, max: 3000 };
 const DEFAULT_SURFACE_ROUGHNESS = 0.7;
 const FAUCET_KINDS: FaucetKind[] = ['arc', 'pullout'];
+const PLACEMENT_SURFACES: PlacementSurface[] = ['countertop'];
 const MODULE_ROLES: ModuleRole[] = ['hob', 'hood', 'fridge'];
 const FRONT_KINDS: FrontBandKind[] = ['doors', 'flap', 'drawer', 'opening'];
 const HANDLE_KINDS: HandleKind[] = ['bar', 'knob', 'profile', 'none'];
@@ -400,6 +404,8 @@ function readFamily(value: unknown, index: number, categoryIds: Set<string>): Mo
     hasCountertop: asFlag(family.countertop, at('countertop')),
     isCorner,
     isFlat: asFlag(family.flat, at('flat')),
+    emitsLight: asFlag(family.light, at('light')),
+    placeOn: family.placeOn === undefined ? undefined : asOneOf(family.placeOn, at('placeOn'), PLACEMENT_SURFACES),
     clearance: family.clearance === undefined ? 0 : asNumber(family.clearance, at('clearance'), 0),
     role: family.role === undefined ? undefined : asOneOf(family.role, at('role'), MODULE_ROLES),
     model: family.model === undefined ? undefined : asText(family.model, at('model')),

@@ -8,7 +8,8 @@ import { buildInsetAppliances } from './appliances/insetAppliances';
 import { buildElectricStove, buildGasStove } from './appliances/stoves';
 import { buildWasher } from './appliances/washer';
 import { buildWineCooler } from './appliances/wineCooler';
-import { buildCurtain, buildFloorLamp, buildPendantLamp, buildPlant, buildRugRect, buildRugRound, buildTrashBin } from './furniture/decor';
+import { buildBlender, buildBreadBin, buildCanisters, buildCoffeeMachine, buildCounterMicrowave, buildCuttingBoard, buildDishRack, buildFruitBowl, buildKettle, buildKnifeBlock, buildMugs, buildPan, buildSaucepan, buildToaster, buildTowelHolder, buildUtensilJar } from './furniture/kitchenware';
+import { buildCurtain, buildFloorLamp, buildPlant, buildRugRect, buildRugRound, buildTrashBin } from './furniture/decor';
 import { buildBarStool, buildBench, buildKitchenSofa, buildLowStool, buildPaddedChair, buildWoodChair } from './furniture/seating';
 import { buildHangingRail, buildOpenShelving, buildTrolley, buildWallShelf, buildWineRack } from './furniture/storage';
 import { buildBarTable, buildRectTable, buildRoundTable } from './furniture/tables';
@@ -46,11 +47,26 @@ const MODEL_BUILDERS: Record<string, ApplianceBuilder> = {
   shelvingOpen: buildOpenShelving,
   trolley: buildTrolley,
   wineRack: buildWineRack,
+  pan: buildPan,
+  saucepan: buildSaucepan,
+  kettle: buildKettle,
+  toaster: buildToaster,
+  coffeeMachine: buildCoffeeMachine,
+  counterMicrowave: buildCounterMicrowave,
+  cuttingBoard: buildCuttingBoard,
+  fruitBowl: buildFruitBowl,
+  knifeBlock: buildKnifeBlock,
+  utensilJar: buildUtensilJar,
+  breadBin: buildBreadBin,
+  canisters: buildCanisters,
+  mugs: buildMugs,
+  dishRack: buildDishRack,
+  blender: buildBlender,
+  towelHolder: buildTowelHolder,
   plant: buildPlant,
   rugRect: buildRugRect,
   rugRound: buildRugRound,
   floorLamp: buildFloorLamp,
-  pendantLamp: buildPendantLamp,
   trashBin: buildTrashBin,
   curtain: buildCurtain,
   wallShelf: buildWallShelf,

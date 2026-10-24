@@ -98,6 +98,10 @@ export function App() {
   useEffect(() => writeKitchenToAddress(kitchen), [kitchen]);
 
   useEffect(() => {
+    document.documentElement.dataset.theme = isEvening ? 'night' : 'day';
+  }, [isEvening]);
+
+  useEffect(() => {
     const allowDrop = (event: DragEvent) => event.preventDefault();
     const openDroppedFile = async (event: DragEvent) => {
       event.preventDefault();

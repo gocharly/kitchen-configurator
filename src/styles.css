@@ -1,3 +1,69 @@
+@property --bg-page {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #e9ebee;
+}
+
+@property --bg-panel {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #ffffff;
+}
+
+@property --bg-control {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #eef0f2;
+}
+
+@property --bg-control-hover {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #e3e6e9;
+}
+
+@property --bg-control-active {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #d6dadf;
+}
+
+@property --text {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #1b1f23;
+}
+
+@property --text-muted {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #69727b;
+}
+
+@property --action-bg {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #1b1f23;
+}
+
+@property --action-text {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #ffffff;
+}
+
+@property --action-disabled-bg {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #d6dadf;
+}
+
+@property --action-disabled-text {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #8b939b;
+}
+
 :root {
   --bg-page: #e9ebee;
   --bg-panel: #ffffff;
@@ -14,7 +80,34 @@
   --radius-small: 8px;
   --edge-gap: 16px;
   --shadow-float: 0 1px 6px rgba(27, 31, 35, 0.08);
+  transition:
+    --bg-page 0.38s ease,
+    --bg-panel 0.38s ease,
+    --bg-control 0.38s ease,
+    --bg-control-hover 0.38s ease,
+    --bg-control-active 0.38s ease,
+    --text 0.38s ease,
+    --text-muted 0.38s ease,
+    --action-bg 0.38s ease,
+    --action-text 0.38s ease,
+    --action-disabled-bg 0.38s ease,
+    --action-disabled-text 0.38s ease;
   --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+:root[data-theme='night'] {
+  --bg-page: #14171c;
+  --bg-panel: #23272e;
+  --bg-control: #2d323a;
+  --bg-control-hover: #373d46;
+  --bg-control-active: #444b56;
+  --text: #e8eaed;
+  --text-muted: #9aa3ad;
+  --action-bg: #e8eaed;
+  --action-text: #14171c;
+  --action-disabled-bg: #3a3f47;
+  --action-disabled-text: #6c747d;
+  --shadow-float: 0 1px 8px rgba(0, 0, 0, 0.4);
 }
 
 * {

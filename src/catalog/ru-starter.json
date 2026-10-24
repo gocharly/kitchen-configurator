@@ -58,6 +58,10 @@
     {
       "id": "interior",
       "title": "Декор интерьера"
+    },
+    {
+      "id": "kitchenware",
+      "title": "Мелкая утварь"
     }
   ],
   "families": [
@@ -4025,38 +4029,8 @@
       "countertop": false,
       "sku": "FLOOR-LAMP-{width}",
       "price": "width * 10",
-      "model": "floorLamp"
-    },
-    {
-      "id": "pendant-lamp",
-      "type": "standing",
-      "category": "interior",
-      "title": "Подвесной светильник",
-      "row": "lower",
-      "widths": {
-        "min": 500,
-        "max": 500,
-        "step": 50
-      },
-      "defaultWidth": 500,
-      "height": 900,
-      "depths": [
-        500
-      ],
-      "elevation": 1500,
-      "fronts": [
-        {
-          "kind": "opening",
-          "ratio": 1
-        }
-      ],
-      "glass": false,
-      "sink": false,
-      "corner": false,
-      "countertop": false,
-      "sku": "PENDANT-LAMP-{width}",
-      "price": "width * 8",
-      "model": "pendantLamp"
+      "model": "floorLamp",
+      "light": true
     },
     {
       "id": "trash-bin",
@@ -4119,6 +4093,582 @@
       "sku": "CURTAIN-{width}",
       "price": "width * 3",
       "model": "curtain"
+    },
+    {
+      "id": "pan",
+      "type": "standing",
+      "category": "kitchenware",
+      "title": "Сковорода",
+      "row": "lower",
+      "widths": {
+        "min": 430,
+        "max": 430,
+        "step": 50
+      },
+      "defaultWidth": 430,
+      "height": 55,
+      "depths": [
+        280
+      ],
+      "elevation": 854,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "PAN-{width}",
+      "price": "width * 3",
+      "model": "pan",
+      "placeOn": "countertop"
+    },
+    {
+      "id": "saucepan",
+      "type": "standing",
+      "category": "kitchenware",
+      "title": "Кастрюля",
+      "row": "lower",
+      "widths": {
+        "min": 260,
+        "max": 260,
+        "step": 50
+      },
+      "defaultWidth": 260,
+      "height": 170,
+      "depths": [
+        260
+      ],
+      "elevation": 854,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "SAUCEPAN-{width}",
+      "price": "width * 4",
+      "model": "saucepan",
+      "placeOn": "countertop"
+    },
+    {
+      "id": "pot-large",
+      "type": "standing",
+      "category": "kitchenware",
+      "title": "Кастрюля большая",
+      "row": "lower",
+      "widths": {
+        "min": 320,
+        "max": 320,
+        "step": 50
+      },
+      "defaultWidth": 320,
+      "height": 220,
+      "depths": [
+        320
+      ],
+      "elevation": 854,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "POT-LARGE-{width}",
+      "price": "width * 5",
+      "model": "saucepan",
+      "placeOn": "countertop"
+    },
+    {
+      "id": "kettle",
+      "type": "standing",
+      "category": "kitchenware",
+      "title": "Чайник",
+      "row": "lower",
+      "widths": {
+        "min": 250,
+        "max": 250,
+        "step": 50
+      },
+      "defaultWidth": 250,
+      "height": 250,
+      "depths": [
+        190
+      ],
+      "elevation": 854,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "KETTLE-{width}",
+      "price": "width * 6",
+      "model": "kettle",
+      "placeOn": "countertop"
+    },
+    {
+      "id": "toaster",
+      "type": "standing",
+      "category": "kitchenware",
+      "title": "Тостер",
+      "row": "lower",
+      "widths": {
+        "min": 300,
+        "max": 300,
+        "step": 50
+      },
+      "defaultWidth": 300,
+      "height": 190,
+      "depths": [
+        180
+      ],
+      "elevation": 854,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TOASTER-{width}",
+      "price": "width * 8",
+      "model": "toaster",
+      "placeOn": "countertop"
+    },
+    {
+      "id": "coffee-machine",
+      "type": "standing",
+      "category": "kitchenware",
+      "title": "Кофемашина",
+      "row": "lower",
+      "widths": {
+        "min": 280,
+        "max": 280,
+        "step": 50
+      },
+      "defaultWidth": 280,
+      "height": 380,
+      "depths": [
+        420
+      ],
+      "elevation": 854,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "COFFEE-MACHINE-{width}",
+      "price": "width * 30",
+      "model": "coffeeMachine",
+      "placeOn": "countertop"
+    },
+    {
+      "id": "microwave-counter",
+      "type": "standing",
+      "category": "kitchenware",
+      "title": "Микроволновка",
+      "row": "lower",
+      "widths": {
+        "min": 480,
+        "max": 480,
+        "step": 50
+      },
+      "defaultWidth": 480,
+      "height": 290,
+      "depths": [
+        360
+      ],
+      "elevation": 854,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "MICROWAVE-COUNTER-{width}",
+      "price": "width * 12",
+      "model": "counterMicrowave",
+      "placeOn": "countertop"
+    },
+    {
+      "id": "cutting-board",
+      "type": "standing",
+      "category": "kitchenware",
+      "title": "Разделочная доска",
+      "row": "lower",
+      "widths": {
+        "min": 420,
+        "max": 420,
+        "step": 50
+      },
+      "defaultWidth": 420,
+      "height": 22,
+      "depths": [
+        260
+      ],
+      "elevation": 854,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "CUTTING-BOARD-{width}",
+      "price": "width * 2",
+      "model": "cuttingBoard",
+      "placeOn": "countertop"
+    },
+    {
+      "id": "fruit-bowl",
+      "type": "standing",
+      "category": "kitchenware",
+      "title": "Ваза с фруктами",
+      "row": "lower",
+      "widths": {
+        "min": 300,
+        "max": 300,
+        "step": 50
+      },
+      "defaultWidth": 300,
+      "height": 230,
+      "depths": [
+        300
+      ],
+      "elevation": 854,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "FRUIT-BOWL-{width}",
+      "price": "width * 3",
+      "model": "fruitBowl",
+      "placeOn": "countertop"
+    },
+    {
+      "id": "knife-block",
+      "type": "standing",
+      "category": "kitchenware",
+      "title": "Подставка с ножами",
+      "row": "lower",
+      "widths": {
+        "min": 140,
+        "max": 140,
+        "step": 50
+      },
+      "defaultWidth": 140,
+      "height": 300,
+      "depths": [
+        220
+      ],
+      "elevation": 854,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "KNIFE-BLOCK-{width}",
+      "price": "width * 5",
+      "model": "knifeBlock",
+      "placeOn": "countertop"
+    },
+    {
+      "id": "utensil-jar",
+      "type": "standing",
+      "category": "kitchenware",
+      "title": "Подставка с приборами",
+      "row": "lower",
+      "widths": {
+        "min": 140,
+        "max": 140,
+        "step": 50
+      },
+      "defaultWidth": 140,
+      "height": 330,
+      "depths": [
+        140
+      ],
+      "elevation": 854,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "UTENSIL-JAR-{width}",
+      "price": "width * 2",
+      "model": "utensilJar",
+      "placeOn": "countertop"
+    },
+    {
+      "id": "bread-bin",
+      "type": "standing",
+      "category": "kitchenware",
+      "title": "Хлебница",
+      "row": "lower",
+      "widths": {
+        "min": 380,
+        "max": 380,
+        "step": 50
+      },
+      "defaultWidth": 380,
+      "height": 200,
+      "depths": [
+        250
+      ],
+      "elevation": 854,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "BREAD-BIN-{width}",
+      "price": "width * 4",
+      "model": "breadBin",
+      "placeOn": "countertop"
+    },
+    {
+      "id": "canisters",
+      "type": "standing",
+      "category": "kitchenware",
+      "title": "Банки для круп",
+      "row": "lower",
+      "widths": {
+        "min": 360,
+        "max": 360,
+        "step": 50
+      },
+      "defaultWidth": 360,
+      "height": 200,
+      "depths": [
+        130
+      ],
+      "elevation": 854,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "CANISTERS-{width}",
+      "price": "width * 3",
+      "model": "canisters",
+      "placeOn": "countertop"
+    },
+    {
+      "id": "mugs",
+      "type": "standing",
+      "category": "kitchenware",
+      "title": "Кружки",
+      "row": "lower",
+      "widths": {
+        "min": 220,
+        "max": 220,
+        "step": 50
+      },
+      "defaultWidth": 220,
+      "height": 100,
+      "depths": [
+        110
+      ],
+      "elevation": 854,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "MUGS-{width}",
+      "price": "width * 1",
+      "model": "mugs",
+      "placeOn": "countertop"
+    },
+    {
+      "id": "dish-rack",
+      "type": "standing",
+      "category": "kitchenware",
+      "title": "Сушилка для посуды",
+      "row": "lower",
+      "widths": {
+        "min": 460,
+        "max": 460,
+        "step": 50
+      },
+      "defaultWidth": 460,
+      "height": 230,
+      "depths": [
+        300
+      ],
+      "elevation": 854,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "DISH-RACK-{width}",
+      "price": "width * 3",
+      "model": "dishRack",
+      "placeOn": "countertop"
+    },
+    {
+      "id": "blender",
+      "type": "standing",
+      "category": "kitchenware",
+      "title": "Блендер",
+      "row": "lower",
+      "widths": {
+        "min": 180,
+        "max": 180,
+        "step": 50
+      },
+      "defaultWidth": 180,
+      "height": 400,
+      "depths": [
+        180
+      ],
+      "elevation": 854,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "BLENDER-{width}",
+      "price": "width * 10",
+      "model": "blender",
+      "placeOn": "countertop"
+    },
+    {
+      "id": "towel-holder",
+      "type": "standing",
+      "category": "kitchenware",
+      "title": "Держатель бумажных полотенец",
+      "row": "lower",
+      "widths": {
+        "min": 170,
+        "max": 170,
+        "step": 50
+      },
+      "defaultWidth": 170,
+      "height": 300,
+      "depths": [
+        170
+      ],
+      "elevation": 854,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TOWEL-HOLDER-{width}",
+      "price": "width * 2",
+      "model": "towelHolder",
+      "placeOn": "countertop"
+    },
+    {
+      "id": "plant-counter",
+      "type": "standing",
+      "category": "kitchenware",
+      "title": "Растение на столешнице",
+      "row": "lower",
+      "widths": {
+        "min": 160,
+        "max": 160,
+        "step": 50
+      },
+      "defaultWidth": 160,
+      "height": 300,
+      "depths": [
+        160
+      ],
+      "elevation": 854,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "PLANT-COUNTER-{width}",
+      "price": "width * 2",
+      "model": "plant",
+      "placeOn": "countertop"
     }
   ],
   "finishes": {

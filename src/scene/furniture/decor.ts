@@ -16,8 +16,6 @@ const RUG_BORDER_MM = 60;
 const LAMP_BASE_HEIGHT_MM = 20;
 const LAMP_POLE_RADIUS_MM = 9;
 const LAMP_SHADE_HEIGHT_MM = 280;
-const PENDANT_CORD_RADIUS_MM = 3;
-const PENDANT_SHADE_HEIGHT_RATIO = 0.45;
 const BIN_LID_MM = 30;
 const BIN_PEDAL_MM = 10;
 const CURTAIN_ROD_MM = 18;
@@ -83,20 +81,6 @@ export function buildFloorLamp(frame: ModelFrame, context: ModelContext): THREE.
   group.add(createRod(LAMP_POLE_RADIUS_MM, frame.height - LAMP_SHADE_HEIGHT_MM, [center[0], (frame.height - LAMP_SHADE_HEIGHT_MM) / 2, center[1]], 'y', steelDark));
   const shade = new THREE.Mesh(new THREE.CylinderGeometry(frame.width * 0.3 * MM, frame.width * 0.5 * MM, LAMP_SHADE_HEIGHT_MM * MM, 28, 1, true), lampShade);
   shade.position.set(center[0] * MM, (frame.height - LAMP_SHADE_HEIGHT_MM / 2) * MM, center[1] * MM);
-  group.add(shade);
-  return group;
-}
-
-export function buildPendantLamp(frame: ModelFrame, context: ModelContext): THREE.Group {
-  const { steelDark, lampShade } = context.materials;
-  const group = new THREE.Group();
-  const center: [number, number] = [frame.width / 2, frame.depth / 2];
-  const shadeHeight = frame.height * PENDANT_SHADE_HEIGHT_RATIO;
-  const top = frame.elevation + frame.height;
-  group.add(createRod(PENDANT_CORD_RADIUS_MM, frame.height - shadeHeight, [center[0], top - (frame.height - shadeHeight) / 2, center[1]], 'y', steelDark));
-  const shade = new THREE.Mesh(new THREE.SphereGeometry((frame.width / 2) * MM, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2), lampShade);
-  shade.scale.y = shadeHeight / (frame.width / 2);
-  shade.position.set(center[0] * MM, frame.elevation * MM, center[1] * MM);
   group.add(shade);
   return group;
 }

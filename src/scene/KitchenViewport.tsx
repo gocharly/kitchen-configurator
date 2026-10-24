@@ -7,7 +7,7 @@ import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { layoutKitchen, listSpaceTaken, locateModuleCenter, type Kitchen, type WallId } from '../domain/kitchen';
-import { buildKitchenGroup, disposeKitchenGroup } from './buildKitchenGroup';
+import { applyNightAmount, buildKitchenGroup, disposeKitchenGroup } from './buildKitchenGroup';
 import {
   PANEL_ANIMATION_MS,
   applyPanelProgress,
@@ -23,6 +23,7 @@ const EYE_FIELD_OF_VIEW_DEG = 62;
 const EYE_HEIGHT_M = 1.6;
 const EYE_TARGET_HEIGHT_M = 1.25;
 const EYE_INSET_FROM_FRONT_M = 0.25;
+const NIGHT_TRANSITION_MS = 380;
 const LIGHTING = {
   day: { background: '#e9ebee', environment: 0.55, sun: 1.5, sunColor: '#fff4e6', fill: 0.55 },
   evening: { background: '#1d2128', environment: 0.1, sun: 0.22, sunColor: '#9db1ff', fill: 0.1 },
@@ -63,6 +64,8 @@ interface ViewportRig {
   inset: ViewInset;
   insetTarget: ViewInset;
   hasUserMovedCamera: boolean;
+  nightAmount: number;
+  nightFrame: number;
   kitchenGroup: THREE.Group | null;
 }
 
@@ -122,7 +125,7 @@ function createRig(container: HTMLElement): ViewportRig {
   controls.maxDistance = 14;
 
   const composer = createComposer(renderer, scene, camera);
-  const rig: ViewportRig = { renderer, scene, camera, controls, composer, light, fill, render: () => undefined, onRendered: null, cameraFrame: 0, insetFrame: 0, inset: { left: 0, bottom: 0 }, insetTarget: { left: 0, bottom: 0 }, hasUserMovedCamera: false, kitchenGroup: null };
+  const rig: ViewportRig = { renderer, scene, camera, controls, composer, light, fill, render: () => undefined, onRendered: null, cameraFrame: 0, insetFrame: 0, inset: { left: 0, bottom: 0 }, insetTarget: { left: 0, bottom: 0 }, hasUserMovedCamera: false, nightAmount: 0, nightFrame: 0, kitchenGroup: null };
   rig.render = () => {
     composer.render();
     rig.onRendered?.();
@@ -185,13 +188,15 @@ function setFieldOfView(rig: ViewportRig, degrees: number): void {
   rig.camera.updateProjectionMatrix();
 }
 
-function applyLighting(rig: ViewportRig, isEvening: boolean): void {
-  const preset = isEvening ? LIGHTING.evening : LIGHTING.day;
-  rig.scene.background = new THREE.Color(preset.background);
-  rig.scene.environmentIntensity = preset.environment;
-  rig.light.intensity = preset.sun;
-  rig.light.color.set(preset.sunColor);
-  rig.fill.intensity = preset.fill;
+function applyLighting(rig: ViewportRig, nightAmount: number): void {
+  const { day, evening } = LIGHTING;
+  const mix = (from: number, to: number) => from + (to - from) * nightAmount;
+  (rig.scene.background as THREE.Color).set(day.background).lerp(new THREE.Color(evening.background), nightAmount);
+  rig.scene.environmentIntensity = mix(day.environment, evening.environment);
+  rig.light.intensity = mix(day.sun, evening.sun);
+  rig.light.color.set(day.sunColor).lerp(new THREE.Color(evening.sunColor), nightAmount);
+  rig.fill.intensity = mix(day.fill, evening.fill);
+  if (rig.kitchenGroup) applyNightAmount(rig.kitchenGroup, nightAmount);
 }
 
 function measureZoomView(rig: ViewportRig, factor: number): CameraView {
@@ -568,6 +573,7 @@ export const KitchenViewport = forwardRef<ViewportHandle, KitchenViewportProps>(
       animationFrames.forEach((frame) => window.cancelAnimationFrame(frame));
       window.cancelAnimationFrame(rig.cameraFrame);
       window.cancelAnimationFrame(rig.insetFrame);
+      window.cancelAnimationFrame(rig.nightFrame);
       observer.disconnect();
       rig.controls.dispose();
       rig.composer.dispose();
@@ -585,7 +591,7 @@ export const KitchenViewport = forwardRef<ViewportHandle, KitchenViewportProps>(
       rig.scene.remove(rig.kitchenGroup);
       disposeKitchenGroup(rig.kitchenGroup);
     }
-    rig.kitchenGroup = buildKitchenGroup(kitchen, selectedModuleId, isEvening);
+    rig.kitchenGroup = buildKitchenGroup(kitchen, selectedModuleId);
     restoreOpenPanels(rig.kitchenGroup, openKeysRef.current);
     rig.scene.add(rig.kitchenGroup);
     frameLight(rig, kitchen.room);
@@ -593,9 +599,26 @@ export const KitchenViewport = forwardRef<ViewportHandle, KitchenViewportProps>(
     if (fittedSpanRef.current === 0) fitCameraToKitchen(rig, kitchen);
     else if (span !== fittedSpanRef.current) refocusCameraOnRoom(rig, kitchen.room, fittedSpanRef.current);
     fittedSpanRef.current = span;
-    applyLighting(rig, isEvening);
+    applyLighting(rig, rig.nightAmount);
     rig.render();
-  }, [kitchen, selectedModuleId, isEvening]);
+  }, [kitchen, selectedModuleId]);
+
+  useEffect(() => {
+    const rig = rigRef.current;
+    if (!rig) return;
+    window.cancelAnimationFrame(rig.nightFrame);
+    const from = rig.nightAmount;
+    const target = isEvening ? 1 : 0;
+    const startTime = performance.now();
+    const step = (now: number) => {
+      const eased = easeInOut(Math.min(1, (now - startTime) / NIGHT_TRANSITION_MS));
+      rig.nightAmount = from + (target - from) * eased;
+      applyLighting(rig, rig.nightAmount);
+      rig.render();
+      if (eased < 1) rig.nightFrame = window.requestAnimationFrame(step);
+    };
+    rig.nightFrame = window.requestAnimationFrame(step);
+  }, [isEvening]);
 
   useEffect(() => {
     const rig = rigRef.current;

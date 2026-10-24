@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { getModuleSpec } from './catalog';
-import { DEFAULT_KITCHEN, calculateEstimate, fitsInRoom, measureOccupiedLength, resizeRoom, type Kitchen } from './kitchen';
+import { placeModuleFreely } from './dragging';
+import { DEFAULT_KITCHEN, addModule, calculateEstimate, fitsInRoom, measureOccupiedLength, resizeRoom, type Kitchen } from './kitchen';
 import { measureFreeModuleRect } from './kitchen';
 import { addCatalogModule, canAddCatalogModule } from './standing';
 
@@ -68,11 +69,43 @@ describe('flat and hanging decor', () => {
     expect(next.freeModules).toHaveLength(1);
     expect(measureFreeModuleRect(next.freeModules[0]).z0).toBe(0);
   });
+});
 
-  it('hangs a pendant lamp above a table', () => {
-    const withTable = addCatalogModule(wideKitchen, 'table-dining', 'table', 'back');
-    const withLamp = addCatalogModule(withTable, 'pendant-lamp', 'lamp', 'back');
-    expect(withLamp.freeModules).toHaveLength(2);
-    expect(fitsInRoom(withLamp)).toBe(true);
+describe('items that stand on the countertop', () => {
+  const withBases = addModule(addModule(addModule(wideKitchen, 'base-1-door', 'a', 'back'), 'base-2-doors', 'b', 'back'), 'base-1-door', 'c', 'back');
+
+  it('puts a kettle on the countertop at the counter height against the wall', () => {
+    const next = addCatalogModule(withBases, 'kettle', 'kettle', 'back');
+    expect(next.freeModules).toHaveLength(1);
+    const rect = measureFreeModuleRect(next.freeModules[0]);
+    expect(getModuleSpec('kettle').elevation).toBe(854);
+    expect(rect.z0).toBeLessThan(40);
+    expect(rect.x0).toBeGreaterThanOrEqual(0);
+    expect(rect.x1).toBeLessThanOrEqual(1600);
+  });
+
+  it('refuses a kettle when there is no countertop', () => {
+    expect(canAddCatalogModule(wideKitchen, 'kettle', 'back')).toBe(false);
+  });
+
+  it('puts several items side by side without overlap', () => {
+    const next = ['toaster', 'kettle', 'coffee-machine'].reduce((acc, id, index) => addCatalogModule(acc, id, `i${index}`, 'back'), withBases);
+    expect(next.freeModules).toHaveLength(3);
+    expect(fitsInRoom(next)).toBe(true);
+  });
+
+  it('does not let an item be dragged off the countertop', () => {
+    const withKettle = addCatalogModule(withBases, 'kettle', 'kettle', 'back');
+    expect(placeModuleFreely(withKettle, 'kettle', { cx: 3000, cz: 2000 })).toBe(withKettle);
+  });
+
+  it('allows a pan on top of a stove', () => {
+    const withStove = addModule(wideKitchen, 'appliance-stove', 's', 'back');
+    expect(addCatalogModule(withStove, 'pan', 'pan', 'back').freeModules).toHaveLength(1);
+  });
+
+  it('does not place anything on a sink', () => {
+    const onlySink = addModule(wideKitchen, 'base-sink-2-doors', 'sink', 'back');
+    expect(canAddCatalogModule(onlySink, 'kettle', 'back')).toBe(false);
   });
 });

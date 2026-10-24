@@ -1,4 +1,5 @@
 import {
+  COUNTERTOP_OVERHANG_MM,
   FACADE_STYLES,
   FILLER,
   FLOORS,
@@ -325,12 +326,72 @@ function isHangingOnWall(free: FreeModule, room: Room): boolean {
   return false;
 }
 
+export interface CountertopSurface {
+  rect: FootprintRect;
+  wall: WallId | null;
+}
+
+function mergeTouchingSurfaces(surfaces: CountertopSurface[]): CountertopSurface[] {
+  const merged = surfaces.map((surface) => ({ ...surface, rect: { ...surface.rect } }));
+  let isMerging = true;
+  while (isMerging) {
+    isMerging = false;
+    for (let i = 0; i < merged.length && !isMerging; i += 1) {
+      for (let j = i + 1; j < merged.length && !isMerging; j += 1) {
+        const a = merged[i].rect;
+        const b = merged[j].rect;
+        if (merged[i].wall !== merged[j].wall) continue;
+        const isSameZRange = Math.abs(a.z0 - b.z0) < 1 && Math.abs(a.z1 - b.z1) < 1 && a.x0 <= b.x1 + 1 && b.x0 <= a.x1 + 1;
+        const isSameXRange = Math.abs(a.x0 - b.x0) < 1 && Math.abs(a.x1 - b.x1) < 1 && a.z0 <= b.z1 + 1 && b.z0 <= a.z1 + 1;
+        if (!isSameZRange && !isSameXRange) continue;
+        merged[i] = { wall: merged[i].wall, rect: { x0: Math.min(a.x0, b.x0), x1: Math.max(a.x1, b.x1), z0: Math.min(a.z0, b.z0), z1: Math.max(a.z1, b.z1) } };
+        merged.splice(j, 1);
+        isMerging = true;
+      }
+    }
+  }
+  return merged;
+}
+
+function growTowardRoom(rect: FootprintRect, wall: WallId, by: number): FootprintRect {
+  if (wall === 'back') return { ...rect, z1: rect.z1 + by };
+  if (wall === 'left') return { ...rect, x1: rect.x1 + by };
+  return { ...rect, x0: rect.x0 - by };
+}
+
+export function listCountertopSurfaces(kitchen: Kitchen): CountertopSurface[] {
+  const onWalls = layoutKitchen(kitchen)
+    .filter((item) => item.spec.row === 'lower' && !item.spec.hasSink && !item.spec.isCorner && (item.spec.hasCountertop || item.spec.role === 'hob'))
+    .map((item): CountertopSurface => {
+      const rect = mapFootprintToRoomRect(listItemFootprints(item)[0], kitchen.room);
+      return { wall: item.wall, rect: item.spec.hasCountertop ? growTowardRoom(rect, item.wall, COUNTERTOP_OVERHANG_MM) : rect };
+    });
+  const onFillers = listFillers(kitchen)
+    .filter((filler) => filler.row === 'lower' && filler.hasCountertop)
+    .map((filler): CountertopSurface => {
+      const footprint = { wall: filler.wall, start: filler.offset, end: filler.offset + filler.width, depth: filler.depth, bottom: filler.elevation, top: filler.elevation + filler.height, row: 'lower' as const };
+      return { wall: filler.wall, rect: growTowardRoom(mapFootprintToRoomRect(footprint, kitchen.room), filler.wall, COUNTERTOP_OVERHANG_MM) };
+    });
+  const onIslands = kitchen.freeModules
+    .filter((free) => getModuleSpec(free.module.specId).hasCountertop && !getModuleSpec(free.module.specId).hasSink)
+    .map((free): CountertopSurface => ({ wall: null, rect: measureFreeModuleRect(free) }));
+  return mergeTouchingSurfaces([...onWalls, ...onFillers, ...onIslands]);
+}
+
+function isRectSupported(rect: FootprintRect, surfaces: CountertopSurface[]): boolean {
+  return surfaces.some(({ rect: surface }) => rect.x0 >= surface.x0 - 0.5 && rect.x1 <= surface.x1 + 0.5 && rect.z0 >= surface.z0 - 0.5 && rect.z1 <= surface.z1 + 0.5);
+}
+
 function hasInvalidFreeModules(kitchen: Kitchen): boolean {
   const onWalls = listWallSpaceTaken(kitchen, null);
+  const needsSurface = kitchen.freeModules.some((free) => getModuleSpec(free.module.specId).placeOn === 'countertop');
+  const surfaces = needsSurface ? listCountertopSurfaces(kitchen) : [];
   return kitchen.freeModules.some((free, index) => {
     const space = measureFreeSpace(free);
-    const needsWall = getModuleSpec(free.module.specId).row === 'upper';
+    const spec = getModuleSpec(free.module.specId);
+    const needsWall = spec.row === 'upper';
     if (!isRectInsideRoom(space.rect, kitchen.room) || (needsWall && !isHangingOnWall(free, kitchen.room))) return true;
+    if (spec.placeOn === 'countertop' && !isRectSupported(space.rect, surfaces)) return true;
     if (!isSolidFree(free)) return false;
     const laterSolids = kitchen.freeModules.slice(index + 1).filter(isSolidFree).map(measureFreeSpace);
     return onWalls.some((other) => overlapsInSpace(space, other)) || laterSolids.some((other) => overlapsInSpace(space, other));
