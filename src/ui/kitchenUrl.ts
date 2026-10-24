@@ -2,26 +2,29 @@ import type { Kitchen } from '../domain/kitchen';
 import { decodeKitchenLink, encodeKitchenLink } from '../domain/kitchenLink';
 
 const EDIT_PREFIX = '#k=';
-const VIEW_PREFIX = '#v=';
+const SHARE_PREFIX = '#s=';
+const SHARE_ID_PATTERN = /^[A-Za-z0-9_-]{22}$/;
 
-export type LinkMode = 'edit' | 'view';
-
-export interface AddressKitchen {
-  kitchen: Kitchen;
-  isViewOnly: boolean;
-}
-
-export function readKitchenFromAddress(): AddressKitchen | null {
+export function readKitchenFromAddress(): Kitchen | null {
   const { hash } = window.location;
-  const isViewOnly = hash.startsWith(VIEW_PREFIX);
-  if (!isViewOnly && !hash.startsWith(EDIT_PREFIX)) return null;
-  const kitchen = decodeKitchenLink(hash.slice(EDIT_PREFIX.length));
-  return kitchen ? { kitchen, isViewOnly } : null;
+  return hash.startsWith(EDIT_PREFIX) ? decodeKitchenLink(hash.slice(EDIT_PREFIX.length)) : null;
 }
 
-export function buildKitchenLinkUrl(kitchen: Kitchen, mode: LinkMode = 'edit'): string {
+export function readShareIdFromAddress(): string | null {
+  const { hash } = window.location;
+  if (!hash.startsWith(SHARE_PREFIX)) return null;
+  const id = hash.slice(SHARE_PREFIX.length);
+  return SHARE_ID_PATTERN.test(id) ? id : null;
+}
+
+export function buildKitchenLinkUrl(kitchen: Kitchen): string {
   const { origin, pathname } = window.location;
-  return `${origin}${pathname}${mode === 'view' ? VIEW_PREFIX : EDIT_PREFIX}${encodeKitchenLink(kitchen)}`;
+  return `${origin}${pathname}${EDIT_PREFIX}${encodeKitchenLink(kitchen)}`;
+}
+
+export function buildShareUrl(id: string): string {
+  const { origin, pathname } = window.location;
+  return `${origin}${pathname}${SHARE_PREFIX}${id}`;
 }
 
 export function writeKitchenToAddress(kitchen: Kitchen): void {

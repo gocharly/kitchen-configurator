@@ -39,9 +39,9 @@ import { SelectionToolbar } from './ui/SelectionToolbar';
 import { SurfacePicker } from './ui/SurfacePicker';
 import { TemplatePanel } from './ui/TemplatePanel';
 import { ViewBar } from './ui/ViewBar';
-import { readKitchenFromAddress, writeKitchenToAddress } from './ui/kitchenUrl';
+import { readKitchenFromAddress, readShareIdFromAddress, writeKitchenToAddress } from './ui/kitchenUrl';
 import { useViewControls } from './ui/useViewControls';
-import { KitchenViewer } from './KitchenViewer';
+import { SharedKitchenPage } from './SharedKitchenPage';
 import { useKitchenHistory } from './ui/useKitchenHistory';
 
 type SectionId = 'templates' | 'room' | 'openings' | 'decor' | 'modules' | 'composition' | 'drawing' | 'checkout';
@@ -324,7 +324,8 @@ function KitchenEditor({ initialKitchen }: { initialKitchen: Kitchen | null }) {
 }
 
 export function App() {
-  const [address] = useState(readKitchenFromAddress);
-  if (address?.isViewOnly) return <KitchenViewer kitchen={address.kitchen} />;
-  return <KitchenEditor initialKitchen={address?.kitchen ?? null} />;
+  const [shareId] = useState(readShareIdFromAddress);
+  const [initialKitchen] = useState(readKitchenFromAddress);
+  if (shareId) return <SharedKitchenPage id={shareId} />;
+  return <KitchenEditor initialKitchen={initialKitchen} />;
 }
