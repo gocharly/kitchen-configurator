@@ -3770,6 +3770,69 @@
       "sku": "WALL-RAIL-{width}",
       "price": "width * 4",
       "model": "hangingRail"
+    },
+    {
+      "id": "base-sink-double",
+      "type": "base",
+      "category": "bottom",
+      "title": "Нижний мойка двойная",
+      "row": "lower",
+      "widths": {
+        "min": 800,
+        "max": 1200,
+        "step": 50
+      },
+      "defaultWidth": 1000,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": true,
+      "corner": false,
+      "countertop": true,
+      "sku": "BASE-SINK-DOUBLE-{width}",
+      "price": "width * 9",
+      "bowls": 2,
+      "faucet": "pullout"
+    },
+    {
+      "id": "base-sink-pullout",
+      "type": "base",
+      "category": "bottom",
+      "title": "Нижний мойка с выдвижным смесителем",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 1000,
+        "step": 50
+      },
+      "defaultWidth": 800,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": true,
+      "corner": false,
+      "countertop": true,
+      "sku": "BASE-SINK-PULLOUT-{width}",
+      "price": "width * 8",
+      "faucet": "pullout"
     }
   ],
   "finishes": {

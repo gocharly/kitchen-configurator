@@ -1,10 +1,17 @@
 import * as THREE from 'three';
 import { COUNTERTOP_THICKNESS_MM } from '../../domain/catalog';
 import { COUNTERTOP_EDGE_RADIUS_MM, MM, createBox, type Materials } from '../cabinetFronts';
+import type { FaucetKind } from '../../domain/catalog';
 import { createRod, type Vec3 } from './applianceShapes';
 import { measureSinkHole, type SinkHole } from './sinkHole';
 
 const SLAB_BEVEL_SEGMENTS = 2;
+const BOWL_DIVIDER_MM = 40;
+const PULLOUT_RISER_HEIGHT_MM = 300;
+const PULLOUT_RISER_RADIUS_MM = 14;
+const PULLOUT_HEAD_LENGTH_MM = 90;
+const PULLOUT_HEAD_RADIUS_MM = 17;
+const PULLOUT_NECK_LENGTH_MM = 120;
 const BOWL_DEPTH_MM = 180;
 const BOWL_WALL_MM = 3;
 const RIM_WIDTH_MM = 8;
@@ -106,12 +113,46 @@ function createSlabWithHole(span: { width: number; depth: number; top: number },
   return mesh;
 }
 
-export function buildSinkCountertop(span: { width: number; depth: number; top: number }, materials: Materials): THREE.Group {
+export interface SinkOptions {
+  bowls: number;
+  faucet: FaucetKind;
+}
+
+function splitIntoBowlHoles(hole: SinkHole, bowls: number): SinkHole[] {
+  const bowlWidth = (hole.width - (bowls - 1) * BOWL_DIVIDER_MM) / bowls;
+  return Array.from({ length: bowls }, (_, index) => ({ ...hole, x: hole.x + index * (bowlWidth + BOWL_DIVIDER_MM), width: bowlWidth }));
+}
+
+function buildDividerRims(hole: SinkHole, bowls: number, surfaceY: number, materials: Materials): THREE.Group {
+  const group = new THREE.Group();
+  const bowlWidth = (hole.width - (bowls - 1) * BOWL_DIVIDER_MM) / bowls;
+  for (let divider = 1; divider < bowls; divider += 1) {
+    const x = hole.x + divider * bowlWidth + (divider - 1) * BOWL_DIVIDER_MM;
+    group.add(createBox([BOWL_DIVIDER_MM, RIM_HEIGHT_MM + 1, hole.depth], [x, surfaceY, hole.z], materials.steel));
+  }
+  return group;
+}
+
+function buildPulloutFaucet(base: Vec3, material: THREE.Material): THREE.Group {
+  const [x, y, z] = base;
+  const group = new THREE.Group();
+  group.add(createRod(FAUCET_BASE_RADIUS_MM, FAUCET_BASE_HEIGHT_MM, [x, y + FAUCET_BASE_HEIGHT_MM / 2, z], 'y', material));
+  group.add(createRod(PULLOUT_RISER_RADIUS_MM, PULLOUT_RISER_HEIGHT_MM, [x, y + FAUCET_BASE_HEIGHT_MM + PULLOUT_RISER_HEIGHT_MM / 2, z], 'y', material));
+  const topY = y + FAUCET_BASE_HEIGHT_MM + PULLOUT_RISER_HEIGHT_MM;
+  group.add(createRod(PULLOUT_HEAD_RADIUS_MM, PULLOUT_NECK_LENGTH_MM, [x, topY, z + PULLOUT_NECK_LENGTH_MM / 2], 'z', material));
+  group.add(createRod(PULLOUT_HEAD_RADIUS_MM, PULLOUT_HEAD_LENGTH_MM, [x, topY - PULLOUT_HEAD_LENGTH_MM / 2, z + PULLOUT_NECK_LENGTH_MM], 'y', material));
+  group.add(createRod(FAUCET_LEVER_RADIUS_MM, FAUCET_LEVER_LENGTH_MM, [x + 45, y + 190, z], 'x', material));
+  return group;
+}
+
+export function buildSinkCountertop(span: { width: number; depth: number; top: number }, options: SinkOptions, materials: Materials): THREE.Group {
   const hole = measureSinkHole(span.width);
   const surfaceY = span.top + COUNTERTOP_THICKNESS_MM;
   const group = new THREE.Group();
   group.add(createSlabWithHole(span, hole, materials.countertop));
-  group.add(buildBowl(hole, surfaceY, materials), buildRim(hole, surfaceY, materials));
-  group.add(buildFaucet([hole.x + hole.width / 2, surfaceY, hole.z / 2], materials.chrome));
+  splitIntoBowlHoles(hole, options.bowls).forEach((bowlHole) => group.add(buildBowl(bowlHole, surfaceY, materials)));
+  group.add(buildRim(hole, surfaceY, materials), buildDividerRims(hole, options.bowls, surfaceY, materials));
+  const faucetBase: Vec3 = [hole.x + hole.width / 2, surfaceY, hole.z / 2];
+  group.add(options.faucet === 'pullout' ? buildPulloutFaucet(faucetBase, materials.chrome) : buildFaucet(faucetBase, materials.chrome));
   return group;
 }

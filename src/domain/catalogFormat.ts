@@ -2,6 +2,7 @@ export const CATALOG_SCHEMA = 'openkitchen3d/catalog@0.1';
 
 export type RowName = 'lower' | 'upper';
 export type FamilyType = 'base' | 'wall' | 'tall' | 'corner' | 'specialty' | 'standing';
+export type FaucetKind = 'arc' | 'pullout';
 export type ModuleRole = 'hob' | 'hood' | 'fridge';
 export type FrontBandKind = 'doors' | 'flap' | 'drawer' | 'opening';
 
@@ -27,6 +28,8 @@ export interface ModuleSpec {
   front: FrontBand[];
   glass: boolean;
   hasSink: boolean;
+  bowls: number;
+  faucet: FaucetKind;
   hasCountertop: boolean;
   isCorner: boolean;
   clearance: number;
@@ -153,6 +156,7 @@ const FLOOR_KINDS: SurfaceKind[] = ['planks', 'herringbone', 'tiles', 'sheet', '
 const WALL_KINDS: SurfaceKind[] = ['paint', 'stripes', 'dots', 'linen', 'brick', 'metro', 'tiles', 'slats'];
 const SURFACE_SIZE_LIMITS = { min: 1, max: 3000 };
 const DEFAULT_SURFACE_ROUGHNESS = 0.7;
+const FAUCET_KINDS: FaucetKind[] = ['arc', 'pullout'];
 const MODULE_ROLES: ModuleRole[] = ['hob', 'hood', 'fridge'];
 const FRONT_KINDS: FrontBandKind[] = ['doors', 'flap', 'drawer', 'opening'];
 const HANDLE_KINDS: HandleKind[] = ['bar', 'knob', 'profile', 'none'];
@@ -390,6 +394,8 @@ function readFamily(value: unknown, index: number, categoryIds: Set<string>): Mo
     front: readFronts(family.fronts, at('fronts')),
     glass: asFlag(family.glass, at('glass')),
     hasSink: asFlag(family.sink, at('sink')),
+    bowls: family.bowls === undefined ? 1 : asNumber(family.bowls, at('bowls'), 1),
+    faucet: family.faucet === undefined ? 'arc' : asOneOf(family.faucet, at('faucet'), FAUCET_KINDS),
     hasCountertop: asFlag(family.countertop, at('countertop')),
     isCorner,
     clearance: family.clearance === undefined ? 0 : asNumber(family.clearance, at('clearance'), 0),

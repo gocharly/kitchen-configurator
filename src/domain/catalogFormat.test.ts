@@ -163,3 +163,14 @@ describe('parseCatalog validation', () => {
     expectCatalogError((c) => (c.finishes.facade[0].hex = 'white'), '#aabbcc');
   });
 });
+
+describe('sink families', () => {
+  const catalog = parseCatalog(catalogFile);
+
+  it('reads bowls and faucet with defaults of one bowl and an arc faucet', () => {
+    const find = (id: string) => catalog.specs.find((spec) => spec.id === id);
+    expect(find('base-sink-2-doors')).toMatchObject({ bowls: 1, faucet: 'arc' });
+    expect(find('base-sink-double')).toMatchObject({ bowls: 2, faucet: 'pullout' });
+    expect(find('base-sink-pullout')).toMatchObject({ bowls: 1, faucet: 'pullout' });
+  });
+});

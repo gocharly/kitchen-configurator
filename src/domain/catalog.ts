@@ -9,6 +9,7 @@ export type {
   ColorFinish,
   ColorOption,
   FamilyType,
+  FaucetKind,
   FrontBand,
   FrontBandKind,
   ModuleRole,

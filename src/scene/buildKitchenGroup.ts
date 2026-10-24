@@ -128,7 +128,7 @@ function buildCountertop(item: LayoutItem, materials: Materials): THREE.Group {
   const top = spec.elevation + spec.height;
   const depth = spec.depth + COUNTERTOP_OVERHANG_MM;
   if (spec.hasSink) {
-    const sinkTop = buildSinkCountertop({ width: module.width, depth, top }, materials);
+    const sinkTop = buildSinkCountertop({ width: module.width, depth, top }, { bowls: spec.bowls, faucet: spec.faucet }, materials);
     sinkTop.position.x = item.offset * MM;
     return sinkTop;
   }
