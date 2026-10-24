@@ -16,6 +16,7 @@ import {
 } from './domain/kitchen';
 import { dragModule, rotateFreeModule } from './domain/dragging';
 import { addCatalogModule } from './domain/standing';
+import { readProjectFile } from './domain/projectFile';
 import { DrawingSheet } from './drawing/DrawingSheet';
 import { buildDrawing, type SheetId } from './drawing/drawingModel';
 import { downloadSvg } from './drawing/downloadSvg';
@@ -29,6 +30,7 @@ import { Flyout } from './ui/Flyout';
 import { HistoryBar } from './ui/HistoryBar';
 import { ModuleCatalog, ModuleList } from './ui/ModulePanels';
 import { OpeningPanel } from './ui/OpeningPanel';
+import { Notice } from './ui/Notice';
 import { PrintSheet } from './ui/PrintSheet';
 import { RoomPanel } from './ui/RoomPanel';
 import { SectionRail, type RailSection } from './ui/SectionRail';
@@ -85,6 +87,7 @@ export function App() {
   const [view, setView] = useState<ViewMode>('perspective');
   const [isEvening, setIsEvening] = useState(false);
   const [isPrinting, setIsPrinting] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
   const [shownSection, setShownSection] = useState<SectionId | null>(activeSection);
   const [leftInsetPx, setLeftInsetPx] = useState(0);
   const [bottomInsetPx, setBottomInsetPx] = useState(0);
@@ -93,6 +96,21 @@ export function App() {
   const viewportRef = useRef<ViewportHandle>(null);
 
   useEffect(() => writeKitchenToAddress(kitchen), [kitchen]);
+
+  useEffect(() => {
+    const allowDrop = (event: DragEvent) => event.preventDefault();
+    const openDroppedFile = async (event: DragEvent) => {
+      event.preventDefault();
+      const file = event.dataTransfer?.files[0];
+      if (file) openProjectText(await file.text());
+    };
+    window.addEventListener('dragover', allowDrop);
+    window.addEventListener('drop', openDroppedFile);
+    return () => {
+      window.removeEventListener('dragover', allowDrop);
+      window.removeEventListener('drop', openDroppedFile);
+    };
+  });
 
   useEffect(() => {
     if (!isPrinting) return;
@@ -137,6 +155,16 @@ export function App() {
         if (image) downloadBlob(image, `kuhnya-${new Date().toISOString().slice(0, 10)}.png`);
       }),
     );
+  };
+  const openProjectText = (text: string) => {
+    const result = readProjectFile(text);
+    if (result.kind === 'rejected') {
+      setNotice(result.reason);
+      return;
+    }
+    setKitchen(() => result.kitchen);
+    setSelectedModuleId(null);
+    setNotice(result.skippedCount > 0 ? `Проект открыт, не удалось разместить предметов: ${result.skippedCount}` : 'Проект открыт');
   };
   const resizeSelected = (moduleId: string, width: number) => setKitchen((current) => resizeModule(current, moduleId, width));
   const moveSelected = (moduleId: string, direction: -1 | 1) => setKitchen((current) => moveModule(current, moduleId, direction));
@@ -192,7 +220,11 @@ export function App() {
         {shownSection && (
           <Flyout title={SECTION_TITLES[shownSection]} isClosing={activeSection === null} contentKey={shownSection} onClose={() => setActiveSection(null)}>
             {shownSection === 'templates' && (
-              <TemplatePanel kitchen={kitchen} onApply={(template) => setKitchen((current) => applyKitchenTemplate(current, template))} />
+              <TemplatePanel
+                kitchen={kitchen}
+                onApply={(template) => setKitchen((current) => applyKitchenTemplate(current, template))}
+                onOpenProjectText={openProjectText}
+              />
             )}
             {shownSection === 'room' && <RoomPanel kitchen={kitchen} onResize={(patch) => setKitchen((current) => resizeRoom(current, patch))} />}
             {shownSection === 'openings' && (
@@ -298,6 +330,7 @@ export function App() {
           onZoom={(factor) => viewportRef.current?.zoomBy(factor)}
         />
       )}
+      {notice && <Notice text={notice} onDone={() => setNotice(null)} />}
     </div>
     {isPrinting && <PrintSheet kitchen={kitchen} />}
     </>

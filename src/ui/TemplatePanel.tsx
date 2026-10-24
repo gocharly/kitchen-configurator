@@ -1,15 +1,19 @@
 import { KITCHEN_TEMPLATES } from '../domain/templates';
 import { applyKitchenTemplate, calculateEstimate, type Kitchen } from '../domain/kitchen';
 import { KitchenPreview } from './KitchenPreview';
+import { ProjectActions } from './ProjectActions';
 import { formatRubles } from './formatRubles';
 
 interface TemplatePanelProps {
   kitchen: Kitchen;
   onApply: (template: Kitchen) => void;
+  onOpenProjectText: (text: string) => void;
 }
 
-export function TemplatePanel({ kitchen, onApply }: TemplatePanelProps) {
+export function TemplatePanel({ kitchen, onApply, onOpenProjectText }: TemplatePanelProps) {
   return (
+    <div className="panel-stack">
+    <ProjectActions kitchen={kitchen} onOpenText={onOpenProjectText} />
     <ul className="template-grid">
       {KITCHEN_TEMPLATES.map((template) => (
         <li key={template.id}>
@@ -25,5 +29,6 @@ export function TemplatePanel({ kitchen, onApply }: TemplatePanelProps) {
         </li>
       ))}
     </ul>
+    </div>
   );
 }

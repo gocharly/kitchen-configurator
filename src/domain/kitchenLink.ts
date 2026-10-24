@@ -37,7 +37,7 @@ function encodeFreeModule(free: FreeModule): LinkFree {
   return [free.module.specId, free.module.width, free.cx, free.cz, free.rotation];
 }
 
-export function encodeKitchenLink(kitchen: Kitchen): string {
+export function buildKitchenPayload(kitchen: Kitchen): LinkPayload {
   const runs: Partial<Record<WallId, LinkRun>> = {};
   WALLS.forEach(({ id }) => {
     if (kitchen.runs[id].length > 0) runs[id] = kitchen.runs[id].map((m) => [m.specId, m.width]);
@@ -53,7 +53,11 @@ export function encodeKitchenLink(kitchen: Kitchen): string {
     o: kitchen.openings.map((o) => [o.kind, o.wall, o.offset, o.width, o.height, o.sill]),
   };
   if (kitchen.freeModules.length > 0) payload.s = kitchen.freeModules.map(encodeFreeModule);
-  return toBase64Url(JSON.stringify(payload));
+  return payload;
+}
+
+export function encodeKitchenLink(kitchen: Kitchen): string {
+  return toBase64Url(JSON.stringify(buildKitchenPayload(kitchen)));
 }
 
 function isFiniteNumber(value: unknown): value is number {
@@ -106,7 +110,17 @@ function readPayload(token: string): Record<string, unknown> | null {
 }
 
 export function decodeKitchenLink(token: string): Kitchen | null {
-  const payload = readPayload(token);
+  return restoreKitchenFromPayload(readPayload(token));
+}
+
+export function countPayloadModules(payload: unknown): number {
+  if (typeof payload !== 'object' || payload === null) return 0;
+  const { m, s } = payload as { m?: unknown; s?: unknown };
+  const onWalls = typeof m === 'object' && m !== null ? Object.values(m).reduce((total, run) => total + (Array.isArray(run) ? run.length : 0), 0) : 0;
+  return onWalls + (Array.isArray(s) ? s.length : 0);
+}
+
+export function restoreKitchenFromPayload(payload: Record<string, unknown> | null): Kitchen | null {
   if (!payload) return null;
   const room = payload.r;
   if (!Array.isArray(room) || room.length !== 3 || !room.every(isFiniteNumber)) return null;
