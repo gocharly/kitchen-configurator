@@ -42,6 +42,18 @@
     {
       "id": "appliances",
       "title": "Техника"
+    },
+    {
+      "id": "islands",
+      "title": "Острова и барные стойки"
+    },
+    {
+      "id": "tables",
+      "title": "Столы и стулья"
+    },
+    {
+      "id": "storage",
+      "title": "Стеллажи и комоды"
     }
   ],
   "families": [
@@ -1837,6 +1849,960 @@
       "sku": "WASHER-{width}",
       "price": "width * 50",
       "model": "washer"
+    },
+    {
+      "id": "island-drawers",
+      "type": "standing",
+      "category": "islands",
+      "title": "Остров с ящиками",
+      "row": "lower",
+      "widths": {
+        "min": 800,
+        "max": 3000,
+        "step": 100
+      },
+      "defaultWidth": 1200,
+      "height": 716,
+      "depths": [
+        600
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "drawer",
+          "ratio": 0.25
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.375
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.375
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "ISLAND-DRAWERS-{width}",
+      "price": "width * 14"
+    },
+    {
+      "id": "island-doors",
+      "type": "standing",
+      "category": "islands",
+      "title": "Остров с дверцами",
+      "row": "lower",
+      "widths": {
+        "min": 800,
+        "max": 3000,
+        "step": 100
+      },
+      "defaultWidth": 1200,
+      "height": 716,
+      "depths": [
+        600
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "ISLAND-DOORS-{width}",
+      "price": "width * 14"
+    },
+    {
+      "id": "island-drawers-doors",
+      "type": "standing",
+      "category": "islands",
+      "title": "Остров с ящиком и дверцами",
+      "row": "lower",
+      "widths": {
+        "min": 800,
+        "max": 3000,
+        "step": 100
+      },
+      "defaultWidth": 1200,
+      "height": 716,
+      "depths": [
+        600
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "drawer",
+          "ratio": 0.2
+        },
+        {
+          "kind": "doors",
+          "ratio": 0.8
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "ISLAND-DRAWERS-DOORS-{width}",
+      "price": "width * 14"
+    },
+    {
+      "id": "island-sink",
+      "type": "standing",
+      "category": "islands",
+      "title": "Остров с мойкой",
+      "row": "lower",
+      "widths": {
+        "min": 800,
+        "max": 3000,
+        "step": 100
+      },
+      "defaultWidth": 1200,
+      "height": 716,
+      "depths": [
+        600
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": true,
+      "corner": false,
+      "countertop": true,
+      "sku": "ISLAND-SINK-{width}",
+      "price": "width * 16"
+    },
+    {
+      "id": "island-open",
+      "type": "standing",
+      "category": "islands",
+      "title": "Остров с открытыми полками",
+      "row": "lower",
+      "widths": {
+        "min": 800,
+        "max": 3000,
+        "step": 100
+      },
+      "defaultWidth": 1200,
+      "height": 716,
+      "depths": [
+        600
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "ISLAND-OPEN-{width}",
+      "price": "width * 11"
+    },
+    {
+      "id": "island-deep",
+      "type": "standing",
+      "category": "islands",
+      "title": "Остров глубокий",
+      "row": "lower",
+      "widths": {
+        "min": 1200,
+        "max": 3000,
+        "step": 100
+      },
+      "defaultWidth": 1600,
+      "height": 716,
+      "depths": [
+        900
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "drawer",
+          "ratio": 0.3
+        },
+        {
+          "kind": "doors",
+          "ratio": 0.7
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "ISLAND-DEEP-{width}",
+      "price": "width * 18"
+    },
+    {
+      "id": "sideboard-doors",
+      "type": "standing",
+      "category": "storage",
+      "title": "Комод с дверцами",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 1800,
+        "step": 100
+      },
+      "defaultWidth": 1200,
+      "height": 750,
+      "depths": [
+        450
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "SIDEBOARD-DOORS-{width}",
+      "price": "width * 9"
+    },
+    {
+      "id": "sideboard-drawers",
+      "type": "standing",
+      "category": "storage",
+      "title": "Комод с ящиками",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 1800,
+        "step": 100
+      },
+      "defaultWidth": 1200,
+      "height": 750,
+      "depths": [
+        450
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "drawer",
+          "ratio": 0.33
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.33
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.34
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "SIDEBOARD-DRAWERS-{width}",
+      "price": "width * 9"
+    },
+    {
+      "id": "sideboard-mixed",
+      "type": "standing",
+      "category": "storage",
+      "title": "Комод с ящиками и дверцами",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 1800,
+        "step": 100
+      },
+      "defaultWidth": 1200,
+      "height": 750,
+      "depths": [
+        450
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "drawer",
+          "ratio": 0.3
+        },
+        {
+          "kind": "doors",
+          "ratio": 0.7
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "SIDEBOARD-MIXED-{width}",
+      "price": "width * 9"
+    },
+    {
+      "id": "sideboard-low",
+      "type": "standing",
+      "category": "storage",
+      "title": "Тумба низкая",
+      "row": "lower",
+      "widths": {
+        "min": 400,
+        "max": 1400,
+        "step": 100
+      },
+      "defaultWidth": 800,
+      "height": 500,
+      "depths": [
+        400
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "SIDEBOARD-LOW-{width}",
+      "price": "width * 8"
+    },
+    {
+      "id": "sideboard-glass",
+      "type": "standing",
+      "category": "storage",
+      "title": "Буфет со стеклом",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 1400,
+        "step": 100
+      },
+      "defaultWidth": 900,
+      "height": 1800,
+      "depths": [
+        400
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 0.4
+        },
+        {
+          "kind": "doors",
+          "ratio": 0.6
+        }
+      ],
+      "glass": true,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "SIDEBOARD-GLASS-{width}",
+      "price": "width * 14"
+    },
+    {
+      "id": "cupboard-tall",
+      "type": "standing",
+      "category": "storage",
+      "title": "Шкаф свободный",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 1200,
+        "step": 100
+      },
+      "defaultWidth": 800,
+      "height": 1900,
+      "depths": [
+        450
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 0.35
+        },
+        {
+          "kind": "doors",
+          "ratio": 0.65
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "CUPBOARD-TALL-{width}",
+      "price": "width * 13"
+    },
+    {
+      "id": "table-small",
+      "type": "standing",
+      "category": "tables",
+      "title": "Стол малый",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 900,
+        "step": 100
+      },
+      "defaultWidth": 800,
+      "height": 750,
+      "depths": [
+        600
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TABLE-SMALL-{width}",
+      "price": "width * 5",
+      "model": "tableRect"
+    },
+    {
+      "id": "table-dining",
+      "type": "standing",
+      "category": "tables",
+      "title": "Стол обеденный",
+      "row": "lower",
+      "widths": {
+        "min": 1000,
+        "max": 2000,
+        "step": 100
+      },
+      "defaultWidth": 1400,
+      "height": 750,
+      "depths": [
+        800
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TABLE-DINING-{width}",
+      "price": "width * 6",
+      "model": "tableRect"
+    },
+    {
+      "id": "table-dining-wide",
+      "type": "standing",
+      "category": "tables",
+      "title": "Стол обеденный широкий",
+      "row": "lower",
+      "widths": {
+        "min": 1400,
+        "max": 2400,
+        "step": 100
+      },
+      "defaultWidth": 1800,
+      "height": 750,
+      "depths": [
+        1000
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TABLE-DINING-WIDE-{width}",
+      "price": "width * 7",
+      "model": "tableRect"
+    },
+    {
+      "id": "table-round-900",
+      "type": "standing",
+      "category": "tables",
+      "title": "Стол круглый 900",
+      "row": "lower",
+      "widths": {
+        "min": 900,
+        "max": 900,
+        "step": 50
+      },
+      "defaultWidth": 900,
+      "height": 750,
+      "depths": [
+        900
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TABLE-ROUND-900-{width}",
+      "price": "width * 7",
+      "model": "tableRound"
+    },
+    {
+      "id": "table-round-1100",
+      "type": "standing",
+      "category": "tables",
+      "title": "Стол круглый 1100",
+      "row": "lower",
+      "widths": {
+        "min": 1100,
+        "max": 1100,
+        "step": 50
+      },
+      "defaultWidth": 1100,
+      "height": 750,
+      "depths": [
+        1100
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TABLE-ROUND-1100-{width}",
+      "price": "width * 7",
+      "model": "tableRound"
+    },
+    {
+      "id": "table-round-1300",
+      "type": "standing",
+      "category": "tables",
+      "title": "Стол круглый 1300",
+      "row": "lower",
+      "widths": {
+        "min": 1300,
+        "max": 1300,
+        "step": 50
+      },
+      "defaultWidth": 1300,
+      "height": 750,
+      "depths": [
+        1300
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TABLE-ROUND-1300-{width}",
+      "price": "width * 7",
+      "model": "tableRound"
+    },
+    {
+      "id": "table-bar",
+      "type": "standing",
+      "category": "tables",
+      "title": "Барный стол",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 1600,
+        "step": 100
+      },
+      "defaultWidth": 1200,
+      "height": 1050,
+      "depths": [
+        600
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TABLE-BAR-{width}",
+      "price": "width * 6",
+      "model": "tableBar"
+    },
+    {
+      "id": "chair-wood",
+      "type": "standing",
+      "category": "tables",
+      "title": "Стул деревянный",
+      "row": "lower",
+      "widths": {
+        "min": 450,
+        "max": 450,
+        "step": 50
+      },
+      "defaultWidth": 450,
+      "height": 900,
+      "depths": [
+        500
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "CHAIR-WOOD-{width}",
+      "price": "width * 8",
+      "model": "chairWood"
+    },
+    {
+      "id": "chair-padded",
+      "type": "standing",
+      "category": "tables",
+      "title": "Стул мягкий",
+      "row": "lower",
+      "widths": {
+        "min": 450,
+        "max": 450,
+        "step": 50
+      },
+      "defaultWidth": 450,
+      "height": 880,
+      "depths": [
+        520
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "CHAIR-PADDED-{width}",
+      "price": "width * 10",
+      "model": "chairPadded"
+    },
+    {
+      "id": "stool-bar",
+      "type": "standing",
+      "category": "tables",
+      "title": "Барный стул",
+      "row": "lower",
+      "widths": {
+        "min": 380,
+        "max": 380,
+        "step": 50
+      },
+      "defaultWidth": 380,
+      "height": 750,
+      "depths": [
+        380
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "STOOL-BAR-{width}",
+      "price": "width * 12",
+      "model": "stoolBar"
+    },
+    {
+      "id": "stool-counter",
+      "type": "standing",
+      "category": "tables",
+      "title": "Полубарный стул",
+      "row": "lower",
+      "widths": {
+        "min": 380,
+        "max": 380,
+        "step": 50
+      },
+      "defaultWidth": 380,
+      "height": 650,
+      "depths": [
+        380
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "STOOL-COUNTER-{width}",
+      "price": "width * 11",
+      "model": "stoolBar"
+    },
+    {
+      "id": "stool-low",
+      "type": "standing",
+      "category": "tables",
+      "title": "Табурет",
+      "row": "lower",
+      "widths": {
+        "min": 340,
+        "max": 340,
+        "step": 50
+      },
+      "defaultWidth": 340,
+      "height": 460,
+      "depths": [
+        340
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "STOOL-LOW-{width}",
+      "price": "width * 7",
+      "model": "stoolLow"
+    },
+    {
+      "id": "bench",
+      "type": "standing",
+      "category": "tables",
+      "title": "Скамья",
+      "row": "lower",
+      "widths": {
+        "min": 800,
+        "max": 1800,
+        "step": 100
+      },
+      "defaultWidth": 1200,
+      "height": 450,
+      "depths": [
+        350
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "BENCH-{width}",
+      "price": "width * 4",
+      "model": "bench"
+    },
+    {
+      "id": "sofa-kitchen",
+      "type": "standing",
+      "category": "tables",
+      "title": "Кухонный диван",
+      "row": "lower",
+      "widths": {
+        "min": 1200,
+        "max": 2200,
+        "step": 100
+      },
+      "defaultWidth": 1600,
+      "height": 800,
+      "depths": [
+        650
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "SOFA-KITCHEN-{width}",
+      "price": "width * 16",
+      "model": "kitchenSofa"
+    },
+    {
+      "id": "shelving-tall",
+      "type": "standing",
+      "category": "storage",
+      "title": "Стеллаж высокий",
+      "row": "lower",
+      "widths": {
+        "min": 400,
+        "max": 1200,
+        "step": 100
+      },
+      "defaultWidth": 800,
+      "height": 1800,
+      "depths": [
+        300
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "SHELVING-TALL-{width}",
+      "price": "width * 8",
+      "model": "shelvingOpen"
+    },
+    {
+      "id": "shelving-low",
+      "type": "standing",
+      "category": "storage",
+      "title": "Стеллаж низкий",
+      "row": "lower",
+      "widths": {
+        "min": 400,
+        "max": 1200,
+        "step": 100
+      },
+      "defaultWidth": 800,
+      "height": 900,
+      "depths": [
+        300
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "SHELVING-LOW-{width}",
+      "price": "width * 6",
+      "model": "shelvingOpen"
+    },
+    {
+      "id": "trolley",
+      "type": "standing",
+      "category": "storage",
+      "title": "Кухонная тележка",
+      "row": "lower",
+      "widths": {
+        "min": 500,
+        "max": 900,
+        "step": 100
+      },
+      "defaultWidth": 600,
+      "height": 850,
+      "depths": [
+        400
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TROLLEY-{width}",
+      "price": "width * 12",
+      "model": "trolley"
+    },
+    {
+      "id": "wine-rack",
+      "type": "standing",
+      "category": "storage",
+      "title": "Винная стойка",
+      "row": "lower",
+      "widths": {
+        "min": 400,
+        "max": 800,
+        "step": 100
+      },
+      "defaultWidth": 500,
+      "height": 600,
+      "depths": [
+        300
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "WINE-RACK-{width}",
+      "price": "width * 9",
+      "model": "wineRack"
     }
   ],
   "finishes": {

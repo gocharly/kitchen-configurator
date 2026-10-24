@@ -1,7 +1,7 @@
 export const CATALOG_SCHEMA = 'openkitchen3d/catalog@0.1';
 
 export type RowName = 'lower' | 'upper';
-export type FamilyType = 'base' | 'wall' | 'tall' | 'corner' | 'specialty';
+export type FamilyType = 'base' | 'wall' | 'tall' | 'corner' | 'specialty' | 'standing';
 export type FrontBandKind = 'doors' | 'flap' | 'drawer' | 'opening';
 
 export interface FrontBand {
@@ -109,7 +109,7 @@ const NUMBER_PATTERN = /^\d+(\.\d+)?/;
 const IDENTIFIER_PATTERN = /^[A-Za-z_][A-Za-z0-9_]*/;
 const RATIO_TOLERANCE = 0.01;
 const COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/;
-const FAMILY_TYPES: FamilyType[] = ['base', 'wall', 'tall', 'corner', 'specialty'];
+const FAMILY_TYPES: FamilyType[] = ['base', 'wall', 'tall', 'corner', 'specialty', 'standing'];
 const ROWS: RowName[] = ['lower', 'upper'];
 const COLOR_FINISHES: ColorFinish[] = ['wood'];
 const FLOOR_KINDS: SurfaceKind[] = ['planks', 'herringbone', 'tiles', 'sheet', 'concrete'];

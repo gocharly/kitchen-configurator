@@ -9,14 +9,13 @@ import {
 } from '../domain/catalog';
 import {
   WALLS,
-  canAddModule,
   listPlacedModules,
   listRowModules,
-  pickWallForModule,
   type Kitchen,
   type PlacedModule,
   type WallId,
 } from '../domain/kitchen';
+import { canAddCatalogModule } from '../domain/standing';
 import { Icon } from './icons';
 import { ModulePreview } from './ModulePreview';
 import { Stepper } from './Stepper';
@@ -121,7 +120,7 @@ export function ModuleCatalog({ kitchen, wall, onWallChange, onAdd }: ModuleCata
             key={spec.id}
             spec={spec}
             colors={kitchen}
-            canAdd={canAddModule(kitchen, spec.id, pickWallForModule(spec.id, wall))}
+            canAdd={canAddCatalogModule(kitchen, spec.id, wall)}
             onAdd={onAdd}
           />
         ))}

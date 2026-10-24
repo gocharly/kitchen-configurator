@@ -5,8 +5,8 @@ import {
   createLinedShell,
   createPlinth,
   createTubeHandle,
-  type ApplianceContext,
-  type ApplianceFrame,
+  type ModelContext,
+  type ModelFrame,
   type Vec3,
 } from './applianceShapes';
 
@@ -51,7 +51,7 @@ interface FridgeStyle {
   plinth: number;
 }
 
-function buildShelves(frame: ApplianceFrame, bottom: number, bodyDepth: number, materials: Materials): THREE.Group {
+function buildShelves(frame: ModelFrame, bottom: number, bodyDepth: number, materials: Materials): THREE.Group {
   const group = new THREE.Group();
   const height = frame.elevation + frame.height - bottom;
   const count = Math.max(0, Math.round(height / SHELF_SPACING_MM) - 1);
@@ -63,7 +63,7 @@ function buildShelves(frame: ApplianceFrame, bottom: number, bodyDepth: number, 
   return group;
 }
 
-function buildFridgeBody(frame: ApplianceFrame, bodyDepth: number, style: FridgeStyle, materials: Materials): THREE.Group {
+function buildFridgeBody(frame: ModelFrame, bodyDepth: number, style: FridgeStyle, materials: Materials): THREE.Group {
   const bottom = frame.elevation + style.plinth;
   const size: Vec3 = [frame.width - 2 * SIDE_GAP_MM, frame.height - style.plinth, bodyDepth];
   const group = new THREE.Group();
@@ -112,7 +112,7 @@ function buildDispenser(door: FridgeDoor, frontZ: number, materials: Materials):
   return group;
 }
 
-function buildFridgeDoor(door: FridgeDoor, frame: ApplianceFrame, style: FridgeStyle, context: ApplianceContext, index: number): THREE.Group {
+function buildFridgeDoor(door: FridgeDoor, frame: ModelFrame, style: FridgeStyle, context: ModelContext, index: number): THREE.Group {
   const { materials, item } = context;
   const leaf = new THREE.Group();
   leaf.add(createBox([door.width, door.height, DOOR_THICKNESS_MM], [door.x, door.y, frame.depth - DOOR_THICKNESS_MM], style.door, 4));
@@ -125,14 +125,14 @@ function buildFridgeDoor(door: FridgeDoor, frame: ApplianceFrame, style: FridgeS
   return wrapOpenable(leaf, pivot, { key: `${item.module.id}:door${index}`, kind: 'door', hingeSign: door.hinge === 'left' ? 1 : -1 });
 }
 
-function buildFridge(frame: ApplianceFrame, context: ApplianceContext, style: FridgeStyle, doors: FridgeDoor[]): THREE.Group {
+function buildFridge(frame: ModelFrame, context: ModelContext, style: FridgeStyle, doors: FridgeDoor[]): THREE.Group {
   const group = new THREE.Group();
   group.add(buildFridgeBody(frame, frame.depth - DOOR_THICKNESS_MM - GASKET_THICKNESS_MM, style, context.materials));
   doors.forEach((door, index) => group.add(buildFridgeDoor(door, frame, style, context, index)));
   return group;
 }
 
-function layoutFreezerOnTop(frame: ApplianceFrame, plinth: number): FridgeDoor[] {
+function layoutFreezerOnTop(frame: ModelFrame, plinth: number): FridgeDoor[] {
   const bottom = frame.elevation + plinth + DOOR_GAP_MM;
   const total = frame.height - plinth - 2 * DOOR_GAP_MM;
   const freezerHeight = Math.round(total * FREEZER_RATIO) - DOOR_GAP_MM / 2;
@@ -144,7 +144,7 @@ function layoutFreezerOnTop(frame: ApplianceFrame, plinth: number): FridgeDoor[]
   ];
 }
 
-function layoutSideBySide(frame: ApplianceFrame, plinth: number): FridgeDoor[] {
+function layoutSideBySide(frame: ModelFrame, plinth: number): FridgeDoor[] {
   const y = frame.elevation + plinth + DOOR_GAP_MM;
   const height = frame.height - plinth - 2 * DOOR_GAP_MM;
   const width = (frame.width - 2 * SIDE_GAP_MM - DOOR_GAP_MM) / 2;
@@ -155,19 +155,19 @@ function layoutSideBySide(frame: ApplianceFrame, plinth: number): FridgeDoor[] {
   ];
 }
 
-function layoutSingleDoor(frame: ApplianceFrame, plinth: number): FridgeDoor[] {
+function layoutSingleDoor(frame: ModelFrame, plinth: number): FridgeDoor[] {
   const y = frame.elevation + plinth + DOOR_GAP_MM;
   const height = frame.height - plinth - 2 * DOOR_GAP_MM;
   return [{ x: SIDE_GAP_MM, width: frame.width - 2 * SIDE_GAP_MM, y, height, hinge: 'left', handleLength: 260, handleY: y + height - 170 }];
 }
 
-export function buildFreestandingFridge(frame: ApplianceFrame, context: ApplianceContext): THREE.Group {
+export function buildFreestandingFridge(frame: ModelFrame, context: ModelContext): THREE.Group {
   const { steel } = context.materials;
   const style = { shell: steel, door: steel, plinth: 60 };
   return buildFridge(frame, context, style, layoutFreezerOnTop(frame, style.plinth));
 }
 
-export function buildSideBySideFridge(frame: ApplianceFrame, context: ApplianceContext): THREE.Group {
+export function buildSideBySideFridge(frame: ModelFrame, context: ModelContext): THREE.Group {
   const { steel, enamel } = context.materials;
   const style = { shell: steel, door: steel, plinth: 70 };
   const group = buildFridge(frame, context, style, layoutSideBySide(frame, style.plinth));
@@ -177,13 +177,13 @@ export function buildSideBySideFridge(frame: ApplianceFrame, context: ApplianceC
   return group;
 }
 
-export function buildUnderCounterFridge(frame: ApplianceFrame, context: ApplianceContext): THREE.Group {
+export function buildUnderCounterFridge(frame: ModelFrame, context: ModelContext): THREE.Group {
   const { steel } = context.materials;
   const style = { shell: steel, door: steel, plinth: 40 };
   return buildFridge(frame, context, style, layoutSingleDoor(frame, style.plinth));
 }
 
-export function buildBuiltInFridge(frame: ApplianceFrame, context: ApplianceContext): THREE.Group {
+export function buildBuiltInFridge(frame: ModelFrame, context: ModelContext): THREE.Group {
   const { materials, item } = context;
   const style = { shell: materials.body, door: materials.body, plinth: 0 };
   const group = new THREE.Group();

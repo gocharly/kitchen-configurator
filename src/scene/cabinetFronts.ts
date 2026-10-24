@@ -4,6 +4,7 @@ import { countDoorLeaves, type FrontBand } from '../domain/catalog';
 import type { LayoutItem } from '../domain/kitchen';
 import type { ApplianceMaterials } from './appliances/applianceMaterials';
 import { measureSinkHole } from './appliances/sinkHole';
+import type { FurnitureMaterials } from './furniture/furnitureMaterials';
 import { wrapOpenable } from './openablePanels';
 
 export const MM = 0.001;
@@ -40,7 +41,7 @@ const UV_HASH_Y = 78.233;
 const UV_HASH_Z = 37.719;
 const UV_HASH_SCALE = 43758.5453;
 
-export interface Materials extends ApplianceMaterials {
+export interface Materials extends ApplianceMaterials, FurnitureMaterials {
   facade: THREE.MeshStandardMaterial;
   body: THREE.MeshStandardMaterial;
   handle: THREE.MeshStandardMaterial;

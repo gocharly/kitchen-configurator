@@ -2,11 +2,9 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { BODY_COLORS, FACADE_COLORS, FLOORS, WALL_FINISHES } from './domain/catalog';
 import {
   DEFAULT_KITCHEN,
-  addModule,
   addOpening,
   applyKitchenTemplate,
   moveModule,
-  pickWallForModule,
   paintKitchen,
   removeModule,
   removeOpening,
@@ -16,6 +14,7 @@ import {
   type WallId,
 } from './domain/kitchen';
 import { dragModule, rotateFreeModule } from './domain/dragging';
+import { addCatalogModule } from './domain/standing';
 import { DrawingSheet } from './drawing/DrawingSheet';
 import { buildDrawing, type SheetId } from './drawing/drawingModel';
 import { downloadSvg } from './drawing/downloadSvg';
@@ -210,11 +209,7 @@ export function App() {
                 kitchen={kitchen}
                 wall={activeWall}
                 onWallChange={setActiveWall}
-                onAdd={(specId) =>
-                  setKitchen((current) =>
-                    addModule(current, specId, crypto.randomUUID(), pickWallForModule(specId, activeWall)),
-                  )
-                }
+                onAdd={(specId) => setKitchen((current) => addCatalogModule(current, specId, crypto.randomUUID(), activeWall))}
               />
             )}
             {shownSection === 'composition' && (

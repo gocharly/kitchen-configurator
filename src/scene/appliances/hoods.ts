@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { MM, createBox } from '../cabinetFronts';
-import type { ApplianceContext, ApplianceFrame } from './applianceShapes';
+import type { ModelContext, ModelFrame } from './applianceShapes';
 
 const CANOPY_HEIGHT_MM = 140;
 const CHIMNEY_DEPTH_MM = 240;
@@ -13,7 +13,7 @@ const FLAT_CHIMNEY_DEPTH_MM = 140;
 const FLAT_GLASS_INSET_MM = 15;
 const FLAT_GLASS_BACK_MM = 25;
 
-function createCanopyMesh(frame: ApplianceFrame, material: THREE.Material): THREE.Mesh {
+function createCanopyMesh(frame: ModelFrame, material: THREE.Material): THREE.Mesh {
   const shape = new THREE.Shape();
   shape.moveTo(0, 0);
   shape.lineTo(frame.depth * MM, 0);
@@ -27,7 +27,7 @@ function createCanopyMesh(frame: ApplianceFrame, material: THREE.Material): THRE
   return mesh;
 }
 
-export function buildDomeHood(frame: ApplianceFrame, context: ApplianceContext): THREE.Group {
+export function buildDomeHood(frame: ModelFrame, context: ModelContext): THREE.Group {
   const { steel, steelDark } = context.materials;
   const group = new THREE.Group();
   group.add(createCanopyMesh(frame, steel));
@@ -40,7 +40,7 @@ export function buildDomeHood(frame: ApplianceFrame, context: ApplianceContext):
   return group;
 }
 
-export function buildFlatHood(frame: ApplianceFrame, context: ApplianceContext): THREE.Group {
+export function buildFlatHood(frame: ModelFrame, context: ModelContext): THREE.Group {
   const { steel, blackGlass } = context.materials;
   const group = new THREE.Group();
   group.add(createBox([frame.width, FLAT_SLAB_HEIGHT_MM, frame.depth], [0, frame.elevation, 0], steel, 3));

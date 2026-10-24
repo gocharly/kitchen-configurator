@@ -5,14 +5,14 @@ import type { LayoutItem } from '../../domain/kitchen';
 export type Vec3 = [number, number, number];
 export type Axis = 'x' | 'y' | 'z';
 
-export interface ApplianceFrame {
+export interface ModelFrame {
   width: number;
   height: number;
   depth: number;
   elevation: number;
 }
 
-export interface ApplianceContext {
+export interface ModelContext {
   materials: Materials;
   item: LayoutItem;
 }

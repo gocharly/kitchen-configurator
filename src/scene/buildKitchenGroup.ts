@@ -25,9 +25,10 @@ import {
   type WallId,
 } from '../domain/kitchen';
 import type { Opening } from '../domain/openings';
-import { buildApplianceModel } from './applianceModel';
+import { buildCatalogModel } from './modelBuilders';
 import { createApplianceMaterials } from './appliances/applianceMaterials';
 import { buildSinkCountertop } from './appliances/sink';
+import { createFurnitureMaterials } from './furniture/furnitureMaterials';
 import {
   COUNTERTOP_EDGE_RADIUS_MM,
   FACADE_GAP_MM,
@@ -135,6 +136,7 @@ function createMaterials(kitchen: Kitchen): Materials {
     doorLeaf: standard('#9d8467', 0.6),
     daylight: new THREE.MeshBasicMaterial({ color: '#dbe7ef' }),
     ...createApplianceMaterials(),
+    ...createFurnitureMaterials(),
   };
 }
 
@@ -263,10 +265,10 @@ function buildFiller(filler: Filler, materials: Materials, room: Kitchen['room']
   return holder;
 }
 
-function buildApplianceModule(item: LayoutItem, modelName: string, materials: Materials): THREE.Group {
+function buildModelModule(item: LayoutItem, modelName: string, materials: Materials): THREE.Group {
   const { spec, module } = item;
   const frame = { width: module.width, height: spec.height, depth: spec.depth, elevation: spec.elevation };
-  const group = buildApplianceModel(modelName, frame, { materials, item });
+  const group = buildCatalogModel(modelName, frame, { materials, item });
   if (spec.hasCountertop) group.add(buildCountertop(item, materials));
   return group;
 }
@@ -309,7 +311,7 @@ function buildFreeModule(free: FreeModule, context: { materials: Materials; tint
 }
 
 function buildModuleBody(item: LayoutItem, materials: Materials): THREE.Group {
-  if (item.spec.model) return buildApplianceModule(item, item.spec.model, materials);
+  if (item.spec.model) return buildModelModule(item, item.spec.model, materials);
   return item.spec.isCorner ? buildCornerModule(item, materials) : buildStraightBody(item, materials);
 }
 

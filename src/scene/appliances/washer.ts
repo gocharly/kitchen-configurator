@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { MM, createBox, type Materials } from '../cabinetFronts';
 import { wrapOpenable } from '../openablePanels';
-import { createHollowBox, createPlinth, createRing, createRod, type ApplianceContext, type ApplianceFrame, type Vec3 } from './applianceShapes';
+import { createHollowBox, createPlinth, createRing, createRod, type ModelContext, type ModelFrame, type Vec3 } from './applianceShapes';
 
 const SIDE_GAP_MM = 2;
 const PLINTH_HEIGHT_MM = 22;
@@ -33,7 +33,7 @@ interface WasherLayout {
   fasciaFrontZ: number;
 }
 
-function measureLayout(frame: ApplianceFrame): WasherLayout {
+function measureLayout(frame: ModelFrame): WasherLayout {
   const height = frame.height - PLINTH_HEIGHT_MM;
   const centerY = PLINTH_HEIGHT_MM + (height - PANEL_HEIGHT_MM) / 2;
   const width = frame.width - 2 * SIDE_GAP_MM;
@@ -81,7 +81,7 @@ function buildControls(layout: WasherLayout, materials: Materials): THREE.Group 
   return group;
 }
 
-function buildPorthole(layout: WasherLayout, context: ApplianceContext): THREE.Group {
+function buildPorthole(layout: WasherLayout, context: ModelContext): THREE.Group {
   const { materials, item } = context;
   const frontZ = layout.fasciaFrontZ + DOOR_THICKNESS_MM;
   const center: Vec3 = [layout.centerX, layout.centerY, frontZ];
@@ -93,7 +93,7 @@ function buildPorthole(layout: WasherLayout, context: ApplianceContext): THREE.G
   return wrapOpenable(leaf, pivot, { key: `${item.module.id}:door`, kind: 'door', hingeSign: 1 });
 }
 
-export function buildWasher(frame: ApplianceFrame, context: ApplianceContext): THREE.Group {
+export function buildWasher(frame: ModelFrame, context: ModelContext): THREE.Group {
   const { materials } = context;
   const layout = measureLayout(frame);
   const group = new THREE.Group();

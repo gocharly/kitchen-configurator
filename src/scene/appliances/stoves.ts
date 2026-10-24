@@ -7,8 +7,8 @@ import {
   createPlinth,
   createRod,
   createTubeHandle,
-  type ApplianceContext,
-  type ApplianceFrame,
+  type ModelContext,
+  type ModelFrame,
   type Vec3,
 } from './applianceShapes';
 
@@ -48,7 +48,7 @@ interface StoveStyle {
   body: THREE.Material;
   door: THREE.Material;
   plate: THREE.Material;
-  buildHob: (frame: ApplianceFrame, layout: StoveLayout, materials: Materials) => THREE.Group;
+  buildHob: (frame: ModelFrame, layout: StoveLayout, materials: Materials) => THREE.Group;
 }
 
 interface BurnerSpec {
@@ -64,7 +64,7 @@ const BURNERS: BurnerSpec[] = [
   { column: RIGHT_COLUMN_RATIO, row: REAR_BURNER_RATIO, radius: 38 },
 ];
 
-function measureLayout(frame: ApplianceFrame): StoveLayout {
+function measureLayout(frame: ModelFrame): StoveLayout {
   const hobTop = frame.elevation + frame.height;
   return {
     x: SIDE_GAP_MM,
@@ -74,7 +74,7 @@ function measureLayout(frame: ApplianceFrame): StoveLayout {
   };
 }
 
-function buildOvenChamber(frame: ApplianceFrame, layout: StoveLayout, style: StoveStyle, materials: Materials): THREE.Group {
+function buildOvenChamber(frame: ModelFrame, layout: StoveLayout, style: StoveStyle, materials: Materials): THREE.Group {
   const height = layout.panelBottom - frame.elevation;
   const group = new THREE.Group();
   group.add(createLinedShell([layout.width, height, frame.depth - DOOR_THICKNESS_MM], [layout.x, frame.elevation, 0], OVEN_WALL_MM, { shell: style.body, liner: materials.recess }));
@@ -84,7 +84,7 @@ function buildOvenChamber(frame: ApplianceFrame, layout: StoveLayout, style: Sto
   return group;
 }
 
-function buildStoveBody(frame: ApplianceFrame, layout: StoveLayout, style: StoveStyle, materials: Materials): THREE.Group {
+function buildStoveBody(frame: ModelFrame, layout: StoveLayout, style: StoveStyle, materials: Materials): THREE.Group {
   const group = new THREE.Group();
   group.add(createPlinth(frame.width - 3, frame.depth - PLINTH_DEPTH_INSET_MM, frame.elevation, materials.recess));
   group.add(buildOvenChamber(frame, layout, style, materials));
@@ -93,7 +93,7 @@ function buildStoveBody(frame: ApplianceFrame, layout: StoveLayout, style: Stove
   return group;
 }
 
-function buildKnobs(frame: ApplianceFrame, layout: StoveLayout, materials: Materials): THREE.Group {
+function buildKnobs(frame: ModelFrame, layout: StoveLayout, materials: Materials): THREE.Group {
   const group = new THREE.Group();
   const y = layout.panelBottom + PANEL_HEIGHT_MM / 2;
   for (let index = 0; index < KNOB_COUNT; index += 1) {
@@ -105,7 +105,7 @@ function buildKnobs(frame: ApplianceFrame, layout: StoveLayout, materials: Mater
   return group;
 }
 
-function buildOvenDoor(frame: ApplianceFrame, layout: StoveLayout, style: StoveStyle, context: ApplianceContext): THREE.Group {
+function buildOvenDoor(frame: ModelFrame, layout: StoveLayout, style: StoveStyle, context: ModelContext): THREE.Group {
   const { materials, item } = context;
   const bottom = frame.elevation + DOOR_LIFT_MM;
   const height = layout.panelBottom - DOOR_TOP_GAP_MM - bottom;
@@ -150,7 +150,7 @@ function buildGrate(span: GrateSpan, surface: number, materials: Materials): THR
   return group;
 }
 
-function buildGasHob(frame: ApplianceFrame, layout: StoveLayout, materials: Materials): THREE.Group {
+function buildGasHob(frame: ModelFrame, layout: StoveLayout, materials: Materials): THREE.Group {
   const group = new THREE.Group();
   group.add(createBox([layout.width, UPSTAND_HEIGHT_MM, UPSTAND_DEPTH_MM], [layout.x, layout.hobTop, 0], materials.steel, 2));
   BURNERS.forEach((burner) => {
@@ -166,7 +166,7 @@ function buildGasHob(frame: ApplianceFrame, layout: StoveLayout, materials: Mate
   return group;
 }
 
-function buildGlassHob(frame: ApplianceFrame, layout: StoveLayout, materials: Materials): THREE.Group {
+function buildGlassHob(frame: ModelFrame, layout: StoveLayout, materials: Materials): THREE.Group {
   const group = new THREE.Group();
   BURNERS.forEach((burner) => {
     const center: Vec3 = [layout.x + layout.width * burner.column, layout.hobTop + 0.5, frame.depth * burner.row];
@@ -176,7 +176,7 @@ function buildGlassHob(frame: ApplianceFrame, layout: StoveLayout, materials: Ma
   return group;
 }
 
-function buildStove(frame: ApplianceFrame, context: ApplianceContext, style: StoveStyle): THREE.Group {
+function buildStove(frame: ModelFrame, context: ModelContext, style: StoveStyle): THREE.Group {
   const { materials } = context;
   const layout = measureLayout(frame);
   const group = new THREE.Group();
@@ -187,12 +187,12 @@ function buildStove(frame: ApplianceFrame, context: ApplianceContext, style: Sto
   return group;
 }
 
-export function buildGasStove(frame: ApplianceFrame, context: ApplianceContext): THREE.Group {
+export function buildGasStove(frame: ModelFrame, context: ModelContext): THREE.Group {
   const { steel } = context.materials;
   return buildStove(frame, context, { body: steel, door: steel, plate: steel, buildHob: buildGasHob });
 }
 
-export function buildElectricStove(frame: ApplianceFrame, context: ApplianceContext): THREE.Group {
+export function buildElectricStove(frame: ModelFrame, context: ModelContext): THREE.Group {
   const { enamel, blackGlass } = context.materials;
   return buildStove(frame, context, { body: enamel, door: enamel, plate: blackGlass, buildHob: buildGlassHob });
 }
