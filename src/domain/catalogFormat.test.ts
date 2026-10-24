@@ -66,6 +66,12 @@ describe('parseCatalog on the shipped catalog', () => {
     );
   });
 
+  it('gives every wall-run unit under a countertop the same depth and top, so neighbours meet flush', () => {
+    const underCountertop = catalog.specs.filter((spec) => spec.hasCountertop && spec.type !== 'standing' && spec.type !== 'specialty');
+    const edges = new Set(underCountertop.map((spec) => `${spec.depth}x${spec.elevation + spec.height}`));
+    expect([...edges]).toEqual(['560x816']);
+  });
+
   it('reads floors and wall finishes with a size and roughness', () => {
     expect(catalog.floors.map((f) => f.kind)).toContain('herringbone');
     expect(catalog.wallFinishes.map((w) => w.kind)).toEqual(expect.arrayContaining(['paint', 'stripes', 'brick']));
