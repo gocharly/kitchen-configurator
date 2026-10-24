@@ -20,7 +20,9 @@ const BIN_LID_MM = 30;
 const BIN_PEDAL_MM = 10;
 const CURTAIN_ROD_MM = 18;
 const CURTAIN_FOLD_WIDTH_MM = 80;
-const CURTAIN_FOLD_DEPTH_MM = 40;
+const CURTAIN_FOLD_OFFSET_MM = 8;
+const CURTAIN_FOLD_OVERLAP_MM = 3;
+const CURTAIN_FRONT_MARGIN_MM = 25;
 const CURTAIN_ROD_DROP_MM = 40;
 
 function createLeaf(length: number, material: THREE.Material): THREE.Mesh {
@@ -100,13 +102,14 @@ export function buildCurtain(frame: ModelFrame, context: ModelContext): THREE.Gr
   const { chrome, curtain } = context.materials;
   const group = new THREE.Group();
   const top = frame.elevation + frame.height;
-  group.add(createRod(CURTAIN_ROD_MM / 2, frame.width, [frame.width / 2, top, frame.depth / 2], 'x', chrome));
+  const hangZ = frame.depth - CURTAIN_FRONT_MARGIN_MM;
+  group.add(createRod(CURTAIN_ROD_MM / 2, frame.width, [frame.width / 2, top, hangZ], 'x', chrome));
   const folds = Math.max(2, Math.round(frame.width / CURTAIN_FOLD_WIDTH_MM));
   const foldWidth = frame.width / folds;
   const length = frame.height - CURTAIN_ROD_DROP_MM;
   for (let fold = 0; fold < folds; fold += 1) {
-    const z = frame.depth / 2 + (fold % 2 === 0 ? -CURTAIN_FOLD_DEPTH_MM / 2 : CURTAIN_FOLD_DEPTH_MM / 2);
-    group.add(createBox([foldWidth, length, 6], [fold * foldWidth, frame.elevation, z], curtain));
+    const z = hangZ + (fold % 2 === 0 ? -CURTAIN_FOLD_OFFSET_MM : CURTAIN_FOLD_OFFSET_MM);
+    group.add(createBox([foldWidth + 2 * CURTAIN_FOLD_OVERLAP_MM, length, 6], [fold * foldWidth - CURTAIN_FOLD_OVERLAP_MM, frame.elevation, z], curtain));
   }
   return group;
 }
