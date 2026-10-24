@@ -1,0 +1,2183 @@
+{
+  "schema": "openkitchen3d/catalog@0.1",
+  "id": "ru-starter",
+  "vendor": "Свой каталог",
+  "version": "2026.10.1",
+  "locale": "ru-RU",
+  "currency": "RUB",
+  "license": "proprietary",
+  "categories": [
+    {
+      "id": "bottom",
+      "title": "Нижние прямые"
+    },
+    {
+      "id": "bottomCorner",
+      "title": "Нижние угловые"
+    },
+    {
+      "id": "bottomEnd",
+      "title": "Нижние торцевые"
+    },
+    {
+      "id": "top",
+      "title": "Верхние прямые"
+    },
+    {
+      "id": "vitrina",
+      "title": "Витрины в рамке"
+    },
+    {
+      "id": "topCorner",
+      "title": "Верхние угловые"
+    },
+    {
+      "id": "topEnd",
+      "title": "Верхние торцевые"
+    },
+    {
+      "id": "tall",
+      "title": "Пеналы"
+    },
+    {
+      "id": "appliances",
+      "title": "Техника"
+    }
+  ],
+  "families": [
+    {
+      "id": "base-1-door",
+      "type": "base",
+      "category": "bottom",
+      "title": "Нижний с 1 створкой",
+      "row": "lower",
+      "widths": {
+        "min": 300,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "BASE-1-DOOR-{width}",
+      "price": "width * 9"
+    },
+    {
+      "id": "base-2-doors",
+      "type": "base",
+      "category": "bottom",
+      "title": "Нижний с 2 створками",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 1200,
+        "step": 50
+      },
+      "defaultWidth": 800,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "BASE-2-DOORS-{width}",
+      "price": "width * 9"
+    },
+    {
+      "id": "base-drawer-1-door",
+      "type": "base",
+      "category": "bottom",
+      "title": "Нижний 1 ящик с 1 створкой",
+      "row": "lower",
+      "widths": {
+        "min": 300,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "drawer",
+          "ratio": 0.22
+        },
+        {
+          "kind": "doors",
+          "ratio": 0.78
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "BASE-DRAWER-1-DOOR-{width}",
+      "price": "width * 11"
+    },
+    {
+      "id": "base-drawer-2-doors",
+      "type": "base",
+      "category": "bottom",
+      "title": "Нижний 1 ящик с 2 створками",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 1200,
+        "step": 50
+      },
+      "defaultWidth": 800,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "drawer",
+          "ratio": 0.22
+        },
+        {
+          "kind": "doors",
+          "ratio": 0.78
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "BASE-DRAWER-2-DOORS-{width}",
+      "price": "width * 11"
+    },
+    {
+      "id": "base-2-drawers",
+      "type": "base",
+      "category": "bottom",
+      "title": "Нижний 2 ящика",
+      "row": "lower",
+      "widths": {
+        "min": 300,
+        "max": 800,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "drawer",
+          "ratio": 0.5
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.5
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "BASE-2-DRAWERS-{width}",
+      "price": "width * 13"
+    },
+    {
+      "id": "base-3-drawers",
+      "type": "base",
+      "category": "bottom",
+      "title": "Нижний 3 ящика",
+      "row": "lower",
+      "widths": {
+        "min": 300,
+        "max": 800,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "drawer",
+          "ratio": 0.3333333333333333
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.3333333333333333
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.3333333333333333
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "BASE-3-DRAWERS-{width}",
+      "price": "width * 14"
+    },
+    {
+      "id": "base-4-drawers",
+      "type": "base",
+      "category": "bottom",
+      "title": "Нижний 4 ящика",
+      "row": "lower",
+      "widths": {
+        "min": 300,
+        "max": 800,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "drawer",
+          "ratio": 0.25
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.25
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.25
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.25
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "BASE-4-DRAWERS-{width}",
+      "price": "width * 15"
+    },
+    {
+      "id": "base-bottle",
+      "type": "base",
+      "category": "bottom",
+      "title": "Нижний бутылочница",
+      "row": "lower",
+      "widths": {
+        "min": 150,
+        "max": 200,
+        "step": 50
+      },
+      "defaultWidth": 200,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "BASE-BOTTLE-{width}",
+      "price": "width * 16"
+    },
+    {
+      "id": "base-oven",
+      "type": "base",
+      "category": "bottom",
+      "title": "Нижний под духовой шкаф",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 0.62
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.38
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "BASE-OVEN-{width}",
+      "price": "width * 9"
+    },
+    {
+      "id": "base-sink-1-door",
+      "type": "base",
+      "category": "bottom",
+      "title": "Нижний мойка с 1 створкой",
+      "row": "lower",
+      "widths": {
+        "min": 500,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": true,
+      "corner": false,
+      "countertop": true,
+      "sku": "BASE-SINK-1-DOOR-{width}",
+      "price": "width * 9.5"
+    },
+    {
+      "id": "base-sink-2-doors",
+      "type": "base",
+      "category": "bottom",
+      "title": "Нижний мойка с 2 створками",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 1000,
+        "step": 50
+      },
+      "defaultWidth": 800,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": true,
+      "corner": false,
+      "countertop": true,
+      "sku": "BASE-SINK-2-DOORS-{width}",
+      "price": "width * 9.5"
+    },
+    {
+      "id": "base-dishwasher",
+      "type": "base",
+      "category": "bottom",
+      "title": "Стол под посудомойку",
+      "row": "lower",
+      "widths": {
+        "min": 450,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 716,
+      "depths": [
+        600
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "BASE-DISHWASHER-{width}",
+      "price": "width * 6"
+    },
+    {
+      "id": "base-washer",
+      "type": "base",
+      "category": "bottom",
+      "title": "Под стиральную машину",
+      "row": "lower",
+      "widths": {
+        "min": 800,
+        "max": 800,
+        "step": 50
+      },
+      "defaultWidth": 800,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "BASE-WASHER-{width}",
+      "price": "width * 6"
+    },
+    {
+      "id": "base-corner-990",
+      "type": "corner",
+      "category": "bottomCorner",
+      "title": "Нижний угловой 990",
+      "row": "lower",
+      "widths": {
+        "min": 990,
+        "max": 990,
+        "step": 50
+      },
+      "defaultWidth": 990,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": true,
+      "countertop": true,
+      "sku": "BASE-CORNER-990-{width}",
+      "price": "width * 11"
+    },
+    {
+      "id": "base-corner-890",
+      "type": "corner",
+      "category": "bottomCorner",
+      "title": "Нижний угловой 890",
+      "row": "lower",
+      "widths": {
+        "min": 890,
+        "max": 890,
+        "step": 50
+      },
+      "defaultWidth": 890,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": true,
+      "countertop": true,
+      "sku": "BASE-CORNER-890-{width}",
+      "price": "width * 11"
+    },
+    {
+      "id": "base-end",
+      "type": "specialty",
+      "category": "bottomEnd",
+      "title": "Нижний торцевой",
+      "row": "lower",
+      "widths": {
+        "min": 300,
+        "max": 300,
+        "step": 50
+      },
+      "defaultWidth": 300,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "BASE-END-{width}",
+      "price": "width * 10"
+    },
+    {
+      "id": "base-end-shelf",
+      "type": "specialty",
+      "category": "bottomEnd",
+      "title": "Нижний торцевой с полками",
+      "row": "lower",
+      "widths": {
+        "min": 300,
+        "max": 300,
+        "step": 50
+      },
+      "defaultWidth": 300,
+      "height": 716,
+      "depths": [
+        540
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "BASE-END-SHELF-{width}",
+      "price": "width * 10"
+    },
+    {
+      "id": "top-720-1-door",
+      "type": "wall",
+      "category": "top",
+      "title": "720 верхний с 1 створкой",
+      "row": "upper",
+      "widths": {
+        "min": 150,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 716,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TOP-720-1-DOOR-{width}",
+      "price": "width * 7"
+    },
+    {
+      "id": "top-720-2-doors",
+      "type": "wall",
+      "category": "top",
+      "title": "720 верхний с 2 створками",
+      "row": "upper",
+      "widths": {
+        "min": 600,
+        "max": 1200,
+        "step": 50
+      },
+      "defaultWidth": 800,
+      "height": 716,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TOP-720-2-DOORS-{width}",
+      "price": "width * 7"
+    },
+    {
+      "id": "top-720-flap",
+      "type": "wall",
+      "category": "top",
+      "title": "720 верхний с 2 откидными створками",
+      "row": "upper",
+      "widths": {
+        "min": 500,
+        "max": 800,
+        "step": 50
+      },
+      "defaultWidth": 800,
+      "height": 716,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "flap",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TOP-720-FLAP-{width}",
+      "price": "width * 9"
+    },
+    {
+      "id": "top-720-open",
+      "type": "wall",
+      "category": "top",
+      "title": "720 верхний без фасада",
+      "row": "upper",
+      "widths": {
+        "min": 150,
+        "max": 200,
+        "step": 50
+      },
+      "defaultWidth": 200,
+      "height": 716,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TOP-720-OPEN-{width}",
+      "price": "width * 6"
+    },
+    {
+      "id": "top-720-bottle",
+      "type": "wall",
+      "category": "top",
+      "title": "720 верхний бутылочница",
+      "row": "upper",
+      "widths": {
+        "min": 150,
+        "max": 200,
+        "step": 50
+      },
+      "defaultWidth": 200,
+      "height": 716,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TOP-720-BOTTLE-{width}",
+      "price": "width * 12"
+    },
+    {
+      "id": "top-hood",
+      "type": "wall",
+      "category": "top",
+      "title": "600 верхний под вытяжку",
+      "row": "upper",
+      "widths": {
+        "min": 600,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 678,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TOP-HOOD-{width}",
+      "price": "width * 7"
+    },
+    {
+      "id": "top-360",
+      "type": "wall",
+      "category": "top",
+      "title": "360 верхний горизонтальный",
+      "row": "upper",
+      "widths": {
+        "min": 500,
+        "max": 800,
+        "step": 50
+      },
+      "defaultWidth": 800,
+      "height": 358,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "flap",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TOP-360-{width}",
+      "price": "width * 6.5"
+    },
+    {
+      "id": "top-460",
+      "type": "wall",
+      "category": "top",
+      "title": "460 верхний горизонтальный",
+      "row": "upper",
+      "widths": {
+        "min": 500,
+        "max": 800,
+        "step": 50
+      },
+      "defaultWidth": 800,
+      "height": 460,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "flap",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TOP-460-{width}",
+      "price": "width * 6.8"
+    },
+    {
+      "id": "top-920-1-door",
+      "type": "wall",
+      "category": "top",
+      "title": "920 верхний с 1 створкой",
+      "row": "upper",
+      "widths": {
+        "min": 250,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 920,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TOP-920-1-DOOR-{width}",
+      "price": "width * 8.5"
+    },
+    {
+      "id": "top-920-2-doors",
+      "type": "wall",
+      "category": "top",
+      "title": "920 верхний с 2 створками",
+      "row": "upper",
+      "widths": {
+        "min": 600,
+        "max": 800,
+        "step": 50
+      },
+      "defaultWidth": 800,
+      "height": 920,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TOP-920-2-DOORS-{width}",
+      "price": "width * 8.5"
+    },
+    {
+      "id": "top-920-flap",
+      "type": "wall",
+      "category": "top",
+      "title": "920 верхний с 2 откидными створками",
+      "row": "upper",
+      "widths": {
+        "min": 500,
+        "max": 800,
+        "step": 50
+      },
+      "defaultWidth": 800,
+      "height": 920,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "flap",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TOP-920-FLAP-{width}",
+      "price": "width * 10.5"
+    },
+    {
+      "id": "top-920-bottle",
+      "type": "wall",
+      "category": "top",
+      "title": "920 верхний бутылочница",
+      "row": "upper",
+      "widths": {
+        "min": 150,
+        "max": 200,
+        "step": 50
+      },
+      "defaultWidth": 200,
+      "height": 920,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TOP-920-BOTTLE-{width}",
+      "price": "width * 13"
+    },
+    {
+      "id": "vitrina-720-1",
+      "type": "wall",
+      "category": "vitrina",
+      "title": "720 витрина с 1 створкой",
+      "row": "upper",
+      "widths": {
+        "min": 300,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 716,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": true,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "VITRINA-720-1-{width}",
+      "price": "width * 11"
+    },
+    {
+      "id": "vitrina-720-2",
+      "type": "wall",
+      "category": "vitrina",
+      "title": "720 витрина с 2 створками",
+      "row": "upper",
+      "widths": {
+        "min": 600,
+        "max": 1000,
+        "step": 50
+      },
+      "defaultWidth": 800,
+      "height": 716,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": true,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "VITRINA-720-2-{width}",
+      "price": "width * 11"
+    },
+    {
+      "id": "vitrina-920-1",
+      "type": "wall",
+      "category": "vitrina",
+      "title": "920 витрина с 1 створкой",
+      "row": "upper",
+      "widths": {
+        "min": 300,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 920,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": true,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "VITRINA-920-1-{width}",
+      "price": "width * 12.5"
+    },
+    {
+      "id": "vitrina-920-2",
+      "type": "wall",
+      "category": "vitrina",
+      "title": "920 витрина с 2 створками",
+      "row": "upper",
+      "widths": {
+        "min": 600,
+        "max": 800,
+        "step": 50
+      },
+      "defaultWidth": 800,
+      "height": 920,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": true,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "VITRINA-920-2-{width}",
+      "price": "width * 12.5"
+    },
+    {
+      "id": "top-corner-720",
+      "type": "corner",
+      "category": "topCorner",
+      "title": "720 верхний угловой",
+      "row": "upper",
+      "widths": {
+        "min": 700,
+        "max": 700,
+        "step": 50
+      },
+      "defaultWidth": 700,
+      "height": 716,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": true,
+      "countertop": false,
+      "sku": "TOP-CORNER-720-{width}",
+      "price": "width * 9"
+    },
+    {
+      "id": "top-corner-920",
+      "type": "corner",
+      "category": "topCorner",
+      "title": "920 верхний угловой",
+      "row": "upper",
+      "widths": {
+        "min": 700,
+        "max": 700,
+        "step": 50
+      },
+      "defaultWidth": 700,
+      "height": 920,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": true,
+      "countertop": false,
+      "sku": "TOP-CORNER-920-{width}",
+      "price": "width * 10"
+    },
+    {
+      "id": "top-end-720",
+      "type": "specialty",
+      "category": "topEnd",
+      "title": "720 верхний торцевой",
+      "row": "upper",
+      "widths": {
+        "min": 300,
+        "max": 300,
+        "step": 50
+      },
+      "defaultWidth": 300,
+      "height": 716,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TOP-END-720-{width}",
+      "price": "width * 7"
+    },
+    {
+      "id": "top-end-920",
+      "type": "specialty",
+      "category": "topEnd",
+      "title": "920 верхний торцевой",
+      "row": "upper",
+      "widths": {
+        "min": 300,
+        "max": 300,
+        "step": 50
+      },
+      "defaultWidth": 300,
+      "height": 920,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TOP-END-920-{width}",
+      "price": "width * 8.5"
+    },
+    {
+      "id": "tall-closed",
+      "type": "tall",
+      "category": "tall",
+      "title": "Пенал закрытый",
+      "row": "lower",
+      "widths": {
+        "min": 400,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 2132,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 0.38
+        },
+        {
+          "kind": "doors",
+          "ratio": 0.62
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TALL-CLOSED-{width}",
+      "price": "width * 18"
+    },
+    {
+      "id": "tall-800",
+      "type": "tall",
+      "category": "tall",
+      "title": "Пенал закрытый 800",
+      "row": "lower",
+      "widths": {
+        "min": 800,
+        "max": 800,
+        "step": 50
+      },
+      "defaultWidth": 800,
+      "height": 2132,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 0.38
+        },
+        {
+          "kind": "doors",
+          "ratio": 0.62
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TALL-800-{width}",
+      "price": "width * 18"
+    },
+    {
+      "id": "tall-1-drawer",
+      "type": "tall",
+      "category": "tall",
+      "title": "Пенал с 1 ящиком",
+      "row": "lower",
+      "widths": {
+        "min": 400,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 2132,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 0.38
+        },
+        {
+          "kind": "doors",
+          "ratio": 0.46
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.16
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TALL-1-DRAWER-{width}",
+      "price": "width * 20"
+    },
+    {
+      "id": "tall-2-drawers",
+      "type": "tall",
+      "category": "tall",
+      "title": "Пенал с 2 ящиками",
+      "row": "lower",
+      "widths": {
+        "min": 400,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 2132,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 0.38
+        },
+        {
+          "kind": "doors",
+          "ratio": 0.3
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.16
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.16
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TALL-2-DRAWERS-{width}",
+      "price": "width * 22"
+    },
+    {
+      "id": "tall-oven",
+      "type": "tall",
+      "category": "tall",
+      "title": "Пенал под духовой шкаф",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 2132,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 0.3
+        },
+        {
+          "kind": "opening",
+          "ratio": 0.36
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.34
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TALL-OVEN-{width}",
+      "price": "width * 18"
+    },
+    {
+      "id": "tall-appliance",
+      "type": "tall",
+      "category": "tall",
+      "title": "Пенал под технику",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 2132,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 0.25
+        },
+        {
+          "kind": "opening",
+          "ratio": 0.4
+        },
+        {
+          "kind": "doors",
+          "ratio": 0.35
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TALL-APPLIANCE-{width}",
+      "price": "width * 18"
+    },
+    {
+      "id": "tall-fridge",
+      "type": "tall",
+      "category": "tall",
+      "title": "Пенал под встроенный холодильник",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 2132,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 0.28
+        },
+        {
+          "kind": "doors",
+          "ratio": 0.72
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TALL-FRIDGE-{width}",
+      "price": "width * 16"
+    },
+    {
+      "id": "tall-high-closed",
+      "type": "tall",
+      "category": "tall",
+      "title": "Высокий пенал закрытый",
+      "row": "lower",
+      "widths": {
+        "min": 400,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 2336,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 0.38
+        },
+        {
+          "kind": "doors",
+          "ratio": 0.62
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TALL-HIGH-CLOSED-{width}",
+      "price": "width * 20"
+    },
+    {
+      "id": "tall-high-oven",
+      "type": "tall",
+      "category": "tall",
+      "title": "Высокий пенал под духовой шкаф",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 2336,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 0.3
+        },
+        {
+          "kind": "opening",
+          "ratio": 0.34
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.36
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TALL-HIGH-OVEN-{width}",
+      "price": "width * 20"
+    },
+    {
+      "id": "appliance-sink",
+      "type": "base",
+      "category": "appliances",
+      "title": "Мойка",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": true,
+      "corner": false,
+      "countertop": true,
+      "sku": "SINK-{width}",
+      "price": "width * 20"
+    },
+    {
+      "id": "appliance-stove",
+      "type": "base",
+      "category": "appliances",
+      "title": "Плита",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 754,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "flap",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "STOVE-{width}",
+      "price": "width * 40",
+      "model": "kitchenStove"
+    },
+    {
+      "id": "appliance-fridge",
+      "type": "tall",
+      "category": "appliances",
+      "title": "Холодильник",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 1850,
+      "depths": [
+        650
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 0.3
+        },
+        {
+          "kind": "doors",
+          "ratio": 0.7
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "FRIDGE-{width}",
+      "price": "width * 80",
+      "model": "kitchenFridge"
+    },
+    {
+      "id": "appliance-hood",
+      "type": "wall",
+      "category": "appliances",
+      "title": "Вытяжка",
+      "row": "upper",
+      "widths": {
+        "min": 600,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 400,
+      "depths": [
+        450
+      ],
+      "elevation": 1500,
+      "fronts": [
+        {
+          "kind": "flap",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "HOOD-{width}",
+      "price": "width * 25",
+      "model": "hoodLarge"
+    },
+    {
+      "id": "appliance-fridge-large",
+      "type": "tall",
+      "category": "appliances",
+      "title": "Холодильник двустворчатый",
+      "row": "lower",
+      "widths": {
+        "min": 900,
+        "max": 900,
+        "step": 50
+      },
+      "defaultWidth": 900,
+      "height": 1850,
+      "depths": [
+        700
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "FRIDGE-2D-{width}",
+      "price": "width * 90",
+      "model": "kitchenFridgeLarge"
+    },
+    {
+      "id": "appliance-fridge-builtin",
+      "type": "tall",
+      "category": "appliances",
+      "title": "Холодильник встраиваемый",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 1780,
+      "depths": [
+        600
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 0.3
+        },
+        {
+          "kind": "doors",
+          "ratio": 0.7
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "FRIDGE-BI-{width}",
+      "price": "width * 85",
+      "model": "kitchenFridgeBuiltIn"
+    },
+    {
+      "id": "appliance-fridge-small",
+      "type": "base",
+      "category": "appliances",
+      "title": "Холодильник под столешницу",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 816,
+      "depths": [
+        600
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "FRIDGE-UC-{width}",
+      "price": "width * 45",
+      "model": "kitchenFridgeSmall"
+    },
+    {
+      "id": "appliance-stove-electric",
+      "type": "base",
+      "category": "appliances",
+      "title": "Плита электрическая",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 754,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "flap",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "STOVE-EL-{width}",
+      "price": "width * 42",
+      "model": "kitchenStoveElectric"
+    },
+    {
+      "id": "appliance-hood-modern",
+      "type": "wall",
+      "category": "appliances",
+      "title": "Вытяжка плоская",
+      "row": "upper",
+      "widths": {
+        "min": 600,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 400,
+      "depths": [
+        450
+      ],
+      "elevation": 1500,
+      "fronts": [
+        {
+          "kind": "flap",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "HOOD-FL-{width}",
+      "price": "width * 28",
+      "model": "hoodModern"
+    },
+    {
+      "id": "appliance-washer",
+      "type": "base",
+      "category": "appliances",
+      "title": "Стиральная машина",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 816,
+      "depths": [
+        600
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "WASHER-{width}",
+      "price": "width * 50",
+      "model": "washer"
+    }
+  ],
+  "finishes": {
+    "facade": [
+      {
+        "id": "white",
+        "title": "Белый",
+        "hex": "#f1f1ee"
+      },
+      {
+        "id": "light-grey",
+        "title": "Светло-серый",
+        "hex": "#c9ccd0"
+      },
+      {
+        "id": "graphite",
+        "title": "Графит",
+        "hex": "#4b4f55"
+      },
+      {
+        "id": "beige",
+        "title": "Бежевый",
+        "hex": "#d6c7ae"
+      },
+      {
+        "id": "green",
+        "title": "Зелёный",
+        "hex": "#7e9484"
+      },
+      {
+        "id": "oak",
+        "title": "Дуб",
+        "hex": "#b89a72",
+        "finish": "wood"
+      },
+      {
+        "id": "walnut",
+        "title": "Орех",
+        "hex": "#7a5a42",
+        "finish": "wood"
+      },
+      {
+        "id": "ash",
+        "title": "Ясень",
+        "hex": "#d8c8a8",
+        "finish": "wood"
+      }
+    ],
+    "body": [
+      {
+        "id": "white",
+        "title": "Белый",
+        "hex": "#ececea"
+      },
+      {
+        "id": "grey",
+        "title": "Серый",
+        "hex": "#9da1a6"
+      },
+      {
+        "id": "oak",
+        "title": "Дуб",
+        "hex": "#a9835a"
+      }
+    ],
+    "floor": [
+      {
+        "id": "laminate-light",
+        "title": "Ламинат светлый дуб",
+        "kind": "planks",
+        "color": "#d6bf9c",
+        "size": [
+          190,
+          1200
+        ],
+        "roughness": 0.5
+      },
+      {
+        "id": "laminate-walnut",
+        "title": "Ламинат орех",
+        "kind": "planks",
+        "color": "#7b5434",
+        "size": [
+          190,
+          1200
+        ],
+        "roughness": 0.5
+      },
+      {
+        "id": "laminate-grey",
+        "title": "Ламинат серый",
+        "kind": "planks",
+        "color": "#a09b94",
+        "size": [
+          190,
+          1200
+        ],
+        "roughness": 0.5
+      },
+      {
+        "id": "parquet-board",
+        "title": "Паркетная доска",
+        "kind": "planks",
+        "color": "#b68a58",
+        "size": [
+          140,
+          1000
+        ],
+        "roughness": 0.4
+      },
+      {
+        "id": "herringbone-light",
+        "title": "Паркет ёлочкой светлый",
+        "kind": "herringbone",
+        "color": "#dccaad",
+        "size": [
+          70,
+          280
+        ],
+        "roughness": 0.45
+      },
+      {
+        "id": "herringbone-oak",
+        "title": "Паркет ёлочкой дуб",
+        "kind": "herringbone",
+        "color": "#a67a4c",
+        "size": [
+          70,
+          280
+        ],
+        "roughness": 0.45
+      },
+      {
+        "id": "vinyl-grey",
+        "title": "Кварцвинил серый",
+        "kind": "planks",
+        "color": "#8c8a86",
+        "size": [
+          180,
+          1220
+        ],
+        "roughness": 0.4
+      },
+      {
+        "id": "linoleum-wood",
+        "title": "Линолеум под дерево",
+        "kind": "planks",
+        "color": "#c4a47c",
+        "size": [
+          180,
+          1500
+        ],
+        "roughness": 0.3
+      },
+      {
+        "id": "linoleum-grey",
+        "title": "Линолеум серый",
+        "kind": "sheet",
+        "color": "#aeb0b1",
+        "accent": "#8e9091",
+        "roughness": 0.3
+      },
+      {
+        "id": "tile-light",
+        "title": "Плитка светлая 600x600",
+        "kind": "tiles",
+        "color": "#dcd9d2",
+        "accent": "#b9b5ab",
+        "size": [
+          600,
+          600
+        ],
+        "roughness": 0.25
+      },
+      {
+        "id": "tile-dark",
+        "title": "Керамогранит тёмный 600x600",
+        "kind": "tiles",
+        "color": "#4b4d51",
+        "accent": "#2d2e30",
+        "size": [
+          600,
+          600
+        ],
+        "roughness": 0.25
+      },
+      {
+        "id": "microcement",
+        "title": "Микроцемент",
+        "kind": "concrete",
+        "color": "#a9a8a5",
+        "roughness": 0.7
+      }
+    ],
+    "wall": [
+      {
+        "id": "paint-white",
+        "title": "Краска белая",
+        "kind": "paint",
+        "color": "#efeee9",
+        "roughness": 0.95
+      },
+      {
+        "id": "paint-beige",
+        "title": "Краска бежевая",
+        "kind": "paint",
+        "color": "#e2d6c2",
+        "roughness": 0.95
+      },
+      {
+        "id": "paint-grey",
+        "title": "Краска серая",
+        "kind": "paint",
+        "color": "#c8cacc",
+        "roughness": 0.95
+      },
+      {
+        "id": "paint-green",
+        "title": "Краска шалфей",
+        "kind": "paint",
+        "color": "#b8c5b1",
+        "roughness": 0.95
+      },
+      {
+        "id": "paint-graphite",
+        "title": "Краска графит",
+        "kind": "paint",
+        "color": "#5d6166",
+        "roughness": 0.95
+      },
+      {
+        "id": "wallpaper-stripes",
+        "title": "Обои в полоску",
+        "kind": "stripes",
+        "color": "#ebe6da",
+        "accent": "#d6cdb8",
+        "size": [
+          60,
+          60
+        ],
+        "roughness": 0.9
+      },
+      {
+        "id": "wallpaper-dots",
+        "title": "Обои мелкий узор",
+        "kind": "dots",
+        "color": "#e9e7e0",
+        "accent": "#c8c2b4",
+        "size": [
+          60,
+          60
+        ],
+        "roughness": 0.9
+      },
+      {
+        "id": "wallpaper-linen",
+        "title": "Обои под лён",
+        "kind": "linen",
+        "color": "#dcd5c6",
+        "roughness": 0.95
+      },
+      {
+        "id": "brick-white",
+        "title": "Кирпич белый",
+        "kind": "brick",
+        "color": "#ece9e2",
+        "accent": "#cdc8be",
+        "size": [
+          250,
+          65
+        ],
+        "roughness": 0.85
+      },
+      {
+        "id": "brick-red",
+        "title": "Кирпич красный",
+        "kind": "brick",
+        "color": "#a4543f",
+        "accent": "#cbc5ba",
+        "size": [
+          250,
+          65
+        ],
+        "roughness": 0.85
+      },
+      {
+        "id": "tile-metro",
+        "title": "Плитка кабанчик",
+        "kind": "metro",
+        "color": "#f0efec",
+        "accent": "#cfcdc8",
+        "size": [
+          150,
+          75
+        ],
+        "roughness": 0.2
+      },
+      {
+        "id": "tile-square-green",
+        "title": "Плитка зелёная 200x200",
+        "kind": "tiles",
+        "color": "#7f9a86",
+        "accent": "#c9cdc8",
+        "size": [
+          200,
+          200
+        ],
+        "roughness": 0.2
+      },
+      {
+        "id": "wood-slats",
+        "title": "Деревянные рейки",
+        "kind": "slats",
+        "color": "#b58a5a",
+        "accent": "#3a2c20",
+        "size": [
+          40,
+          40
+        ],
+        "roughness": 0.7
+      }
+    ]
+  },
+  "accessories": {
+    "plinth": {
+      "height": 100
+    },
+    "countertop": {
+      "thickness": 38,
+      "overhang": 30,
+      "price": "length * 6"
+    },
+    "filler": {
+      "title": "Добор",
+      "minWidth": 20,
+      "maxWidth": 150,
+      "sku": "FILLER-{width}",
+      "price": "width * 8"
+    }
+  },
+  "rules": {
+    "minAisle": 900
+  }
+}

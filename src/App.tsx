@@ -1,0 +1,248 @@
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { BODY_COLORS, FACADE_COLORS, FLOORS, WALL_FINISHES } from './domain/catalog';
+import {
+  DEFAULT_KITCHEN,
+  addModule,
+  addOpening,
+  applyKitchenTemplate,
+  moveModule,
+  pickWallForModule,
+  paintKitchen,
+  removeModule,
+  removeOpening,
+  resizeModule,
+  resizeRoom,
+  updateOpening,
+  type WallId,
+} from './domain/kitchen';
+import { dragModule, rotateFreeModule } from './domain/dragging';
+import { DrawingSheet } from './drawing/DrawingSheet';
+import { buildDrawing, type SheetId } from './drawing/drawingModel';
+import { downloadSvg } from './drawing/downloadSvg';
+import { KitchenViewport, type ViewportHandle } from './scene/KitchenViewport';
+import { CheckoutPanel } from './ui/CheckoutPanel';
+import { ColorPicker } from './ui/ColorPicker';
+import { DrawingPanel } from './ui/DrawingPanel';
+import { EstimateCard } from './ui/EstimateCard';
+import { Flyout } from './ui/Flyout';
+import { HistoryBar } from './ui/HistoryBar';
+import { ModuleCatalog, ModuleList } from './ui/ModulePanels';
+import { OpeningPanel } from './ui/OpeningPanel';
+import { RoomPanel } from './ui/RoomPanel';
+import { SectionRail, type RailSection } from './ui/SectionRail';
+import { SelectionToolbar } from './ui/SelectionToolbar';
+import { SurfacePicker } from './ui/SurfacePicker';
+import { TemplatePanel } from './ui/TemplatePanel';
+import { ViewBar, type ViewMode } from './ui/ViewBar';
+import { readKitchenFromAddress, writeKitchenToAddress } from './ui/kitchenUrl';
+import { useKitchenHistory } from './ui/useKitchenHistory';
+
+type SectionId = 'templates' | 'room' | 'openings' | 'decor' | 'modules' | 'composition' | 'drawing' | 'checkout';
+
+const RAIL_SECTIONS: (RailSection & { id: SectionId })[] = [
+  { id: 'templates', title: 'Шаблоны', icon: 'templates' },
+  { id: 'room', title: 'Комната', icon: 'room' },
+  { id: 'openings', title: 'Окна и двери', icon: 'opening' },
+  { id: 'decor', title: 'Декор', icon: 'decor' },
+  { id: 'modules', title: 'Модули', icon: 'modules' },
+  { id: 'composition', title: 'Состав', icon: 'composition' },
+  { id: 'drawing', title: 'Чертёж', icon: 'drawing' },
+];
+
+const SECTION_TITLES: Record<SectionId, string> = {
+  templates: 'Шаблоны',
+  room: 'Комната',
+  openings: 'Окна и двери',
+  decor: 'Декор',
+  modules: 'Модули',
+  composition: 'Состав',
+  drawing: 'Чертёж',
+  checkout: 'Оформление заказа',
+};
+
+const WIDE_SCREEN_MIN_PX = 1100;
+const FLYOUT_EXIT_MS = 160;
+const PHONE_MAX_WIDTH_PX = 720;
+
+export function App() {
+  const {
+    kitchen,
+    updateKitchen: setKitchen,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
+  } = useKitchenHistory(() => readKitchenFromAddress() ?? DEFAULT_KITCHEN);
+  const [activeSection, setActiveSection] = useState<SectionId | null>(() =>
+    window.innerWidth >= WIDE_SCREEN_MIN_PX ? 'modules' : null,
+  );
+  const [activeWall, setActiveWall] = useState<WallId>('back');
+  const [activeSheet, setActiveSheet] = useState<SheetId>('plan');
+  const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
+  const [view, setView] = useState<ViewMode>('perspective');
+  const [shownSection, setShownSection] = useState<SectionId | null>(activeSection);
+  const [leftInsetPx, setLeftInsetPx] = useState(0);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const drawingRef = useRef<SVGSVGElement>(null);
+  const viewportRef = useRef<ViewportHandle>(null);
+
+  useEffect(() => writeKitchenToAddress(kitchen), [kitchen]);
+
+  useLayoutEffect(() => {
+    const overlay = overlayRef.current;
+    if (!overlay || window.innerWidth <= PHONE_MAX_WIDTH_PX) {
+      setLeftInsetPx(0);
+      return;
+    }
+    const edge = activeSection ? overlay.querySelector('.flyout') : overlay.querySelector('.rail');
+    setLeftInsetPx(edge ? edge.getBoundingClientRect().right : 0);
+  }, [activeSection, shownSection]);
+
+  useEffect(() => {
+    if (activeSection) {
+      setShownSection(activeSection);
+      return;
+    }
+    const timer = window.setTimeout(() => setShownSection(null), FLYOUT_EXIT_MS);
+    return () => window.clearTimeout(timer);
+  }, [activeSection]);
+
+  const toggleSection = (id: string) => setActiveSection((current) => (current === id ? null : (id as SectionId)));
+  const changeView = (next: ViewMode) => {
+    setView(next);
+    if (next === 'top') viewportRef.current?.showTop();
+    else viewportRef.current?.showPerspective();
+  };
+  const resizeSelected = (moduleId: string, width: number) => setKitchen((current) => resizeModule(current, moduleId, width));
+  const moveSelected = (moduleId: string, direction: -1 | 1) => setKitchen((current) => moveModule(current, moduleId, direction));
+  const removeSelected = (moduleId: string) => {
+    setKitchen((current) => removeModule(current, moduleId));
+    setSelectedModuleId(null);
+  };
+
+  return (
+    <div className="app">
+      <main className="stage">
+        {activeSection === 'drawing' && (
+          <div className="stage-pane drawing-pane">
+            <DrawingSheet ref={drawingRef} drawing={buildDrawing(kitchen, activeSheet)} />
+          </div>
+        )}
+        <div className="stage-pane" hidden={activeSection === 'drawing'}>
+          <KitchenViewport
+            ref={viewportRef}
+            kitchen={kitchen}
+            selectedModuleId={selectedModuleId}
+            leftInsetPx={leftInsetPx}
+            onSelect={setSelectedModuleId}
+            onDragModule={(moduleId, cx, cz) => setKitchen((current) => dragModule(current, moduleId, { cx, cz }))}
+            onMoveOpening={(openingId, offset) =>
+              setKitchen((current) => updateOpening(current, openingId, { offset }))
+            }
+            selectionToolbar={
+              selectedModuleId && (
+                <SelectionToolbar
+                  kitchen={kitchen}
+                  moduleId={selectedModuleId}
+                  onResize={resizeSelected}
+                  onMove={moveSelected}
+                  onRotate={(moduleId) => setKitchen((current) => rotateFreeModule(current, moduleId))}
+                  onRemove={removeSelected}
+                />
+              )
+            }
+          />
+        </div>
+      </main>
+      <HistoryBar canUndo={canUndo} canRedo={canRedo} onUndo={undo} onRedo={redo} />
+      <div className="overlay-left" ref={overlayRef}>
+        <SectionRail
+          sections={RAIL_SECTIONS}
+          activeId={activeSection === 'checkout' ? null : activeSection}
+          onSelect={toggleSection}
+        />
+        {shownSection && (
+          <Flyout title={SECTION_TITLES[shownSection]} isClosing={activeSection === null} contentKey={shownSection} onClose={() => setActiveSection(null)}>
+            {shownSection === 'templates' && (
+              <TemplatePanel kitchen={kitchen} onApply={(template) => setKitchen((current) => applyKitchenTemplate(current, template))} />
+            )}
+            {shownSection === 'room' && <RoomPanel kitchen={kitchen} onResize={(patch) => setKitchen((current) => resizeRoom(current, patch))} />}
+            {shownSection === 'openings' && (
+              <OpeningPanel
+                kitchen={kitchen}
+                wall={activeWall}
+                onWallChange={setActiveWall}
+                onAdd={(kind) => setKitchen((current) => addOpening(current, kind, crypto.randomUUID(), activeWall))}
+                onUpdate={(openingId, patch) => setKitchen((current) => updateOpening(current, openingId, patch))}
+                onRemove={(openingId) => setKitchen((current) => removeOpening(current, openingId))}
+              />
+            )}
+            {shownSection === 'decor' && (
+              <div className="decor-groups">
+                <ColorPicker
+                  label="Фасад"
+                  options={FACADE_COLORS}
+                  selectedId={kitchen.facadeColorId}
+                  onSelect={(facadeColorId) => setKitchen((current) => paintKitchen(current, { facadeColorId }))}
+                />
+                <ColorPicker
+                  label="Корпус"
+                  options={BODY_COLORS}
+                  selectedId={kitchen.bodyColorId}
+                  onSelect={(bodyColorId) => setKitchen((current) => paintKitchen(current, { bodyColorId }))}
+                />
+                <SurfacePicker
+                  label="Пол"
+                  options={FLOORS}
+                  selectedId={kitchen.floorId}
+                  onSelect={(floorId) => setKitchen((current) => paintKitchen(current, { floorId }))}
+                />
+                <SurfacePicker
+                  label="Стены"
+                  options={WALL_FINISHES}
+                  selectedId={kitchen.wallFinishId}
+                  onSelect={(wallFinishId) => setKitchen((current) => paintKitchen(current, { wallFinishId }))}
+                />
+              </div>
+            )}
+            {shownSection === 'modules' && (
+              <ModuleCatalog
+                kitchen={kitchen}
+                wall={activeWall}
+                onWallChange={setActiveWall}
+                onAdd={(specId) =>
+                  setKitchen((current) =>
+                    addModule(current, specId, crypto.randomUUID(), pickWallForModule(specId, activeWall)),
+                  )
+                }
+              />
+            )}
+            {shownSection === 'composition' && (
+              <ModuleList
+                kitchen={kitchen}
+                selectedId={selectedModuleId}
+                onSelect={setSelectedModuleId}
+                onResize={resizeSelected}
+                onMove={moveSelected}
+                onRemove={removeSelected}
+              />
+            )}
+            {shownSection === 'drawing' && (
+              <DrawingPanel
+                kitchen={kitchen}
+                sheet={activeSheet}
+                onSheetChange={setActiveSheet}
+                onDownload={() => drawingRef.current && downloadSvg(drawingRef.current, `kitchen-${activeSheet}.svg`)}
+              />
+            )}
+            {shownSection === 'checkout' && <CheckoutPanel kitchen={kitchen} />}
+          </Flyout>
+        )}
+      </div>
+      <EstimateCard kitchen={kitchen} onOrder={() => setActiveSection('checkout')} />
+      {activeSection !== 'drawing' && (
+        <ViewBar view={view} onViewChange={changeView} onZoom={(factor) => viewportRef.current?.zoomBy(factor)} />
+      )}
+    </div>
+  );
+}

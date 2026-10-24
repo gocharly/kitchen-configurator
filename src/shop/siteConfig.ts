@@ -1,0 +1,10 @@
+export const BRAND_NAME = 'Кухни';
+export const HERO_IMAGE: string | null = '/products/kitchen.jpg';
+export const HERO_IMAGE_POSITION = '50% 40%';
+export const HERO_LABEL = 'Готовые кухни';
+export const HERO_TITLE = 'Кухни';
+export const HERO_LINES = ['Готовые планировки с ценой', 'Размеры и состав в карточке', 'Заказ в WhatsApp'];
+export const HERO_LINK_TEXT = 'Смотреть кухни';
+export const CATALOG_TITLE = 'Готовые кухни';
+export const ANNOUNCEMENT_STEPS = ['Выберите кухню', 'Нажмите «Заказать»', 'Оформим в WhatsApp'];
+export const WHATSAPP_PHONE: string | null = null;

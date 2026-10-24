@@ -1,0 +1,168 @@
+{
+  "schema": "kitchen-shop/products@0.1",
+  "sample": true,
+  "currency": "RUB",
+  "products": [
+    {
+      "id": "straight-1600",
+      "title": "Кухня прямая 1,6 м",
+      "shape": "straight",
+      "size": "1600 мм",
+      "price": 24000,
+      "sku": "K-STRAIGHT-1600",
+      "images": [
+        {
+          "src": "/products/kitchen.jpg",
+          "position": "50% 78%"
+        },
+        {
+          "src": "/products/kitchen.jpg",
+          "position": "50% 25%"
+        },
+        {
+          "src": "/products/kitchen.jpg",
+          "position": "50% 52%"
+        }
+      ],
+      "description": null
+    },
+    {
+      "id": "straight-2000",
+      "title": "Кухня прямая 2,0 м",
+      "shape": "straight",
+      "size": "2000 мм",
+      "price": 30000,
+      "sku": "K-STRAIGHT-2000",
+      "images": [
+        {
+          "src": "/products/kitchen.jpg",
+          "position": "50% 52%"
+        },
+        {
+          "src": "/products/kitchen.jpg",
+          "position": "50% 80%"
+        },
+        {
+          "src": "/products/kitchen.jpg",
+          "position": "50% 20%"
+        }
+      ],
+      "description": null
+    },
+    {
+      "id": "straight-2400",
+      "title": "Кухня прямая 2,4 м",
+      "shape": "straight",
+      "size": "2400 мм",
+      "price": 36000,
+      "sku": "K-STRAIGHT-2400",
+      "images": [
+        {
+          "src": "/products/kitchen.jpg",
+          "position": "50% 20%"
+        },
+        {
+          "src": "/products/kitchen.jpg",
+          "position": "50% 60%"
+        },
+        {
+          "src": "/products/kitchen.jpg",
+          "position": "50% 85%"
+        }
+      ],
+      "description": null
+    },
+    {
+      "id": "straight-3000",
+      "title": "Кухня прямая 3,0 м",
+      "shape": "straight",
+      "size": "3000 мм",
+      "price": 45000,
+      "sku": "K-STRAIGHT-3000",
+      "images": [
+        {
+          "src": "/products/kitchen.jpg",
+          "position": "50% 85%"
+        },
+        {
+          "src": "/products/kitchen.jpg",
+          "position": "50% 35%"
+        },
+        {
+          "src": "/products/kitchen.jpg",
+          "position": "50% 55%"
+        }
+      ],
+      "description": null
+    },
+    {
+      "id": "corner-2400-1800",
+      "title": "Кухня угловая 2,4 × 1,8 м",
+      "shape": "corner",
+      "size": "2400 × 1800 мм",
+      "price": 63000,
+      "sku": "K-CORNER-2400-1800",
+      "images": [
+        {
+          "src": "/products/kitchen.jpg",
+          "position": "50% 35%"
+        },
+        {
+          "src": "/products/kitchen.jpg",
+          "position": "50% 75%"
+        },
+        {
+          "src": "/products/kitchen.jpg",
+          "position": "50% 10%"
+        }
+      ],
+      "description": null
+    },
+    {
+      "id": "corner-3000-2100",
+      "title": "Кухня угловая 3,0 × 2,1 м",
+      "shape": "corner",
+      "size": "3000 × 2100 мм",
+      "price": 76500,
+      "sku": "K-CORNER-3000-2100",
+      "images": [
+        {
+          "src": "/products/kitchen.jpg",
+          "position": "50% 60%"
+        },
+        {
+          "src": "/products/kitchen.jpg",
+          "position": "50% 15%"
+        },
+        {
+          "src": "/products/kitchen.jpg",
+          "position": "50% 90%"
+        }
+      ],
+      "description": null
+    },
+    {
+      "id": "u-shape-3000",
+      "title": "Кухня П-образная 3,0 м",
+      "shape": "u-shape",
+      "size": "3000 × 2400 × 2400 мм",
+      "price": 108000,
+      "sku": "K-USHAPE-3000",
+      "images": [
+        {
+          "src": "/products/kitchen.jpg",
+          "position": "50% 10%"
+        },
+        {
+          "src": "/products/kitchen.jpg",
+          "position": "50% 70%"
+        },
+        {
+          "src": "/products/kitchen.jpg",
+          "position": "50% 45%"
+        }
+      ],
+      "description": null
+    }
+  ]
+}

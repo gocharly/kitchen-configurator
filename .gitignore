@@ -1,0 +1,6 @@
+node_modules
+dist
+dist-pages
+server/.env
+*.local
+.DS_Store
