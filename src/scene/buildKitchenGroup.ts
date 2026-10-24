@@ -18,6 +18,7 @@ import type { Filler } from '../domain/fillers';
 import type { FreeModule } from '../domain/freeModules';
 import {
   DEFAULT_KITCHEN,
+  WALLS,
   layoutKitchen,
   listFillers,
   listSpaceTaken,
@@ -49,6 +50,7 @@ import {
 import { createStoneTexture, createWoodGrainTexture, getSurfaceTexture } from './surfaceTextures';
 
 const PLINTH_RECESS_MM = 50;
+const SLAB_JOIN_TOLERANCE_MM = 1;
 const WALL_THICKNESS_MM = 100;
 const SKIRTING_HEIGHT_MM = 90;
 const SKIRTING_THICKNESS_MM = 14;
@@ -135,7 +137,7 @@ function buildCountertop(item: LayoutItem, materials: Materials): THREE.Group {
   return group;
 }
 
-function buildStraightBody(item: LayoutItem, materials: Materials): THREE.Group {
+function buildStraightBody(item: LayoutItem, materials: Materials, hasOwnCountertop: boolean): THREE.Group {
   const { spec, module } = item;
   const group = new THREE.Group();
   group.add(buildCarcass(item, materials));
@@ -144,7 +146,7 @@ function buildStraightBody(item: LayoutItem, materials: Materials): THREE.Group 
     const plinthSize: [number, number, number] = [module.width - FACADE_GAP_MM, PLINTH_HEIGHT_MM, spec.depth - PLINTH_RECESS_MM];
     group.add(createBox(plinthSize, [0, 0, 0], materials.recess));
   }
-  if (spec.hasCountertop) group.add(buildCountertop(item, materials));
+  if (spec.hasCountertop && hasOwnCountertop) group.add(buildCountertop(item, materials));
   return group;
 }
 
@@ -213,30 +215,19 @@ function buildFiller(filler: Filler, materials: Materials, room: Kitchen['room']
     const plinthDepth = filler.depth - PLINTH_RECESS_MM;
     group.add(createBox([filler.width, PLINTH_HEIGHT_MM, plinthDepth], [0, 0, 0], materials.recess));
   }
-  if (filler.hasCountertop) {
-    const top = filler.elevation + filler.height;
-    group.add(
-      createBox(
-        [filler.width, COUNTERTOP_THICKNESS_MM, filler.depth + COUNTERTOP_OVERHANG_MM],
-        [0, top, 0],
-        materials.countertop,
-        COUNTERTOP_EDGE_RADIUS_MM,
-      ),
-    );
-  }
   const holder = new THREE.Group();
   holder.add(group);
   positionOnWall(holder, { wall: filler.wall, offset: filler.offset, width: filler.width }, room);
   return holder;
 }
 
-function buildModelModule(item: LayoutItem, modelName: string, materials: Materials): THREE.Group {
+function buildModelModule(item: LayoutItem, modelName: string, materials: Materials, hasOwnCountertop: boolean): THREE.Group {
   const { spec, module } = item;
   const frame = { width: module.width - 2 * spec.clearance, height: spec.height, depth: spec.depth, elevation: spec.elevation };
   const body = buildCatalogModel(modelName, frame, { materials, item });
   body.position.x = spec.clearance * MM;
   const group = new THREE.Group().add(body);
-  if (spec.hasCountertop) group.add(buildCountertop(item, materials));
+  if (spec.hasCountertop && hasOwnCountertop) group.add(buildCountertop(item, materials));
   return group;
 }
 
@@ -259,7 +250,7 @@ function tintForSelection(group: THREE.Group, tinted: THREE.Material[]): void {
 
 function buildModule(item: LayoutItem, context: { materials: Materials; room: Kitchen['room']; tinted: THREE.Material[]; selectedId: string | null }): THREE.Group {
   const local: LayoutItem = { ...item, offset: 0 };
-  const body = buildModuleBody(local, context.materials);
+  const body = buildModuleBody(local, context.materials, !hasSharedCountertop(item.spec));
   if (item.module.id === context.selectedId) tintForSelection(body, context.tinted);
   return placeOnWall(body, item, context.room);
 }
@@ -267,7 +258,7 @@ function buildModule(item: LayoutItem, context: { materials: Materials; room: Ki
 function buildFreeModule(free: FreeModule, context: { materials: Materials; tinted: THREE.Material[]; selectedId: string | null }): THREE.Group {
   const spec = getModuleSpec(free.module.specId);
   const item: LayoutItem = { module: free.module, spec, wall: 'back', offset: 0 };
-  const body = buildModuleBody(item, context.materials);
+  const body = buildModuleBody(item, context.materials, true);
   if (free.module.id === context.selectedId) tintForSelection(body, context.tinted);
   body.position.set((-free.module.width / 2) * MM, 0, (-spec.depth / 2) * MM);
   const holder = new THREE.Group().add(body);
@@ -277,9 +268,13 @@ function buildFreeModule(free: FreeModule, context: { materials: Materials; tint
   return holder;
 }
 
-function buildModuleBody(item: LayoutItem, materials: Materials): THREE.Group {
-  if (item.spec.model) return buildModelModule(item, item.spec.model, materials);
-  return item.spec.isCorner ? buildCornerModule(item, materials) : buildStraightBody(item, materials);
+function buildModuleBody(item: LayoutItem, materials: Materials, hasOwnCountertop: boolean): THREE.Group {
+  if (item.spec.model) return buildModelModule(item, item.spec.model, materials, hasOwnCountertop);
+  return item.spec.isCorner ? buildCornerModule(item, materials) : buildStraightBody(item, materials, hasOwnCountertop);
+}
+
+function hasSharedCountertop(spec: ModuleSpec): boolean {
+  return spec.hasCountertop && !spec.hasSink && !spec.isCorner && spec.type !== 'standing';
 }
 
 function applyWallTransform(object: THREE.Object3D, wall: WallId, room: Kitchen['room']): void {
@@ -407,11 +402,55 @@ function buildRoom(kitchen: Kitchen, materials: Materials): THREE.Group {
   return room;
 }
 
+interface SlabSpan {
+  start: number;
+  end: number;
+  depth: number;
+  top: number;
+}
+
+function listSharedSlabSpans(kitchen: Kitchen, wall: WallId): SlabSpan[] {
+  const fromModules = layoutKitchen(kitchen)
+    .filter((item) => item.wall === wall && item.spec.row === 'lower' && hasSharedCountertop(item.spec))
+    .map((item): SlabSpan => ({ start: item.offset, end: item.offset + item.module.width, depth: item.spec.depth, top: item.spec.elevation + item.spec.height }));
+  const fromFillers = listFillers(kitchen)
+    .filter((filler) => filler.wall === wall && filler.row === 'lower' && filler.hasCountertop)
+    .map((filler): SlabSpan => ({ start: filler.offset, end: filler.offset + filler.width, depth: filler.depth, top: filler.elevation + filler.height }));
+  return [...fromModules, ...fromFillers];
+}
+
+function joinTouchingSlabs(spans: SlabSpan[]): SlabSpan[] {
+  return [...spans]
+    .sort((a, b) => a.start - b.start)
+    .reduce<SlabSpan[]>((joined, span) => {
+      const last = joined[joined.length - 1];
+      const touches = last && span.start - last.end < SLAB_JOIN_TOLERANCE_MM && span.depth === last.depth && span.top === last.top;
+      if (touches) last.end = Math.max(last.end, span.end);
+      else joined.push({ ...span });
+      return joined;
+    }, []);
+}
+
+function buildSharedCountertops(kitchen: Kitchen, materials: Materials): THREE.Group {
+  const group = new THREE.Group();
+  WALLS.forEach(({ id: wall }) => {
+    joinTouchingSlabs(listSharedSlabSpans(kitchen, wall)).forEach((span) => {
+      const length = span.end - span.start;
+      const slab = createBox([length, COUNTERTOP_THICKNESS_MM, span.depth + COUNTERTOP_OVERHANG_MM], [0, span.top, 0], materials.countertop, COUNTERTOP_EDGE_RADIUS_MM);
+      const holder = new THREE.Group().add(slab);
+      positionOnWall(holder, { wall, offset: span.start, width: length }, kitchen.room);
+      group.add(holder);
+    });
+  });
+  return group;
+}
+
 export function buildKitchenGroup(kitchen: Kitchen, selectedModuleId: string | null = null): THREE.Group {
   const materials = createMaterials(kitchen);
   const group = new THREE.Group();
   group.add(buildRoom(kitchen, materials));
   group.add(buildBacksplash(kitchen, materials));
+  group.add(buildSharedCountertops(kitchen, materials));
   const tinted: THREE.Material[] = [];
   const context = { materials, room: kitchen.room, tinted, selectedId: selectedModuleId };
   layoutKitchen(kitchen).forEach((item) => group.add(buildModule(item, context)));
@@ -427,7 +466,7 @@ export function buildModulePreviewGroup(spec: ModuleSpec, colors: { facadeColorI
   const materials = createMaterials({ ...DEFAULT_KITCHEN, ...colors });
   const module = { id: `preview-${spec.id}`, specId: spec.id, width: spec.defaultWidth, cornerSide: spec.isCorner ? ('start' as const) : undefined };
   const item: LayoutItem = { module, spec, wall: 'back', offset: 0 };
-  const group = new THREE.Group().add(buildModuleBody(item, materials));
+  const group = new THREE.Group().add(buildModuleBody(item, materials, true));
   group.userData.materials = materials;
   group.userData.tintedMaterials = [];
   return group;
