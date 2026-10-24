@@ -1044,6 +1044,21 @@ ul {
   color: var(--text);
 }
 
+.opening-add .catalog-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  text-align: left;
+  line-height: 1.2;
+}
+
+.opening-add-thumb {
+  flex: none;
+  width: 28px;
+  height: 28px;
+}
+
 .opening-add .catalog-button:disabled {
   background: var(--bg-control);
   color: var(--action-disabled-text);

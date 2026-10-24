@@ -24,18 +24,16 @@ import {
   type LayoutItem,
   type WallId,
 } from '../domain/kitchen';
-import type { Opening } from '../domain/openings';
+import { OPENING_SPECS, type Opening } from '../domain/openings';
 import { buildCatalogModel } from './modelBuilders';
 import { createApplianceMaterials } from './appliances/applianceMaterials';
 import { buildSinkCountertop } from './appliances/sink';
 import { createFurnitureMaterials } from './furniture/furnitureMaterials';
+import { buildOpeningContent } from './openingModels';
 import {
   COUNTERTOP_EDGE_RADIUS_MM,
   FACADE_GAP_MM,
   FACADE_THICKNESS_MM,
-  HANDLE_EDGE_OFFSET_MM,
-  HANDLE_LENGTH_MM,
-  HANDLE_SIZE_MM,
   MM,
   buildCarcass,
   buildFront,
@@ -45,20 +43,12 @@ import {
 import { createStoneTexture, createWoodGrainTexture, getSurfaceTexture, type SurfaceTexture } from './surfaceTextures';
 
 const PLINTH_RECESS_MM = 50;
-const OPENING_FRAME_MM = 50;
-const OPENING_FRAME_DEPTH_MM = 70;
 const WALL_THICKNESS_MM = 100;
 const SKIRTING_HEIGHT_MM = 90;
 const SKIRTING_THICKNESS_MM = 14;
 const SKIRTING_MIN_SEGMENT_MM = 20;
 const SKIRTING_BLOCK_HEIGHT_MM = 100;
 const WALL_CONTACT_TOLERANCE_MM = 5;
-const WINDOW_PANE_MM = 6;
-const WINDOW_SILL_PROTRUSION_MM = 120;
-const WINDOW_SILL_THICKNESS_MM = 30;
-const WINDOW_DOUBLE_SASH_MIN_MM = 1000;
-const DOOR_LEAF_THICKNESS_MM = 40;
-const DOOR_HANDLE_HEIGHT_MM = 1000;
 const SELECTION_TINT = '#3f7bff';
 const SELECTION_TINT_MIX = 0.3;
 const FACADE_CLEARCOAT = 0.35;
@@ -362,69 +352,8 @@ function buildWall(kitchen: Kitchen, wall: WallId, materials: Materials): THREE.
   return mesh;
 }
 
-function buildWindow(opening: Opening, materials: Materials): THREE.Group {
-  const { width, height, sill } = opening;
-  const group = new THREE.Group();
-  const frame = (size: [number, number, number], origin: [number, number, number]) =>
-    createBox(size, origin, materials.openingFrame);
-  const frameZ = -OPENING_FRAME_DEPTH_MM / 2;
-  group.add(
-    frame([width, OPENING_FRAME_MM, OPENING_FRAME_DEPTH_MM], [0, sill, frameZ]),
-    frame([width, OPENING_FRAME_MM, OPENING_FRAME_DEPTH_MM], [0, sill + height - OPENING_FRAME_MM, frameZ]),
-    frame([OPENING_FRAME_MM, height - 2 * OPENING_FRAME_MM, OPENING_FRAME_DEPTH_MM], [0, sill + OPENING_FRAME_MM, frameZ]),
-    frame(
-      [OPENING_FRAME_MM, height - 2 * OPENING_FRAME_MM, OPENING_FRAME_DEPTH_MM],
-      [width - OPENING_FRAME_MM, sill + OPENING_FRAME_MM, frameZ],
-    ),
-  );
-  if (width > WINDOW_DOUBLE_SASH_MIN_MM) {
-    group.add(
-      frame(
-        [OPENING_FRAME_MM, height - 2 * OPENING_FRAME_MM, OPENING_FRAME_DEPTH_MM],
-        [(width - OPENING_FRAME_MM) / 2, sill + OPENING_FRAME_MM, frameZ],
-      ),
-    );
-  }
-  const pane = createBox(
-    [width - 2 * OPENING_FRAME_MM, height - 2 * OPENING_FRAME_MM, WINDOW_PANE_MM],
-    [OPENING_FRAME_MM, sill + OPENING_FRAME_MM, -WINDOW_PANE_MM / 2],
-    materials.glass,
-  );
-  pane.castShadow = false;
-  const sillBoard = createBox(
-    [width + 2 * OPENING_FRAME_MM, WINDOW_SILL_THICKNESS_MM, WINDOW_SILL_PROTRUSION_MM],
-    [-OPENING_FRAME_MM, sill - WINDOW_SILL_THICKNESS_MM, 0],
-    materials.openingFrame,
-  );
-  group.add(pane, sillBoard);
-  return group;
-}
-
-function buildDoor(opening: Opening, materials: Materials): THREE.Group {
-  const { width, height } = opening;
-  const group = new THREE.Group();
-  const frame = (size: [number, number, number], origin: [number, number, number]) =>
-    createBox(size, origin, materials.openingFrame);
-  const frameZ = -OPENING_FRAME_DEPTH_MM / 2;
-  group.add(
-    frame([OPENING_FRAME_MM, height, OPENING_FRAME_DEPTH_MM], [0, 0, frameZ]),
-    frame([OPENING_FRAME_MM, height, OPENING_FRAME_DEPTH_MM], [width - OPENING_FRAME_MM, 0, frameZ]),
-    frame([width - 2 * OPENING_FRAME_MM, OPENING_FRAME_MM, OPENING_FRAME_DEPTH_MM], [OPENING_FRAME_MM, height - OPENING_FRAME_MM, frameZ]),
-  );
-  const leafWidth = width - 2 * OPENING_FRAME_MM;
-  group.add(
-    createBox([leafWidth, height - OPENING_FRAME_MM, DOOR_LEAF_THICKNESS_MM], [OPENING_FRAME_MM, 0, -DOOR_LEAF_THICKNESS_MM / 2], materials.doorLeaf),
-    createBox(
-      [HANDLE_SIZE_MM, HANDLE_LENGTH_MM, HANDLE_SIZE_MM],
-      [width - OPENING_FRAME_MM - HANDLE_EDGE_OFFSET_MM, DOOR_HANDLE_HEIGHT_MM, DOOR_LEAF_THICKNESS_MM / 2],
-      materials.handle,
-    ),
-  );
-  return group;
-}
-
 function buildWallOpening(opening: Opening, room: Kitchen['room'], materials: Materials): THREE.Group {
-  const content = opening.kind === 'window' ? buildWindow(opening, materials) : buildDoor(opening, materials);
+  const content = buildOpeningContent(opening, materials);
   const backdrop = new THREE.Mesh(
     new THREE.PlaneGeometry(opening.width * MM, opening.height * MM),
     materials.daylight,
@@ -465,7 +394,7 @@ function listBlockedSpans(kitchen: Kitchen, wall: WallId): WallSpan[] {
     .filter((filler) => filler.wall === wall && filler.row === 'lower')
     .map((filler): WallSpan => [filler.offset, filler.offset + filler.width]);
   const fromDoors = kitchen.openings
-    .filter((opening) => opening.wall === wall && opening.kind === 'door')
+    .filter((opening) => opening.wall === wall && OPENING_SPECS[opening.kind].family === 'door')
     .map((opening): WallSpan => [opening.offset, opening.offset + opening.width]);
   return mergeSpans([...fromModules, ...fromFillers, ...fromDoors]);
 }

@@ -1,4 +1,5 @@
 import { COUNTERTOP_THICKNESS_MM, countDoorLeaves, getModuleSpec } from '../domain/catalog';
+import { OPENING_SPECS } from '../domain/openings';
 import {
   layoutKitchen,
   listFillers,
@@ -233,7 +234,7 @@ export function buildElevationDrawing(kitchen: Kitchen, wall: WallId): Drawing {
     const [x] = toX(opening.offset, opening.offset + opening.width);
     rects.push({
       key: `opening-${opening.id}`,
-      kind: opening.kind,
+      kind: OPENING_SPECS[opening.kind].family,
       x,
       y: toY(opening.sill + opening.height),
       width: opening.width,
@@ -427,7 +428,7 @@ export function buildPlanDrawing(kitchen: Kitchen): Drawing {
         : opening.wall === 'left'
           ? { x: -thickness / 2, y: start, width: thickness, height: opening.width }
           : { x: room.length - thickness / 2, y: start, width: thickness, height: opening.width };
-    rects.push({ key: `opening-${opening.id}`, kind: opening.kind, ...rect });
+    rects.push({ key: `opening-${opening.id}`, kind: OPENING_SPECS[opening.kind].family, ...rect });
   });
   labels.push({ key: 'title', kind: 'title', x: 0, y: -FIRST_CHAIN_MM - 3 * CHAIN_STEP_MM, text: 'План, размеры в мм' });
   const drawing: Drawing = {

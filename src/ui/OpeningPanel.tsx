@@ -5,11 +5,6 @@ import { WallPicker } from './ModulePanels';
 import { OpeningThumbnail } from './OpeningThumbnail';
 import { Stepper } from './Stepper';
 
-const ADD_LABELS: Record<OpeningKind, string> = {
-  window: 'Добавить окно',
-  door: 'Добавить дверь',
-};
-
 function findWallTitle(wall: WallId): string {
   return WALLS.find((entry) => entry.id === wall)?.title ?? wall;
 }
@@ -36,7 +31,10 @@ export function OpeningPanel({ kitchen, wall, onWallChange, onAdd, onUpdate, onR
             disabled={!canAddOpening(kitchen, kind, wall)}
             onClick={() => onAdd(kind)}
           >
-            {ADD_LABELS[kind]}
+            <span className="opening-add-thumb">
+              <OpeningThumbnail kind={kind} />
+            </span>
+            {OPENING_SPECS[kind].title}
           </button>
         ))}
       </div>
@@ -63,7 +61,7 @@ export function OpeningPanel({ kitchen, wall, onWallChange, onAdd, onUpdate, onR
               <Stepper label="Отступ от угла" value={opening.offset} step={OPENING_STEP_MM} onChange={(offset) => onUpdate(opening.id, { offset })} />
               <Stepper label="Ширина" value={opening.width} step={OPENING_STEP_MM} onChange={(width) => onUpdate(opening.id, { width })} />
               <Stepper label="Высота" value={opening.height} step={OPENING_STEP_MM} onChange={(height) => onUpdate(opening.id, { height })} />
-              {opening.kind === 'window' && (
+              {OPENING_SPECS[opening.kind].sill.max > OPENING_SPECS[opening.kind].sill.min && (
                 <Stepper label="Подоконник" value={opening.sill} step={OPENING_STEP_MM} onChange={(sill) => onUpdate(opening.id, { sill })} />
               )}
             </div>
