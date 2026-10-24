@@ -72,6 +72,19 @@ describe('parseCatalog on the shipped catalog', () => {
     expect([...edges]).toEqual(['560x816']);
   });
 
+  it('leaves a 20 to 50 mm gap on each side of freestanding fridges and a smaller one for under-counter units', () => {
+    const gapOf = (id: string) => catalog.specs.find((spec) => spec.id === id)?.clearance;
+    ['appliance-fridge', 'appliance-fridge-large', 'appliance-fridge-tall', 'appliance-freezer'].forEach((id) => {
+      expect(gapOf(id)).toBeGreaterThanOrEqual(20);
+      expect(gapOf(id)).toBeLessThanOrEqual(50);
+    });
+    ['appliance-washer', 'appliance-dishwasher-free', 'appliance-wine-cooler', 'appliance-fridge-small'].forEach((id) => {
+      expect(gapOf(id)).toBeGreaterThan(0);
+      expect(gapOf(id)).toBeLessThan(20);
+    });
+    catalog.specs.forEach((spec) => expect(2 * spec.clearance).toBeLessThan(spec.minWidth));
+  });
+
   it('reads floors and wall finishes with a size and roughness', () => {
     expect(catalog.floors.map((f) => f.kind)).toContain('herringbone');
     expect(catalog.wallFinishes.map((w) => w.kind)).toEqual(expect.arrayContaining(['paint', 'stripes', 'brick']));

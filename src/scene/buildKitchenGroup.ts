@@ -257,8 +257,10 @@ function buildFiller(filler: Filler, materials: Materials, room: Kitchen['room']
 
 function buildModelModule(item: LayoutItem, modelName: string, materials: Materials): THREE.Group {
   const { spec, module } = item;
-  const frame = { width: module.width, height: spec.height, depth: spec.depth, elevation: spec.elevation };
-  const group = buildCatalogModel(modelName, frame, { materials, item });
+  const frame = { width: module.width - 2 * spec.clearance, height: spec.height, depth: spec.depth, elevation: spec.elevation };
+  const body = buildCatalogModel(modelName, frame, { materials, item });
+  body.position.x = spec.clearance * MM;
+  const group = new THREE.Group().add(body);
   if (spec.hasCountertop) group.add(buildCountertop(item, materials));
   return group;
 }

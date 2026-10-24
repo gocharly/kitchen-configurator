@@ -28,6 +28,7 @@ export interface ModuleSpec {
   hasSink: boolean;
   hasCountertop: boolean;
   isCorner: boolean;
+  clearance: number;
   model?: string;
   sku: (width: number) => string;
   priceFor: (width: number) => number;
@@ -352,6 +353,7 @@ function readFamily(value: unknown, index: number, categoryIds: Set<string>): Mo
     hasSink: asFlag(family.sink, at('sink')),
     hasCountertop: asFlag(family.countertop, at('countertop')),
     isCorner,
+    clearance: family.clearance === undefined ? 0 : asNumber(family.clearance, at('clearance'), 0),
     model: family.model === undefined ? undefined : asText(family.model, at('model')),
     sku: (width) => skuTemplate.replaceAll('{width}', String(width)),
     priceFor: readPriceFunction(family.price, 'width', at('price'), [minWidth, maxWidth]),

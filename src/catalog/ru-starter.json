@@ -1579,11 +1579,11 @@
       "title": "Плита",
       "row": "lower",
       "widths": {
-        "min": 500,
-        "max": 900,
+        "min": 520,
+        "max": 920,
         "step": 100
       },
-      "defaultWidth": 600,
+      "defaultWidth": 620,
       "height": 754,
       "depths": [
         560
@@ -1601,7 +1601,8 @@
       "countertop": false,
       "sku": "STOVE-{width}",
       "price": "width * 40",
-      "model": "kitchenStove"
+      "model": "kitchenStove",
+      "clearance": 10
     },
     {
       "id": "appliance-fridge",
@@ -1610,11 +1611,11 @@
       "title": "Холодильник",
       "row": "lower",
       "widths": {
-        "min": 600,
-        "max": 600,
+        "min": 650,
+        "max": 650,
         "step": 50
       },
-      "defaultWidth": 600,
+      "defaultWidth": 650,
       "height": 1850,
       "depths": [
         650
@@ -1636,7 +1637,8 @@
       "countertop": false,
       "sku": "FRIDGE-{width}",
       "price": "width * 80",
-      "model": "kitchenFridge"
+      "model": "kitchenFridge",
+      "clearance": 25
     },
     {
       "id": "appliance-hood",
@@ -1676,11 +1678,11 @@
       "title": "Холодильник двустворчатый",
       "row": "lower",
       "widths": {
-        "min": 900,
-        "max": 900,
+        "min": 950,
+        "max": 950,
         "step": 50
       },
-      "defaultWidth": 900,
+      "defaultWidth": 950,
       "height": 1850,
       "depths": [
         700
@@ -1698,7 +1700,8 @@
       "countertop": false,
       "sku": "FRIDGE-2D-{width}",
       "price": "width * 90",
-      "model": "kitchenFridgeLarge"
+      "model": "kitchenFridgeLarge",
+      "clearance": 25
     },
     {
       "id": "appliance-fridge-builtin",
@@ -1742,11 +1745,11 @@
       "title": "Холодильник под столешницу",
       "row": "lower",
       "widths": {
-        "min": 600,
-        "max": 600,
+        "min": 620,
+        "max": 620,
         "step": 50
       },
-      "defaultWidth": 600,
+      "defaultWidth": 620,
       "height": 816,
       "depths": [
         560
@@ -1764,7 +1767,8 @@
       "countertop": true,
       "sku": "FRIDGE-UC-{width}",
       "price": "width * 45",
-      "model": "kitchenFridgeSmall"
+      "model": "kitchenFridgeSmall",
+      "clearance": 10
     },
     {
       "id": "appliance-stove-electric",
@@ -1773,11 +1777,11 @@
       "title": "Плита электрическая",
       "row": "lower",
       "widths": {
-        "min": 500,
-        "max": 900,
+        "min": 520,
+        "max": 920,
         "step": 100
       },
-      "defaultWidth": 600,
+      "defaultWidth": 620,
       "height": 754,
       "depths": [
         560
@@ -1795,7 +1799,8 @@
       "countertop": false,
       "sku": "STOVE-EL-{width}",
       "price": "width * 40",
-      "model": "kitchenStoveElectric"
+      "model": "kitchenStoveElectric",
+      "clearance": 10
     },
     {
       "id": "appliance-hood-modern",
@@ -1835,11 +1840,11 @@
       "title": "Стиральная машина",
       "row": "lower",
       "widths": {
-        "min": 600,
-        "max": 600,
+        "min": 620,
+        "max": 620,
         "step": 50
       },
-      "defaultWidth": 600,
+      "defaultWidth": 620,
       "height": 816,
       "depths": [
         560
@@ -1857,7 +1862,8 @@
       "countertop": true,
       "sku": "WASHER-{width}",
       "price": "width * 50",
-      "model": "washer"
+      "model": "washer",
+      "clearance": 10
     },
     {
       "id": "island-drawers",
@@ -2820,11 +2826,11 @@
       "title": "Посудомойка отдельная",
       "row": "lower",
       "widths": {
-        "min": 600,
-        "max": 600,
+        "min": 620,
+        "max": 620,
         "step": 50
       },
-      "defaultWidth": 600,
+      "defaultWidth": 620,
       "height": 816,
       "depths": [
         560
@@ -2842,7 +2848,8 @@
       "countertop": true,
       "sku": "DISHWASHER-{width}",
       "price": "width * 55",
-      "model": "dishwasherFree"
+      "model": "dishwasherFree",
+      "clearance": 10
     },
     {
       "id": "appliance-wine-cooler",
@@ -2851,11 +2858,11 @@
       "title": "Винный шкаф под столешницу",
       "row": "lower",
       "widths": {
-        "min": 600,
-        "max": 600,
+        "min": 620,
+        "max": 620,
         "step": 50
       },
-      "defaultWidth": 600,
+      "defaultWidth": 620,
       "height": 816,
       "depths": [
         560
@@ -2873,7 +2880,8 @@
       "countertop": true,
       "sku": "WINE-COOLER-{width}",
       "price": "width * 60",
-      "model": "wineCooler"
+      "model": "wineCooler",
+      "clearance": 10
     },
     {
       "id": "appliance-hob-induction",
@@ -2960,11 +2968,11 @@
       "title": "Холодильник однодверный",
       "row": "lower",
       "widths": {
-        "min": 600,
-        "max": 600,
+        "min": 650,
+        "max": 650,
         "step": 50
       },
-      "defaultWidth": 600,
+      "defaultWidth": 650,
       "height": 1850,
       "depths": [
         650
@@ -2982,7 +2990,8 @@
       "countertop": false,
       "sku": "FRIDGE-TALL-{width}",
       "price": "width * 50",
-      "model": "kitchenFridgeTall"
+      "model": "kitchenFridgeTall",
+      "clearance": 25
     },
     {
       "id": "appliance-freezer",
@@ -2991,11 +3000,11 @@
       "title": "Морозильная камера",
       "row": "lower",
       "widths": {
-        "min": 600,
-        "max": 600,
+        "min": 650,
+        "max": 650,
         "step": 50
       },
-      "defaultWidth": 600,
+      "defaultWidth": 650,
       "height": 1850,
       "depths": [
         650
@@ -3013,7 +3022,8 @@
       "countertop": false,
       "sku": "FREEZER-{width}",
       "price": "width * 45",
-      "model": "kitchenFridgeTall"
+      "model": "kitchenFridgeTall",
+      "clearance": 25
     },
     {
       "id": "appliance-hood-slanted",
