@@ -95,3 +95,42 @@ export function renderModulePreview(spec: ModuleSpec, colors: { facadeColorId: s
   previews.set(key, url);
   return url;
 }
+
+interface PreviewJob {
+  render: () => string;
+  resolve: (url: string) => void;
+}
+
+const queuedJobs: PreviewJob[] = [];
+let isDrainScheduled = false;
+
+function drainOnePreview(): void {
+  isDrainScheduled = false;
+  const job = queuedJobs.shift();
+  if (!job) return;
+  job.resolve(job.render());
+  if (queuedJobs.length > 0) scheduleDrain();
+}
+
+function scheduleDrain(): void {
+  if (isDrainScheduled) return;
+  isDrainScheduled = true;
+  window.requestAnimationFrame(drainOnePreview);
+}
+
+function buildPreviewKey(spec: ModuleSpec, colors: { facadeColorId: string; bodyColorId: string }): string {
+  return `${spec.id}|${colors.facadeColorId}|${colors.bodyColorId}`;
+}
+
+export function peekModulePreview(spec: ModuleSpec, colors: { facadeColorId: string; bodyColorId: string }): string | null {
+  return previews.get(buildPreviewKey(spec, colors)) ?? null;
+}
+
+export function requestModulePreview(spec: ModuleSpec, colors: { facadeColorId: string; bodyColorId: string }): Promise<string> {
+  const cached = peekModulePreview(spec, colors);
+  if (cached) return Promise.resolve(cached);
+  return new Promise((resolve) => {
+    queuedJobs.push({ render: () => renderModulePreview(spec, colors), resolve });
+    scheduleDrain();
+  });
+}

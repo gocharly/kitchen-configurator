@@ -7,6 +7,7 @@ import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { layoutKitchen, listSpaceTaken, locateModuleCenter, type Kitchen, type WallId } from '../domain/kitchen';
+import { LAST_QUALITY_LEVEL, QUALITY_LEVELS, createFrameCostMonitor, pickStartQualityLevel, rememberQualityLevel, type FrameCostMonitor } from './renderQuality';
 import { applyNightAmount, buildKitchenGroup, disposeKitchenGroup } from './buildKitchenGroup';
 import {
   PANEL_ANIMATION_MS,
@@ -29,17 +30,12 @@ const LIGHTING = {
   evening: { background: '#1d2128', environment: 0.1, sun: 0.22, sunColor: '#9db1ff', fill: 0.1 },
 } as const;
 const SHADOW_SOFTNESS = 6;
-const MULTISAMPLE_COUNT = 4;
+const MULTISAMPLE_COUNT = 2;
 const OCCLUSION_RADIUS_M = 0.45;
 const OCCLUSION_SCALE = 1.4;
-const OCCLUSION_QUALITY = {
-  full: { samples: 24, denoiseRadius: 10, denoiseRings: 3, denoiseSamples: 24, maxPixelRatio: 2 },
-  touch: { samples: 16, denoiseRadius: 8, denoiseRings: 2, denoiseSamples: 16, maxPixelRatio: 1.5 },
-};
-
-function pickRenderQuality(): typeof OCCLUSION_QUALITY.full {
-  return window.matchMedia('(pointer: coarse)').matches ? OCCLUSION_QUALITY.touch : OCCLUSION_QUALITY.full;
-}
+const DENOISE_RADIUS_PX = 8;
+const DENOISE_RINGS = 2;
+const DENOISE_SAMPLES = 16;
 const TOP_VIEW_HEIGHT_FACTOR = 1.15;
 const TOP_VIEW_TILT_M = 0.05;
 const MIN_ANCHOR_TOP_PX = 64;
@@ -50,6 +46,12 @@ const FIT_MARGIN = 1.25;
 const VIEW_INSET_ANIMATION_MS = 280;
 
 interface ViewportRig {
+  container: HTMLElement;
+  occlusion: GTAOPass;
+  state: { occlusionScale: number };
+  monitor: FrameCostMonitor;
+  qualityLevel: number;
+  areShadowsStale: boolean;
   renderer: THREE.WebGLRenderer;
   scene: THREE.Scene;
   camera: THREE.PerspectiveCamera;
@@ -82,23 +84,24 @@ export interface ViewportHandle {
   zoomBy: (factor: number) => void;
 }
 
-function createComposer(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera): EffectComposer {
+function createComposer(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera, readOcclusionScale: () => number): { composer: EffectComposer; occlusion: GTAOPass } {
   const target = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: MULTISAMPLE_COUNT });
   const composer = new EffectComposer(renderer, target);
   const occlusion = new GTAOPass(scene, camera, 1, 1);
-  const quality = pickRenderQuality();
-  occlusion.updateGtaoMaterial({ radius: OCCLUSION_RADIUS_M, scale: OCCLUSION_SCALE, samples: quality.samples });
-  occlusion.updatePdMaterial({ radius: quality.denoiseRadius, rings: quality.denoiseRings, samples: quality.denoiseSamples });
+  const resizeFull = occlusion.setSize.bind(occlusion);
+  occlusion.setSize = (width: number, height: number) => resizeFull(Math.max(1, Math.round(width * readOcclusionScale())), Math.max(1, Math.round(height * readOcclusionScale())));
+  occlusion.updateGtaoMaterial({ radius: OCCLUSION_RADIUS_M, scale: OCCLUSION_SCALE });
+  occlusion.updatePdMaterial({ radius: DENOISE_RADIUS_PX, rings: DENOISE_RINGS, samples: DENOISE_SAMPLES });
   composer.addPass(new RenderPass(scene, camera));
   composer.addPass(occlusion);
   composer.addPass(new OutputPass());
-  return composer;
+  return { composer, occlusion };
 }
 
 function createRig(container: HTMLElement): ViewportRig {
   const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, pickRenderQuality().maxPixelRatio));
   renderer.shadowMap.enabled = true;
+  renderer.shadowMap.autoUpdate = false;
   renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.toneMapping = THREE.NeutralToneMapping;
   container.appendChild(renderer.domElement);
@@ -124,12 +127,20 @@ function createRig(container: HTMLElement): ViewportRig {
   controls.minDistance = 1;
   controls.maxDistance = 14;
 
-  const composer = createComposer(renderer, scene, camera);
-  const rig: ViewportRig = { renderer, scene, camera, controls, composer, light, fill, render: () => undefined, onRendered: null, cameraFrame: 0, insetFrame: 0, inset: { left: 0, bottom: 0 }, insetTarget: { left: 0, bottom: 0 }, hasUserMovedCamera: false, nightAmount: 0, nightFrame: 0, kitchenGroup: null };
+  const state = { occlusionScale: QUALITY_LEVELS[0].occlusionScale };
+  const { composer, occlusion } = createComposer(renderer, scene, camera, () => state.occlusionScale);
+  const rig: ViewportRig = { container, renderer, scene, camera, controls, composer, occlusion, state, light, fill, monitor: createFrameCostMonitor(() => degradeQuality(rig)), qualityLevel: 0, areShadowsStale: true, render: () => undefined, onRendered: null, cameraFrame: 0, insetFrame: 0, inset: { left: 0, bottom: 0 }, insetTarget: { left: 0, bottom: 0 }, hasUserMovedCamera: false, nightAmount: 0, nightFrame: 0, kitchenGroup: null };
   rig.render = () => {
+    if (rig.areShadowsStale) {
+      renderer.shadowMap.needsUpdate = true;
+      rig.areShadowsStale = false;
+    }
+    const startedAt = performance.now();
     composer.render();
     rig.onRendered?.();
+    window.requestAnimationFrame(() => rig.monitor.record(performance.now() - startedAt));
   };
+  applyQualityLevel(rig, pickStartQualityLevel());
   controls.addEventListener('change', rig.render);
   controls.addEventListener('start', () => {
     window.cancelAnimationFrame(rig.cameraFrame);
@@ -296,6 +307,28 @@ function slideViewInset(rig: ViewportRig, target: ViewInset): void {
     if (eased < 1) rig.insetFrame = window.requestAnimationFrame(step);
   };
   rig.insetFrame = window.requestAnimationFrame(step);
+}
+
+function applyQualityLevel(rig: ViewportRig, index: number): void {
+  const level = QUALITY_LEVELS[index];
+  rig.qualityLevel = index;
+  const ratio = Math.min(window.devicePixelRatio, level.pixelRatio);
+  rig.renderer.setPixelRatio(ratio);
+  rig.composer.setPixelRatio(ratio);
+  rig.state.occlusionScale = level.occlusionScale;
+  rig.occlusion.enabled = level.hasOcclusion;
+  rig.occlusion.updateGtaoMaterial({ samples: level.occlusionSamples });
+  rig.light.shadow.mapSize.set(level.shadowMapSize, level.shadowMapSize);
+  rig.light.shadow.map?.dispose();
+  rig.light.shadow.map = null;
+  rig.areShadowsStale = true;
+  resizeRig(rig, rig.container);
+}
+
+function degradeQuality(rig: ViewportRig): void {
+  if (rig.qualityLevel >= LAST_QUALITY_LEVEL) return;
+  applyQualityLevel(rig, rig.qualityLevel + 1);
+  rememberQualityLevel(rig.qualityLevel);
 }
 
 function resizeRig(rig: ViewportRig, container: HTMLElement): void {
@@ -470,6 +503,7 @@ export const KitchenViewport = forwardRef<ViewportHandle, KitchenViewportProps>(
       const step = (now: number) => {
         const elapsed = Math.min(1, (now - startTime) / PANEL_ANIMATION_MS);
         applyPanelProgress(wrapper, startProgress + (target - startProgress) * easeInOut(elapsed));
+        rig.areShadowsStale = true;
         rig.render();
         if (elapsed < 1) animationFrames.set(wrapper, window.requestAnimationFrame(step));
         else animationFrames.delete(wrapper);
@@ -595,6 +629,7 @@ export const KitchenViewport = forwardRef<ViewportHandle, KitchenViewportProps>(
     restoreOpenPanels(rig.kitchenGroup, openKeysRef.current);
     rig.scene.add(rig.kitchenGroup);
     frameLight(rig, kitchen.room);
+    rig.areShadowsStale = true;
     const span = measureRoomSpan(kitchen.room);
     if (fittedSpanRef.current === 0) fitCameraToKitchen(rig, kitchen);
     else if (span !== fittedSpanRef.current) refocusCameraOnRoom(rig, kitchen.room, fittedSpanRef.current);

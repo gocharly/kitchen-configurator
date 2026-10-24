@@ -53,6 +53,7 @@ import { createStoneTexture, createWoodGrainTexture, getSurfaceTexture } from '.
 const PLINTH_RECESS_MM = 50;
 const SLAB_JOIN_TOLERANCE_MM = 1;
 const LIT_CABINET_MIN_ELEVATION_MM = 1000;
+const LIGHT_RUN_GAP_MM = 30;
 const LIGHT_STRIP_HEIGHT_MM = 12;
 const LIGHT_STRIP_DEPTH_MM = 22;
 const LIGHT_STRIP_INSET_MM = 30;
@@ -469,24 +470,45 @@ function isLitCabinet(item: LayoutItem): boolean {
   return item.spec.row === 'upper' && item.spec.type !== 'standing' && item.spec.elevation >= LIT_CABINET_MIN_ELEVATION_MM && item.spec.role !== 'hood';
 }
 
-function createCabinetLight(item: LayoutItem): THREE.RectAreaLight {
-  const width = item.module.width - 2 * LIGHT_STRIP_INSET_MM;
-  const light = new THREE.RectAreaLight(LED_LIGHT_COLOR, LED_LIGHT_INTENSITY, width * MM, LIGHT_STRIP_DEPTH_MM * MM);
-  light.position.set((item.module.width / 2) * MM, (item.spec.elevation - LIGHT_STRIP_HEIGHT_MM) * MM, (item.spec.depth - LIGHT_STRIP_FRONT_GAP_MM - LIGHT_STRIP_DEPTH_MM / 2) * MM);
+function groupLitRuns(items: LayoutItem[]): LayoutItem[][] {
+  const runs: LayoutItem[][] = [];
+  [...items].sort((a, b) => a.wall.localeCompare(b.wall) || a.offset - b.offset).forEach((item) => {
+    const run = runs[runs.length - 1];
+    const last = run?.[run.length - 1];
+    const isContinuation = last && last.wall === item.wall && item.offset - (last.offset + last.module.width) <= LIGHT_RUN_GAP_MM;
+    if (isContinuation) run.push(item);
+    else runs.push([item]);
+  });
+  return runs;
+}
+
+function createRunLight(run: LayoutItem[]): THREE.RectAreaLight {
+  const first = run[0];
+  const last = run[run.length - 1];
+  const length = last.offset + last.module.width - first.offset;
+  const light = new THREE.RectAreaLight(LED_LIGHT_COLOR, LED_LIGHT_INTENSITY, (length - 2 * LIGHT_STRIP_INSET_MM) * MM, LIGHT_STRIP_DEPTH_MM * MM);
+  light.position.set((length / 2) * MM, (first.spec.elevation - LIGHT_STRIP_HEIGHT_MM) * MM, (first.spec.depth - LIGHT_STRIP_FRONT_GAP_MM - LIGHT_STRIP_DEPTH_MM / 2) * MM);
   light.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, -1), LED_LIGHT_DIRECTION);
   return light;
 }
 
 function buildCabinetLights(kitchen: Kitchen, materials: Materials, rig: NightRig): THREE.Group {
   const group = new THREE.Group();
-  layoutKitchen(kitchen).filter(isLitCabinet).forEach((item) => {
+  const lit = layoutKitchen(kitchen).filter(isLitCabinet);
+  lit.forEach((item) => {
     const strip = createBox([item.module.width - 2 * LIGHT_STRIP_INSET_MM, LIGHT_STRIP_HEIGHT_MM, LIGHT_STRIP_DEPTH_MM], [LIGHT_STRIP_INSET_MM, item.spec.elevation - LIGHT_STRIP_HEIGHT_MM, item.spec.depth - LIGHT_STRIP_DEPTH_MM - LIGHT_STRIP_FRONT_GAP_MM], materials.ledStrip);
     strip.castShadow = false;
     strip.receiveShadow = false;
-    const light = createCabinetLight(item);
-    rig.lights.push({ light, fullIntensity: LED_LIGHT_INTENSITY });
-    const holder = new THREE.Group().add(strip, light);
+    const holder = new THREE.Group().add(strip);
     positionOnWall(holder, { wall: item.wall, offset: item.offset, width: item.module.width }, kitchen.room);
+    group.add(holder);
+  });
+  groupLitRuns(lit).forEach((run) => {
+    const light = createRunLight(run);
+    rig.lights.push({ light, fullIntensity: LED_LIGHT_INTENSITY });
+    const length = run[run.length - 1].offset + run[run.length - 1].module.width - run[0].offset;
+    const holder = new THREE.Group().add(light);
+    positionOnWall(holder, { wall: run[0].wall, offset: run[0].offset, width: length }, kitchen.room);
     group.add(holder);
   });
   return group;
