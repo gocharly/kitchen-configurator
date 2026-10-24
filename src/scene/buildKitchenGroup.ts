@@ -4,13 +4,15 @@ import {
   COUNTERTOP_OVERHANG_MM,
   COUNTERTOP_THICKNESS_MM,
   FACADE_COLORS,
+  BACKSPLASHES,
+  FACADE_STYLES,
   FLOORS,
+  HANDLES,
   PLINTH_HEIGHT_MM,
   getModuleSpec,
   WALL_FINISHES,
   type ColorOption,
   type ModuleSpec,
-  type SurfaceOption,
 } from '../domain/catalog';
 import type { Filler } from '../domain/fillers';
 import type { FreeModule } from '../domain/freeModules';
@@ -30,6 +32,9 @@ import { createApplianceMaterials } from './appliances/applianceMaterials';
 import { buildSinkCountertop } from './appliances/sink';
 import { createFurnitureMaterials } from './furniture/furnitureMaterials';
 import { buildOpeningContent } from './openingModels';
+import { createSurfaceMaterial, findSurface, projectUvToMeters } from './surfaceMaterials';
+import { buildBacksplash } from './backsplash';
+import { mergeSpans, positionOnWall, type WallSpan } from './wallPlacement';
 import {
   COUNTERTOP_EDGE_RADIUS_MM,
   FACADE_GAP_MM,
@@ -38,9 +43,10 @@ import {
   buildCarcass,
   buildFront,
   createBox,
+  type FinishStyle,
   type Materials,
 } from './cabinetFronts';
-import { createStoneTexture, createWoodGrainTexture, getSurfaceTexture, type SurfaceTexture } from './surfaceTextures';
+import { createStoneTexture, createWoodGrainTexture, getSurfaceTexture } from './surfaceTextures';
 
 const PLINTH_RECESS_MM = 50;
 const WALL_THICKNESS_MM = 100;
@@ -67,35 +73,18 @@ function getStoneTexture(): THREE.CanvasTexture {
   return stoneTexture;
 }
 
-function findSurface(options: SurfaceOption[], id: string): SurfaceOption {
-  const option = options.find((entry) => entry.id === id);
-  if (!option) throw new Error(`Surface ${id} is missing in the catalog`);
-  return option;
-}
-
-function createSurfaceMaterial(option: SurfaceOption): THREE.MeshStandardMaterial {
-  return new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: option.roughness, map: getSurfaceTexture(option).texture });
-}
-
-function projectUvToMeters(
-  geometry: THREE.BufferGeometry,
-  surface: SurfaceTexture,
-  toMeters: (u: number, v: number) => [number, number],
-): void {
-  const uv = geometry.getAttribute('uv');
-  const cos = Math.cos(surface.rotation);
-  const sin = Math.sin(surface.rotation);
-  for (let index = 0; index < uv.count; index += 1) {
-    const [x, y] = toMeters(uv.getX(index), uv.getY(index));
-    uv.setXY(index, (x * cos - y * sin) / surface.metersX, (x * sin + y * cos) / surface.metersY);
-  }
-  uv.needsUpdate = true;
-}
-
 function findColor(options: ColorOption[], id: string): ColorOption {
   const option = options.find((o) => o.id === id);
   if (!option) throw new Error(`Color ${id} is missing in the catalog`);
   return option;
+}
+
+function findFinishStyle(kitchen: Kitchen): FinishStyle {
+  const handle = HANDLES.find((option) => option.id === kitchen.handleId);
+  const facadeStyle = FACADE_STYLES.find((option) => option.id === kitchen.facadeStyleId);
+  if (!handle) throw new Error(`Handle ${kitchen.handleId} is missing in the catalog`);
+  if (!facadeStyle) throw new Error(`Facade style ${kitchen.facadeStyleId} is missing in the catalog`);
+  return { handle, facadeStyle };
 }
 
 function createMaterials(kitchen: Kitchen): Materials {
@@ -114,6 +103,7 @@ function createMaterials(kitchen: Kitchen): Materials {
     clearcoatRoughness: FACADE_CLEARCOAT_ROUGHNESS,
   });
   return {
+    finish: findFinishStyle(kitchen),
     facade,
     body: standard(findColor(BODY_COLORS, kitchen.bodyColorId).hex, 0.7),
     handle: standard('#a3a9af', 0.22, 0.9),
@@ -121,6 +111,7 @@ function createMaterials(kitchen: Kitchen): Materials {
     glass,
     countertop: Object.assign(standard('#d8d4cb', 0.32), { map: getStoneTexture() }),
     wall: createSurfaceMaterial(findSurface(WALL_FINISHES, kitchen.wallFinishId)),
+    backsplash: createSurfaceMaterial(findSurface(BACKSPLASHES, kitchen.backsplashId)),
     floor: createSurfaceMaterial(findSurface(FLOORS, kitchen.floorId)),
     openingFrame: standard('#f4f3ef', 0.5),
     doorLeaf: standard('#9d8467', 0.6),
@@ -197,22 +188,6 @@ function buildCornerModule(item: LayoutItem, materials: Materials): THREE.Group 
     return mirrored;
   }
   return group;
-}
-
-function positionOnWall(
-  holder: THREE.Group,
-  span: { wall: WallId; offset: number; width: number },
-  room: Kitchen['room'],
-): void {
-  if (span.wall === 'back') holder.position.set(span.offset * MM, 0, 0);
-  if (span.wall === 'left') {
-    holder.rotation.y = Math.PI / 2;
-    holder.position.set(0, 0, (span.offset + span.width) * MM);
-  }
-  if (span.wall === 'right') {
-    holder.rotation.y = -Math.PI / 2;
-    holder.position.set(room.length * MM, 0, span.offset * MM);
-  }
 }
 
 function placeOnWall(moduleGroup: THREE.Group, item: LayoutItem, room: Kitchen['room']): THREE.Group {
@@ -370,19 +345,6 @@ function buildWallOpening(opening: Opening, room: Kitchen['room'], materials: Ma
   return placed;
 }
 
-type WallSpan = [number, number];
-
-function mergeSpans(spans: WallSpan[]): WallSpan[] {
-  return [...spans]
-    .sort((a, b) => a[0] - b[0])
-    .reduce<WallSpan[]>((merged, span) => {
-      const last = merged[merged.length - 1];
-      if (last && span[0] <= last[1]) last[1] = Math.max(last[1], span[1]);
-      else merged.push([span[0], span[1]]);
-      return merged;
-    }, []);
-}
-
 function listBlockedSpans(kitchen: Kitchen, wall: WallId): WallSpan[] {
   const { room } = kitchen;
   const fromModules = listSpaceTaken(kitchen)
@@ -449,6 +411,7 @@ export function buildKitchenGroup(kitchen: Kitchen, selectedModuleId: string | n
   const materials = createMaterials(kitchen);
   const group = new THREE.Group();
   group.add(buildRoom(kitchen, materials));
+  group.add(buildBacksplash(kitchen, materials));
   const tinted: THREE.Material[] = [];
   const context = { materials, room: kitchen.room, tinted, selectedId: selectedModuleId };
   layoutKitchen(kitchen).forEach((item) => group.add(buildModule(item, context)));

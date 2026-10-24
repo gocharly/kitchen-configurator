@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
-import { countDoorLeaves, type FrontBand } from '../domain/catalog';
+import { countDoorLeaves, type FacadeStyleOption, type FrontBand, type HandleOption } from '../domain/catalog';
 import type { LayoutItem } from '../domain/kitchen';
 import type { ApplianceMaterials } from './appliances/applianceMaterials';
 import { measureSinkHole } from './appliances/sinkHole';
@@ -20,6 +20,14 @@ const HANDLE_POST_MM = 7;
 const HANDLE_STANDOFF_MM = 22;
 const HANDLE_POST_INSET_MM = 14;
 const TALL_HANDLE_HEIGHT_MM = 1000;
+const KNOB_RADIUS_MM = 14;
+const KNOB_HEIGHT_MM = 24;
+const KNOB_EDGE_OFFSET_MM = 60;
+const PROFILE_HEIGHT_MM = 26;
+const PROFILE_PROTRUDE_MM = 8;
+const FRAME_RAIL_MM = 55;
+const FRAME_RECESS_MM = 6;
+const FRAMED_MIN_SIDE_MM = 220;
 const GLASS_FRAME_MM = 22;
 const GLASS_THICKNESS_MM = 4;
 const FACADE_EDGE_RADIUS_MM = 2;
@@ -41,7 +49,13 @@ const UV_HASH_Y = 78.233;
 const UV_HASH_Z = 37.719;
 const UV_HASH_SCALE = 43758.5453;
 
+export interface FinishStyle {
+  handle: HandleOption;
+  facadeStyle: FacadeStyleOption;
+}
+
 export interface Materials extends ApplianceMaterials, FurnitureMaterials {
+  finish: FinishStyle;
   facade: THREE.MeshStandardMaterial;
   body: THREE.MeshStandardMaterial;
   handle: THREE.MeshStandardMaterial;
@@ -49,6 +63,7 @@ export interface Materials extends ApplianceMaterials, FurnitureMaterials {
   glass: THREE.MeshStandardMaterial;
   countertop: THREE.MeshStandardMaterial;
   wall: THREE.MeshStandardMaterial;
+  backsplash: THREE.MeshStandardMaterial;
   floor: THREE.MeshStandardMaterial;
   openingFrame: THREE.MeshStandardMaterial;
   doorLeaf: THREE.MeshStandardMaterial;
@@ -133,25 +148,87 @@ function pickVerticalHandleY(item: LayoutItem, lowestY: number, highestY: number
   return highestY;
 }
 
+function createKnob(center: [number, number], frontZ: number, material: THREE.Material): THREE.Mesh {
+  const knob = new THREE.Mesh(new THREE.CylinderGeometry(KNOB_RADIUS_MM * MM, KNOB_RADIUS_MM * MM, KNOB_HEIGHT_MM * MM, 20), material);
+  knob.rotation.x = Math.PI / 2;
+  knob.position.set(center[0] * MM, center[1] * MM, (frontZ + KNOB_HEIGHT_MM / 2) * MM);
+  knob.castShadow = true;
+  return knob;
+}
+
+function createProfileBar(rect: Rect, edge: 'top' | 'bottom' | 'side', isOnRightEdge: boolean, context: FrontContext): THREE.Mesh {
+  const material = context.materials.handle;
+  const z = context.frontZ;
+  if (edge === 'side') {
+    const x = isOnRightEdge ? rect.x + rect.width - PROFILE_HEIGHT_MM : rect.x;
+    return createBox([PROFILE_HEIGHT_MM, rect.height, PROFILE_PROTRUDE_MM], [x, rect.y, z], material);
+  }
+  const y = edge === 'top' ? rect.y + rect.height - PROFILE_HEIGHT_MM : rect.y;
+  return createBox([rect.width, PROFILE_HEIGHT_MM, PROFILE_PROTRUDE_MM], [rect.x, y, z], material);
+}
+
+function clampBarLength(handle: HandleOption, available: number): number {
+  return Math.max(Math.min(handle.lengthMm, available), HANDLE_POST_INSET_MM * 2 + 10);
+}
+
+function pickProfileEdge(item: LayoutItem): 'top' | 'bottom' | 'side' {
+  if (item.spec.row === 'upper') return 'bottom';
+  return item.spec.height > TALL_HANDLE_HEIGHT_MM ? 'side' : 'top';
+}
+
+function pickKnobY(item: LayoutItem, rect: Rect, lowestY: number): number {
+  if (item.spec.row === 'upper') return lowestY + KNOB_EDGE_OFFSET_MM;
+  const topY = rect.y + rect.height - KNOB_EDGE_OFFSET_MM;
+  return item.spec.height > TALL_HANDLE_HEIGHT_MM ? Math.min(topY, Math.max(lowestY, TALL_HANDLE_HEIGHT_MM)) : topY;
+}
+
 function placeVerticalHandle(rect: Rect, isOnRightEdge: boolean, context: FrontContext): THREE.Group {
   const { item, materials, frontZ } = context;
+  const { handle } = materials.finish;
+  const group = new THREE.Group();
+  if (handle.kind === 'none') return group;
+  if (handle.kind === 'profile') return group.add(createProfileBar(rect, pickProfileEdge(item), isOnRightEdge, context));
   const x = isOnRightEdge ? rect.x + rect.width - HANDLE_EDGE_OFFSET_MM - HANDLE_SIZE_MM : rect.x + HANDLE_EDGE_OFFSET_MM;
   const lowestY = rect.y + HANDLE_ROW_OFFSET_MM;
-  const highestY = rect.y + rect.height - HANDLE_ROW_OFFSET_MM - HANDLE_LENGTH_MM;
+  if (handle.kind === 'knob') {
+    return group.add(createKnob([x, pickKnobY(item, rect, lowestY)], frontZ, materials.handle));
+  }
+  const length = clampBarLength(handle, rect.height - 2 * HANDLE_ROW_OFFSET_MM);
+  const highestY = rect.y + rect.height - HANDLE_ROW_OFFSET_MM - length;
   const preferredY = pickVerticalHandleY(item, lowestY, highestY);
   const y = Math.min(Math.max(preferredY, lowestY), Math.max(lowestY, highestY));
-  return createBarHandle([x, y, frontZ], HANDLE_LENGTH_MM, true, materials.handle);
+  return group.add(createBarHandle([x, y, frontZ], length, true, materials.handle));
 }
 
 function placeHorizontalHandle(rect: Rect, isAtTop: boolean, context: FrontContext): THREE.Group {
-  const x = rect.x + (rect.width - HANDLE_LENGTH_MM) / 2;
+  const { handle } = context.materials.finish;
+  const group = new THREE.Group();
+  if (handle.kind === 'none') return group;
+  if (handle.kind === 'profile') return group.add(createProfileBar(rect, isAtTop ? 'top' : 'bottom', false, context));
+  if (handle.kind === 'knob') {
+    const knobY = isAtTop ? rect.y + rect.height - KNOB_EDGE_OFFSET_MM : rect.y + KNOB_EDGE_OFFSET_MM;
+    return group.add(createKnob([rect.x + rect.width / 2, knobY], context.frontZ, context.materials.handle));
+  }
+  const length = clampBarLength(handle, rect.width - 2 * HANDLE_EDGE_OFFSET_MM);
+  const x = rect.x + (rect.width - length) / 2;
   const y = isAtTop ? rect.y + rect.height - HANDLE_ROW_OFFSET_MM : rect.y + HANDLE_ROW_OFFSET_MM / 2;
-  return createBarHandle([x, y, context.frontZ], HANDLE_LENGTH_MM, false, context.materials.handle);
+  return group.add(createBarHandle([x, y, context.frontZ], length, false, context.materials.handle));
 }
 
-function buildSolidPanel(rect: Rect, context: FrontContext): THREE.Mesh {
-  const size: Vec3 = [rect.width, rect.height, FACADE_THICKNESS_MM];
-  return createBox(size, [rect.x, rect.y, context.frontZ - FACADE_THICKNESS_MM], context.materials.facade, FACADE_EDGE_RADIUS_MM);
+function buildSolidPanel(rect: Rect, context: FrontContext): THREE.Object3D {
+  const { facade, finish } = context.materials;
+  const z = context.frontZ - FACADE_THICKNESS_MM;
+  const isFramed = finish.facadeStyle.kind === 'framed' && Math.min(rect.width, rect.height) >= FRAMED_MIN_SIDE_MM;
+  if (!isFramed) return createBox([rect.width, rect.height, FACADE_THICKNESS_MM], [rect.x, rect.y, z], facade, FACADE_EDGE_RADIUS_MM);
+  const group = new THREE.Group();
+  const rail = (size: Vec3, origin: Vec3) => group.add(createBox(size, origin, facade, FACADE_EDGE_RADIUS_MM));
+  const innerHeight = rect.height - 2 * FRAME_RAIL_MM;
+  rail([rect.width, FRAME_RAIL_MM, FACADE_THICKNESS_MM], [rect.x, rect.y, z]);
+  rail([rect.width, FRAME_RAIL_MM, FACADE_THICKNESS_MM], [rect.x, rect.y + rect.height - FRAME_RAIL_MM, z]);
+  rail([FRAME_RAIL_MM, innerHeight, FACADE_THICKNESS_MM], [rect.x, rect.y + FRAME_RAIL_MM, z]);
+  rail([FRAME_RAIL_MM, innerHeight, FACADE_THICKNESS_MM], [rect.x + rect.width - FRAME_RAIL_MM, rect.y + FRAME_RAIL_MM, z]);
+  group.add(createBox([rect.width - 2 * FRAME_RAIL_MM, innerHeight, FACADE_THICKNESS_MM - FRAME_RECESS_MM], [rect.x + FRAME_RAIL_MM, rect.y + FRAME_RAIL_MM, z], facade));
+  return group;
 }
 
 function buildGlassPanel(rect: Rect, context: FrontContext): THREE.Group {
