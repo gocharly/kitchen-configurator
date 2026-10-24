@@ -23,10 +23,14 @@ const SHADOW_SOFTNESS = 6;
 const MULTISAMPLE_COUNT = 4;
 const OCCLUSION_RADIUS_M = 0.45;
 const OCCLUSION_SCALE = 1.4;
-const OCCLUSION_SAMPLES = 24;
-const DENOISE_RADIUS_PX = 10;
-const DENOISE_RINGS = 3;
-const DENOISE_SAMPLES = 24;
+const OCCLUSION_QUALITY = {
+  full: { samples: 24, denoiseRadius: 10, denoiseRings: 3, denoiseSamples: 24, maxPixelRatio: 2 },
+  touch: { samples: 16, denoiseRadius: 8, denoiseRings: 2, denoiseSamples: 16, maxPixelRatio: 1.5 },
+};
+
+function pickRenderQuality(): typeof OCCLUSION_QUALITY.full {
+  return window.matchMedia('(pointer: coarse)').matches ? OCCLUSION_QUALITY.touch : OCCLUSION_QUALITY.full;
+}
 const TOP_VIEW_HEIGHT_FACTOR = 1.15;
 const TOP_VIEW_TILT_M = 0.05;
 const MIN_ANCHOR_TOP_PX = 64;
@@ -68,8 +72,9 @@ function createComposer(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camer
   const target = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: MULTISAMPLE_COUNT });
   const composer = new EffectComposer(renderer, target);
   const occlusion = new GTAOPass(scene, camera, 1, 1);
-  occlusion.updateGtaoMaterial({ radius: OCCLUSION_RADIUS_M, scale: OCCLUSION_SCALE, samples: OCCLUSION_SAMPLES });
-  occlusion.updatePdMaterial({ radius: DENOISE_RADIUS_PX, rings: DENOISE_RINGS, samples: DENOISE_SAMPLES });
+  const quality = pickRenderQuality();
+  occlusion.updateGtaoMaterial({ radius: OCCLUSION_RADIUS_M, scale: OCCLUSION_SCALE, samples: quality.samples });
+  occlusion.updatePdMaterial({ radius: quality.denoiseRadius, rings: quality.denoiseRings, samples: quality.denoiseSamples });
   composer.addPass(new RenderPass(scene, camera));
   composer.addPass(occlusion);
   composer.addPass(new OutputPass());
@@ -78,7 +83,7 @@ function createComposer(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camer
 
 function createRig(container: HTMLElement): ViewportRig {
   const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, pickRenderQuality().maxPixelRatio));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.toneMapping = THREE.NeutralToneMapping;

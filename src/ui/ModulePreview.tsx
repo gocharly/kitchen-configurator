@@ -1,6 +1,8 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ModuleSpec } from '../domain/catalog';
 import { renderModulePreview } from '../scene/modulePreview';
+
+const PREFETCH_MARGIN = '240px';
 
 interface ModulePreviewProps {
   spec: ModuleSpec;
@@ -8,7 +10,27 @@ interface ModulePreviewProps {
   bodyColorId: string;
 }
 
+function useIsNearViewport(holder: React.RefObject<HTMLElement | null>): boolean {
+  const [isNear, setIsNear] = useState(false);
+  useEffect(() => {
+    const element = holder.current;
+    if (isNear || !element) return;
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) setIsNear(true);
+    }, { rootMargin: PREFETCH_MARGIN });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [holder, isNear]);
+  return isNear;
+}
+
 export function ModulePreview({ spec, facadeColorId, bodyColorId }: ModulePreviewProps) {
-  const url = useMemo(() => renderModulePreview(spec, { facadeColorId, bodyColorId }), [spec, facadeColorId, bodyColorId]);
+  const holder = useRef<HTMLSpanElement>(null);
+  const isNear = useIsNearViewport(holder);
+  const url = useMemo(
+    () => (isNear ? renderModulePreview(spec, { facadeColorId, bodyColorId }) : null),
+    [isNear, spec, facadeColorId, bodyColorId],
+  );
+  if (!url) return <span ref={holder} className="module-preview" />;
   return <img className="module-preview" src={url} alt="" draggable={false} />;
 }
