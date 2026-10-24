@@ -6,6 +6,7 @@ const POT_HEIGHT_RATIO = 0.3;
 const POT_TOP_RADIUS_RATIO = 0.46;
 const POT_BOTTOM_RADIUS_RATIO = 0.34;
 const SOIL_HEIGHT_MM = 14;
+const SOIL_PROUD_MM = 3;
 const LEAF_COUNT = 9;
 const LEAF_LENGTH_RATIO = 0.62;
 const LEAF_WIDTH_MM = 70;
@@ -42,7 +43,7 @@ export function buildPlant(frame: ModelFrame, context: ModelContext): THREE.Grou
   pot.position.set(centerX * MM, (potHeight / 2) * MM, centerZ * MM);
   pot.castShadow = true;
   group.add(pot);
-  group.add(createRod(frame.width * POT_TOP_RADIUS_RATIO - 8, SOIL_HEIGHT_MM, [centerX, potHeight - SOIL_HEIGHT_MM / 2, centerZ], 'y', woodDark));
+  group.add(createRod(frame.width * POT_TOP_RADIUS_RATIO - 8, SOIL_HEIGHT_MM, [centerX, potHeight + SOIL_PROUD_MM - SOIL_HEIGHT_MM / 2, centerZ], 'y', woodDark));
   const length = (frame.height - potHeight) * LEAF_LENGTH_RATIO;
   for (let index = 0; index < LEAF_COUNT; index += 1) {
     const angle = (index / LEAF_COUNT) * Math.PI * 2;
@@ -51,7 +52,7 @@ export function buildPlant(frame: ModelFrame, context: ModelContext): THREE.Grou
     const pivot = new THREE.Group().add(blade);
     blade.position.y = (length / 2) * MM;
     pivot.rotation.set(Math.sin(angle) * tilt, angle, Math.cos(angle) * tilt);
-    pivot.position.set(centerX * MM, (potHeight - SOIL_HEIGHT_MM) * MM, centerZ * MM);
+    pivot.position.set(centerX * MM, potHeight * MM, centerZ * MM);
     group.add(pivot);
   }
   return group;

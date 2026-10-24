@@ -6,6 +6,7 @@ import { createHorizontalRing, listCornerOffsets } from './furnitureShapes';
 const CHAIR_SEAT_HEIGHT_MM = 450;
 const CHAIR_LEG_MM = 38;
 const WOOD_SEAT_THICKNESS_MM = 36;
+const SEAT_OVERHANG_MM = 2;
 const PADDED_SEAT_THICKNESS_MM = 70;
 const STRETCHER_MM = 22;
 const STRETCHER_HEIGHT_MM = 170;
@@ -75,7 +76,7 @@ export function buildWoodChair(frame: ModelFrame, context: ModelContext): THREE.
   const style = { frame: woodDark, seat: wood, seatThickness: WOOD_SEAT_THICKNESS_MM };
   const group = new THREE.Group();
   group.add(buildChairLegs(frame, style), buildSlattedBack(frame, style));
-  group.add(createBox([frame.width, WOOD_SEAT_THICKNESS_MM, frame.depth], [0, CHAIR_SEAT_HEIGHT_MM - WOOD_SEAT_THICKNESS_MM, 0], style.seat, 4));
+  group.add(createBox([frame.width + 2 * SEAT_OVERHANG_MM, WOOD_SEAT_THICKNESS_MM, frame.depth + 2 * SEAT_OVERHANG_MM], [-SEAT_OVERHANG_MM, CHAIR_SEAT_HEIGHT_MM - WOOD_SEAT_THICKNESS_MM, -SEAT_OVERHANG_MM], style.seat, 4));
   return group;
 }
 
@@ -84,9 +85,9 @@ export function buildPaddedChair(frame: ModelFrame, context: ModelContext): THRE
   const style = { frame: steelDark, seat: fabric, seatThickness: PADDED_SEAT_THICKNESS_MM };
   const group = new THREE.Group();
   group.add(buildChairLegs(frame, style));
-  group.add(createBox([frame.width, PADDED_SEAT_THICKNESS_MM, frame.depth], [0, CHAIR_SEAT_HEIGHT_MM - PADDED_SEAT_THICKNESS_MM, 0], fabric, 14));
+  group.add(createBox([frame.width + 2 * SEAT_OVERHANG_MM, PADDED_SEAT_THICKNESS_MM, frame.depth + 2 * SEAT_OVERHANG_MM], [-SEAT_OVERHANG_MM, CHAIR_SEAT_HEIGHT_MM - PADDED_SEAT_THICKNESS_MM, -SEAT_OVERHANG_MM], fabric, 14));
   const cushionY = CHAIR_SEAT_HEIGHT_MM + 90;
-  group.add(createBox([frame.width - 2 * CHAIR_LEG_MM + 20, BACK_CUSHION_HEIGHT_MM, BACK_CUSHION_THICKNESS_MM], [CHAIR_LEG_MM - 10, cushionY, 0], fabric, 16));
+  group.add(createBox([frame.width - 2 * CHAIR_LEG_MM + 20, BACK_CUSHION_HEIGHT_MM, BACK_CUSHION_THICKNESS_MM], [CHAIR_LEG_MM - 10, cushionY, SEAT_OVERHANG_MM], fabric, 16));
   return group;
 }
 
