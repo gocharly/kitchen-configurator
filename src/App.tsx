@@ -29,6 +29,7 @@ import { Flyout } from './ui/Flyout';
 import { HistoryBar } from './ui/HistoryBar';
 import { ModuleCatalog, ModuleList } from './ui/ModulePanels';
 import { OpeningPanel } from './ui/OpeningPanel';
+import { PrintSheet } from './ui/PrintSheet';
 import { RoomPanel } from './ui/RoomPanel';
 import { SectionRail, type RailSection } from './ui/SectionRail';
 import { SelectionToolbar } from './ui/SelectionToolbar';
@@ -83,6 +84,7 @@ export function App() {
   const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
   const [view, setView] = useState<ViewMode>('perspective');
   const [isEvening, setIsEvening] = useState(false);
+  const [isPrinting, setIsPrinting] = useState(false);
   const [shownSection, setShownSection] = useState<SectionId | null>(activeSection);
   const [leftInsetPx, setLeftInsetPx] = useState(0);
   const [bottomInsetPx, setBottomInsetPx] = useState(0);
@@ -91,6 +93,15 @@ export function App() {
   const viewportRef = useRef<ViewportHandle>(null);
 
   useEffect(() => writeKitchenToAddress(kitchen), [kitchen]);
+
+  useEffect(() => {
+    if (!isPrinting) return;
+    const frame = window.requestAnimationFrame(() => {
+      window.print();
+      setIsPrinting(false);
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [isPrinting]);
 
   useLayoutEffect(() => {
     const overlay = overlayRef.current;
@@ -135,6 +146,7 @@ export function App() {
   };
 
   return (
+    <>
     <div className="app">
       <main className="stage">
         {activeSection === 'drawing' && (
@@ -275,7 +287,7 @@ export function App() {
           </Flyout>
         )}
       </div>
-      <EstimateCard kitchen={kitchen} onOrder={() => setActiveSection('checkout')} />
+      <EstimateCard kitchen={kitchen} onOrder={() => setActiveSection('checkout')} onPrint={() => setIsPrinting(true)} />
       {activeSection !== 'drawing' && (
         <ViewBar
           view={view}
@@ -287,5 +299,7 @@ export function App() {
         />
       )}
     </div>
+    {isPrinting && <PrintSheet kitchen={kitchen} />}
+    </>
   );
 }

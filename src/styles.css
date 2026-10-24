@@ -1401,3 +1401,63 @@ ul {
     min-height: 44px;
   }
 }
+
+.estimate-file-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.print-sheet {
+  display: none;
+}
+
+@media print {
+  html,
+  body {
+    background: #ffffff;
+  }
+
+  .app {
+    display: none;
+  }
+
+  .print-sheet {
+    display: block;
+    color: #1b1f23;
+  }
+
+  .print-page {
+    break-after: page;
+    padding: 12mm;
+  }
+
+  .print-page:last-child {
+    break-after: auto;
+  }
+
+  .print-page svg {
+    width: 100%;
+    height: auto;
+  }
+
+  .print-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .print-table th,
+  .print-table td {
+    padding: 4px 8px;
+    text-align: left;
+  }
+
+  .print-table td:last-child,
+  .print-table th:last-child {
+    text-align: right;
+  }
+
+  .print-table tfoot td {
+    font-weight: 700;
+  }
+}

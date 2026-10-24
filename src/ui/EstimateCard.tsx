@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { getModuleSpec } from '../domain/catalog';
+import { buildEstimateCsv } from '../domain/estimateCsv';
 import { calculateEstimate, listPlacedModules, type Kitchen } from '../domain/kitchen';
 import { CopyLinkButton } from './CopyLinkButton';
+import { downloadBlob } from './downloadFile';
 import { formatRubles } from './formatRubles';
 import { Icon } from './icons';
 import { ModulePreview } from './ModulePreview';
@@ -9,9 +11,10 @@ import { ModulePreview } from './ModulePreview';
 interface EstimateCardProps {
   kitchen: Kitchen;
   onOrder: () => void;
+  onPrint: () => void;
 }
 
-export function EstimateCard({ kitchen, onOrder }: EstimateCardProps) {
+export function EstimateCard({ kitchen, onOrder, onPrint }: EstimateCardProps) {
   const [isOpen, setIsOpen] = useState(false);
   const estimate = calculateEstimate(kitchen);
   const specIdByModuleId = new Map(listPlacedModules(kitchen).map(({ module }) => [module.id, module.specId]));
@@ -54,6 +57,18 @@ export function EstimateCard({ kitchen, onOrder }: EstimateCardProps) {
           </ul>
           <div className="estimate-actions">
             <CopyLinkButton kitchen={kitchen} />
+            <div className="estimate-file-actions">
+              <button
+                type="button"
+                className="catalog-button"
+                onClick={() => downloadBlob(new Blob([buildEstimateCsv(kitchen)], { type: 'text/csv;charset=utf-8' }), `kuhnya-smeta-${new Date().toISOString().slice(0, 10)}.csv`)}
+              >
+                Смета в CSV
+              </button>
+              <button type="button" className="catalog-button" onClick={onPrint}>
+                Печать, PDF
+              </button>
+            </div>
             <button type="button" className="catalog-button" onClick={onOrder}>
               Оформить заказ
             </button>
