@@ -38,6 +38,9 @@ export interface KitchenDraft {
   bodyColorId?: string;
   floorId?: string;
   wallFinishId?: string;
+  backsplashId?: string;
+  handleId?: string;
+  facadeStyleId?: string;
 }
 
 export function createKitchenFromDraft(draft: KitchenDraft): Kitchen {
@@ -51,6 +54,9 @@ export function createKitchenFromDraft(draft: KitchenDraft): Kitchen {
     bodyColorId: draft.bodyColorId ?? DEFAULT_KITCHEN.bodyColorId,
     floorId: draft.floorId ?? DEFAULT_KITCHEN.floorId,
     wallFinishId: draft.wallFinishId ?? DEFAULT_KITCHEN.wallFinishId,
+    backsplashId: draft.backsplashId ?? DEFAULT_KITCHEN.backsplashId,
+    handleId: draft.handleId ?? DEFAULT_KITCHEN.handleId,
+    facadeStyleId: draft.facadeStyleId ?? DEFAULT_KITCHEN.facadeStyleId,
   };
   (draft.openings ?? []).forEach((opening) => {
     kitchen = addOpeningAt(kitchen, normalizeOpening(opening));

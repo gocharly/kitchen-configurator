@@ -34,8 +34,14 @@ export function EstimateCard({ kitchen, onOrder }: EstimateCardProps) {
                   )}
                 </span>
                 <span className="estimate-name">
-                  {line.title} {line.width}
+                  {line.width > 0 ? `${line.title} ${line.width}` : line.title}
                 </span>
+                <span className="estimate-price">{formatRubles(line.price)}</span>
+              </li>
+            ))}
+            {estimate.extraLines.map((line) => (
+              <li key={line.moduleId} className="estimate-line">
+                <span>{line.title}</span>
                 <span className="estimate-price">{formatRubles(line.price)}</span>
               </li>
             ))}

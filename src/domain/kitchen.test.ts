@@ -5,6 +5,8 @@ import {
   addOpening,
   addOpeningAt,
   applyKitchenTemplate,
+  applyStylePreset,
+  paintKitchen,
   calculateEstimate,
   canAddModule,
   canAddOpening,
@@ -212,11 +214,27 @@ describe('applyKitchenTemplate', () => {
 
 describe('calculateEstimate', () => {
   it('prices modules by width and adds the countertop for base and sink', () => {
-    const kitchen = addAll(emptyKitchen, ['base-1-door', 'tall-closed']);
+    const kitchen = paintKitchen(addAll(emptyKitchen, ['base-1-door', 'tall-closed']), { handleId: 'none' });
     const estimate = calculateEstimate(kitchen);
     expect(estimate.lines.map((l) => l.price)).toEqual([5400, 10800]);
     expect(estimate.countertopPrice).toBe(3600);
     expect(estimate.total).toBe(19800);
+  });
+
+  it('prices handles per piece and the framed facade style as a factor', () => {
+    const plain = addAll(emptyKitchen, ['base-1-door', 'tall-closed']);
+    const handleCount = 3;
+    expect(calculateEstimate(plain).extraLines).toHaveLength(1);
+    expect(calculateEstimate(plain).extraLines[0].price).toBe(handleCount * 350);
+    expect(calculateEstimate(paintKitchen(plain, { handleId: 'none' })).extraLines).toEqual([]);
+    const framed = paintKitchen(plain, { facadeStyleId: 'framed', handleId: 'none' });
+    expect(calculateEstimate(framed).lines.map((l) => l.price)).toEqual([6210, 12420]);
+  });
+
+  it('applies a style preset to every finish at once', () => {
+    const styled = applyStylePreset(emptyKitchen, 'classic');
+    expect(styled).toMatchObject({ facadeColorId: 'beige', handleId: 'knob', facadeStyleId: 'framed', backsplashId: 'metro-grey' });
+    expect(() => applyStylePreset(emptyKitchen, 'missing')).toThrowError('missing');
   });
 
   it('counts modules from every wall', () => {

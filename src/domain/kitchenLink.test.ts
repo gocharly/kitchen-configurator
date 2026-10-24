@@ -14,6 +14,21 @@ function describeKitchen(kitchen: ReturnType<typeof decodeKitchenLink>) {
   };
 }
 
+describe('kitchen link finishes', () => {
+  it('restores backsplash, handles and facade style', () => {
+    const styled = { ...DEFAULT_KITCHEN, backsplashId: 'glass-white', handleId: 'knob', facadeStyleId: 'framed' };
+    const restored = decodeKitchenLink(encodeKitchenLink(styled));
+    expect(restored).toMatchObject({ backsplashId: 'glass-white', handleId: 'knob', facadeStyleId: 'framed' });
+  });
+
+  it('opens an old link without the new finishes using the defaults', () => {
+    const { bs, h, fs, ...old } = JSON.parse(atob(encodeKitchenLink(DEFAULT_KITCHEN).replace(/-/g, '+').replace(/_/g, '/')));
+    const token = btoa(JSON.stringify(old)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    expect(decodeKitchenLink(token)).toMatchObject({ backsplashId: DEFAULT_KITCHEN.backsplashId, handleId: DEFAULT_KITCHEN.handleId, facadeStyleId: DEFAULT_KITCHEN.facadeStyleId });
+    expect([bs, h, fs]).toEqual(['none', 'bar', 'flat']);
+  });
+});
+
 describe('kitchen link', () => {
   it('restores the default kitchen from its own token', () => {
     const restored = decodeKitchenLink(encodeKitchenLink(DEFAULT_KITCHEN));

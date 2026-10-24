@@ -1,10 +1,15 @@
 import {
+  FACADE_STYLES,
   FILLER,
   FLOORS,
+  HANDLES,
+  NO_BACKSPLASH_ID,
+  STYLE_PRESETS,
   WALL_FINISHES,
   MIN_AISLE_MM,
   ROOM_LIMITS,
   calculateCountertopPrice,
+  countDoorLeaves,
   getModuleSpec,
   type ModuleSpec,
   type RowName,
@@ -52,6 +57,9 @@ export interface Kitchen {
   bodyColorId: string;
   floorId: string;
   wallFinishId: string;
+  backsplashId: string;
+  handleId: string;
+  facadeStyleId: string;
 }
 
 export interface LayoutItem {
@@ -71,6 +79,7 @@ export interface EstimateLine {
 
 export interface Estimate {
   lines: EstimateLine[];
+  extraLines: EstimateLine[];
   countertopPrice: number;
   total: number;
 }
@@ -96,6 +105,9 @@ export const DEFAULT_KITCHEN: Kitchen = {
   bodyColorId: 'white',
   floorId: FLOORS[0].id,
   wallFinishId: WALL_FINISHES[0].id,
+  backsplashId: NO_BACKSPLASH_ID,
+  handleId: HANDLES[0].id,
+  facadeStyleId: FACADE_STYLES[0].id,
 };
 
 interface Obstacle {
@@ -708,9 +720,16 @@ export function updateOpening(kitchen: Kitchen, openingId: string, patch: Openin
 
 export function paintKitchen(
   kitchen: Kitchen,
-  colors: Partial<Pick<Kitchen, 'facadeColorId' | 'bodyColorId' | 'floorId' | 'wallFinishId'>>,
+  finishes: Partial<Pick<Kitchen, 'facadeColorId' | 'bodyColorId' | 'floorId' | 'wallFinishId' | 'backsplashId' | 'handleId' | 'facadeStyleId'>>,
 ): Kitchen {
-  return { ...kitchen, ...colors };
+  return { ...kitchen, ...finishes };
+}
+
+export function applyStylePreset(kitchen: Kitchen, presetId: string): Kitchen {
+  const preset = STYLE_PRESETS.find((entry) => entry.id === presetId);
+  if (!preset) throw new Error(`Style ${presetId} is missing in the catalog`);
+  const { id, title, ...finishes } = preset;
+  return paintKitchen(kitchen, finishes);
 }
 
 export function applyKitchenTemplate(current: Kitchen, template: Kitchen): Kitchen {
@@ -722,6 +741,9 @@ export function applyKitchenTemplate(current: Kitchen, template: Kitchen): Kitch
     bodyColorId: current.bodyColorId,
     floorId: current.floorId,
     wallFinishId: current.wallFinishId,
+    backsplashId: current.backsplashId,
+    handleId: current.handleId,
+    facadeStyleId: current.facadeStyleId,
   };
   return current.openings.reduce<Kitchen>((kitchen, opening) => addOpeningAt(kitchen, opening), base);
 }
@@ -754,8 +776,28 @@ export function listFillers(kitchen: Kitchen): Filler[] {
   return findFillers(rows, FILLER);
 }
 
-export function calculateModulePrice(module: PlacedModule): number {
-  return getModuleSpec(module.specId).priceFor(module.width);
+function findFacadeStyle(kitchen: Kitchen) {
+  const style = FACADE_STYLES.find((entry) => entry.id === kitchen.facadeStyleId);
+  if (!style) throw new Error(`Facade style ${kitchen.facadeStyleId} is missing in the catalog`);
+  return style;
+}
+
+function findHandle(kitchen: Kitchen) {
+  const handle = HANDLES.find((entry) => entry.id === kitchen.handleId);
+  if (!handle) throw new Error(`Handle ${kitchen.handleId} is missing in the catalog`);
+  return handle;
+}
+
+export function calculateModulePrice(module: PlacedModule, priceFactor = 1): number {
+  const spec = getModuleSpec(module.specId);
+  const base = spec.priceFor(module.width);
+  return spec.model === undefined ? Math.round(base * priceFactor) : base;
+}
+
+export function countModuleHandles(module: PlacedModule): number {
+  const spec = getModuleSpec(module.specId);
+  if (spec.model !== undefined) return 0;
+  return spec.front.reduce((total, band) => (band.kind === 'opening' ? total : total + countDoorLeaves(band, module.width)), 0);
 }
 
 function measureCountertopLength(module: PlacedModule): number {
@@ -764,14 +806,22 @@ function measureCountertopLength(module: PlacedModule): number {
   return spec.isCorner ? 2 * module.width - spec.depth : module.width;
 }
 
+function buildHandleLines(kitchen: Kitchen, placed: PlacedModule[]): EstimateLine[] {
+  const handle = findHandle(kitchen);
+  const count = placed.reduce((total, module) => total + countModuleHandles(module), 0);
+  if (handle.price === 0 || count === 0) return [];
+  return [{ moduleId: 'handles', sku: `HANDLE-${handle.id.toUpperCase()}`, title: `Ручки: ${handle.title}, ${count} шт.`, width: 0, price: count * handle.price }];
+}
+
 export function calculateEstimate(kitchen: Kitchen): Estimate {
   const placed = listPlacedModules(kitchen).map(({ module }) => module);
+  const priceFactor = findFacadeStyle(kitchen).priceFactor;
   const lines = placed.map((module) => ({
     moduleId: module.id,
     sku: getModuleSpec(module.specId).sku(module.width),
     title: getModuleSpec(module.specId).title,
     width: module.width,
-    price: calculateModulePrice(module),
+    price: calculateModulePrice(module, priceFactor),
   }));
   const fillers = listFillers(kitchen);
   const fillerLines = fillers.map((filler) => ({
@@ -784,7 +834,8 @@ export function calculateEstimate(kitchen: Kitchen): Estimate {
   const fillerCountertopLength = fillers.reduce((sum, f) => sum + (f.hasCountertop ? f.width : 0), 0);
   const countertopLength = placed.reduce((sum, module) => sum + measureCountertopLength(module), fillerCountertopLength);
   const countertopPrice = calculateCountertopPrice(countertopLength);
+  const extraLines = buildHandleLines(kitchen, placed);
   const allLines = [...lines, ...fillerLines];
-  const linesTotal = allLines.reduce((sum, line) => sum + line.price, 0);
-  return { lines: allLines, countertopPrice, total: linesTotal + countertopPrice };
+  const linesTotal = [...allLines, ...extraLines].reduce((sum, line) => sum + line.price, 0);
+  return { lines: allLines, extraLines, countertopPrice, total: linesTotal + countertopPrice };
 }

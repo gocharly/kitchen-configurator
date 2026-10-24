@@ -3,6 +3,9 @@ import { parseCatalog, type FrontBand, type ModuleSpec } from './catalogFormat';
 
 export type {
   CategorySpec,
+  FacadeStyleOption,
+  HandleOption,
+  StylePreset,
   ColorFinish,
   ColorOption,
   FamilyType,
@@ -32,6 +35,11 @@ export const FACADE_COLORS = catalog.facadeColors;
 export const BODY_COLORS = catalog.bodyColors;
 export const FLOORS = catalog.floors;
 export const WALL_FINISHES = catalog.wallFinishes;
+export const BACKSPLASHES = catalog.backsplashes;
+export const HANDLES = catalog.handles;
+export const FACADE_STYLES = catalog.facadeStyles;
+export const STYLE_PRESETS = catalog.stylePresets;
+export const NO_BACKSPLASH_ID = 'none';
 
 export const ROOM_LIMITS = {
   length: { min: 1500, max: 8000 },

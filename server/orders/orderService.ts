@@ -102,7 +102,7 @@ export class OrderService {
     const order = this.store.insert({
       token: this.createToken(),
       kitchenToken: encodeKitchenLink(kitchen),
-      lines: estimate.lines.map(({ sku, title, width, price }) => ({ sku, title, width, price })),
+      lines: [...estimate.lines, ...estimate.extraLines].map(({ sku, title, width, price }) => ({ sku, title, width, price })),
       countertopPrice: estimate.countertopPrice,
       total: estimate.total,
       source: input.source,

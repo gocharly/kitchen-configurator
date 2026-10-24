@@ -1353,3 +1353,38 @@ ul {
     min-height: 48px;
   }
 }
+
+.choice-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.choice-chip {
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: var(--radius-small);
+  background: var(--bg-control);
+  font-weight: 500;
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.choice-chip:hover {
+  background: var(--bg-control-hover);
+}
+
+.choice-chip:active {
+  transform: scale(0.97);
+}
+
+.choice-chip[aria-checked='true'] {
+  background: var(--bg-control-active);
+}
+
+@media (pointer: coarse) {
+  .choice-chip {
+    min-height: 44px;
+  }
+}

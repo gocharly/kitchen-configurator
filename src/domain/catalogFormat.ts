@@ -58,6 +58,36 @@ export interface SurfaceOption {
   roughness: number;
 }
 
+export type HandleKind = 'bar' | 'knob' | 'profile' | 'none';
+export type FacadeStyleKind = 'flat' | 'framed';
+
+export interface HandleOption {
+  id: string;
+  title: string;
+  kind: HandleKind;
+  lengthMm: number;
+  price: number;
+}
+
+export interface FacadeStyleOption {
+  id: string;
+  title: string;
+  kind: FacadeStyleKind;
+  priceFactor: number;
+}
+
+export interface StylePreset {
+  id: string;
+  title: string;
+  facadeColorId: string;
+  bodyColorId: string;
+  floorId: string;
+  wallFinishId: string;
+  backsplashId: string;
+  handleId: string;
+  facadeStyleId: string;
+}
+
 export interface CategorySpec {
   id: string;
   title: string;
@@ -83,6 +113,10 @@ export interface Catalog {
   bodyColors: ColorOption[];
   floors: SurfaceOption[];
   wallFinishes: SurfaceOption[];
+  backsplashes: SurfaceOption[];
+  handles: HandleOption[];
+  facadeStyles: FacadeStyleOption[];
+  stylePresets: StylePreset[];
   plinthHeight: number;
   countertop: { thickness: number; overhang: number; priceFor: (length: number) => number };
   filler: FillerSpec;
@@ -118,6 +152,8 @@ const WALL_KINDS: SurfaceKind[] = ['paint', 'stripes', 'dots', 'linen', 'brick',
 const SURFACE_SIZE_LIMITS = { min: 1, max: 3000 };
 const DEFAULT_SURFACE_ROUGHNESS = 0.7;
 const FRONT_KINDS: FrontBandKind[] = ['doors', 'flap', 'drawer', 'opening'];
+const HANDLE_KINDS: HandleKind[] = ['bar', 'knob', 'profile', 'none'];
+const FACADE_STYLE_KINDS: FacadeStyleKind[] = ['flat', 'framed'];
 
 class ExpressionParser {
   private position = 0;
@@ -360,6 +396,62 @@ function readFamily(value: unknown, index: number, categoryIds: Set<string>): Mo
   };
 }
 
+function readHandles(value: unknown): HandleOption[] {
+  const handles = asArray(value, 'finishes.handle').map((entry, index): HandleOption => {
+    const at = `finishes.handle[${index}]`;
+    const handle = asObject(entry, at);
+    return {
+      id: asText(handle.id, `${at}.id`),
+      title: asText(handle.title, `${at}.title`),
+      kind: asOneOf(handle.kind, `${at}.kind`, HANDLE_KINDS),
+      lengthMm: asNumber(handle.length, `${at}.length`, 0),
+      price: asNumber(handle.price, `${at}.price`, 0),
+    };
+  });
+  readUniqueIds(handles, 'finishes.handle');
+  return handles;
+}
+
+function readFacadeStyles(value: unknown): FacadeStyleOption[] {
+  const styles = asArray(value, 'finishes.facadeStyle').map((entry, index): FacadeStyleOption => {
+    const at = `finishes.facadeStyle[${index}]`;
+    const style = asObject(entry, at);
+    return {
+      id: asText(style.id, `${at}.id`),
+      title: asText(style.title, `${at}.title`),
+      kind: asOneOf(style.kind, `${at}.kind`, FACADE_STYLE_KINDS),
+      priceFactor: asNumber(style.priceFactor, `${at}.priceFactor`, 0.01),
+    };
+  });
+  readUniqueIds(styles, 'finishes.facadeStyle');
+  return styles;
+}
+
+function readStylePresets(value: unknown, known: Record<string, { id: string }[]>): StylePreset[] {
+  const presets = asArray(value, 'styles').map((entry, index): StylePreset => {
+    const at = `styles[${index}]`;
+    const preset = asObject(entry, at);
+    const pick = (field: string, options: { id: string }[]) => {
+      const id = asText(preset[field], `${at}.${field}`);
+      if (!options.some((option) => option.id === id)) throw new CatalogError(`${at}.${field}`, `unknown id "${id}"`);
+      return id;
+    };
+    return {
+      id: asText(preset.id, `${at}.id`),
+      title: asText(preset.title, `${at}.title`),
+      facadeColorId: pick('facade', known.facade),
+      bodyColorId: pick('body', known.body),
+      floorId: pick('floor', known.floor),
+      wallFinishId: pick('wall', known.wall),
+      backsplashId: pick('backsplash', known.backsplash),
+      handleId: pick('handle', known.handle),
+      facadeStyleId: pick('facadeStyle', known.facadeStyle),
+    };
+  });
+  readUniqueIds(presets, 'styles');
+  return presets;
+}
+
 function readFiller(value: unknown): FillerSpec {
   const filler = asObject(value, 'accessories.filler');
   const minWidth = asNumber(filler.minWidth, 'accessories.filler.minWidth', 1);
@@ -391,6 +483,14 @@ export function parseCatalog(raw: unknown): Catalog {
   const plinth = asObject(accessories.plinth, 'accessories.plinth');
   const countertop = asObject(accessories.countertop, 'accessories.countertop');
   const rules = asObject(root.rules, 'rules');
+  const facadeColors = readColors(finishes.facade, 'finishes.facade');
+  const bodyColors = readColors(finishes.body, 'finishes.body');
+  const floors = readSurfaces(finishes.floor, 'finishes.floor', FLOOR_KINDS);
+  const wallFinishes = readSurfaces(finishes.wall, 'finishes.wall', WALL_KINDS);
+  const backsplashes = readSurfaces(finishes.backsplash, 'finishes.backsplash', WALL_KINDS);
+  const handles = readHandles(finishes.handle);
+  const facadeStyles = readFacadeStyles(finishes.facadeStyle);
+  const known = { facade: facadeColors, body: bodyColors, floor: floors, wall: wallFinishes, backsplash: backsplashes, handle: handles, facadeStyle: facadeStyles };
   return {
     id: asText(root.id, 'id'),
     version: asText(root.version, 'version'),
@@ -398,10 +498,14 @@ export function parseCatalog(raw: unknown): Catalog {
     currency: asText(root.currency, 'currency'),
     categories,
     specs,
-    facadeColors: readColors(finishes.facade, 'finishes.facade'),
-    bodyColors: readColors(finishes.body, 'finishes.body'),
-    floors: readSurfaces(finishes.floor, 'finishes.floor', FLOOR_KINDS),
-    wallFinishes: readSurfaces(finishes.wall, 'finishes.wall', WALL_KINDS),
+    facadeColors,
+    bodyColors,
+    floors,
+    wallFinishes,
+    backsplashes,
+    handles,
+    facadeStyles,
+    stylePresets: readStylePresets(root.styles, known),
     plinthHeight: asNumber(plinth.height, 'accessories.plinth.height', 1),
     countertop: {
       thickness: asNumber(countertop.thickness, 'accessories.countertop.thickness', 1),

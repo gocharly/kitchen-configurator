@@ -4075,6 +4075,152 @@
         ],
         "roughness": 0.7
       }
+    ],
+    "backsplash": [
+      {
+        "id": "none",
+        "title": "Без фартука",
+        "kind": "paint",
+        "color": "#e6e5e0",
+        "roughness": 0.95
+      },
+      {
+        "id": "tile-metro",
+        "title": "Плитка кабанчик",
+        "kind": "metro",
+        "color": "#f0efec",
+        "accent": "#cfcdc8",
+        "size": [
+          150,
+          75
+        ],
+        "roughness": 0.2
+      },
+      {
+        "id": "metro-grey",
+        "title": "Кабанчик серый",
+        "kind": "metro",
+        "color": "#a7aeb2",
+        "accent": "#8b9296",
+        "size": [
+          150,
+          75
+        ],
+        "roughness": 0.2
+      },
+      {
+        "id": "tile-square-green",
+        "title": "Плитка зелёная 200x200",
+        "kind": "tiles",
+        "color": "#7f9a86",
+        "accent": "#c9cdc8",
+        "size": [
+          200,
+          200
+        ],
+        "roughness": 0.2
+      },
+      {
+        "id": "tile-large-stone",
+        "title": "Керамогранит камень",
+        "kind": "tiles",
+        "color": "#b9b7b1",
+        "accent": "#a5a39d",
+        "size": [
+          600,
+          300
+        ],
+        "roughness": 0.3
+      },
+      {
+        "id": "brick-white",
+        "title": "Кирпич белый",
+        "kind": "brick",
+        "color": "#ece9e2",
+        "accent": "#cdc8be",
+        "size": [
+          250,
+          65
+        ],
+        "roughness": 0.85
+      },
+      {
+        "id": "glass-white",
+        "title": "Стекло белое",
+        "kind": "paint",
+        "color": "#f4f6f6",
+        "roughness": 0.08
+      },
+      {
+        "id": "glass-graphite",
+        "title": "Стекло графит",
+        "kind": "paint",
+        "color": "#2a2d31",
+        "roughness": 0.08
+      },
+      {
+        "id": "wood-slats",
+        "title": "Деревянные рейки",
+        "kind": "slats",
+        "color": "#b58a5a",
+        "accent": "#3a2c20",
+        "size": [
+          40,
+          40
+        ],
+        "roughness": 0.7
+      }
+    ],
+    "handle": [
+      {
+        "id": "bar",
+        "title": "Рейлинг 140",
+        "kind": "bar",
+        "length": 140,
+        "price": 350
+      },
+      {
+        "id": "bar-long",
+        "title": "Рейлинг 300",
+        "kind": "bar",
+        "length": 300,
+        "price": 600
+      },
+      {
+        "id": "knob",
+        "title": "Кнопка",
+        "kind": "knob",
+        "length": 30,
+        "price": 150
+      },
+      {
+        "id": "profile",
+        "title": "Профиль-ручка",
+        "kind": "profile",
+        "length": 0,
+        "price": 500
+      },
+      {
+        "id": "none",
+        "title": "Без ручек",
+        "kind": "none",
+        "length": 0,
+        "price": 0
+      }
+    ],
+    "facadeStyle": [
+      {
+        "id": "flat",
+        "title": "Плоский",
+        "kind": "flat",
+        "priceFactor": 1
+      },
+      {
+        "id": "framed",
+        "title": "Рамочный",
+        "kind": "framed",
+        "priceFactor": 1.15
+      }
     ]
   },
   "accessories": {
@@ -4096,5 +4242,40 @@
   },
   "rules": {
     "minAisle": 900
-  }
+  },
+  "styles": [
+    {
+      "id": "scandi",
+      "title": "Скандинавский",
+      "facade": "white",
+      "body": "white",
+      "floor": "laminate-light",
+      "wall": "paint-white",
+      "backsplash": "tile-metro",
+      "handle": "bar",
+      "facadeStyle": "flat"
+    },
+    {
+      "id": "loft",
+      "title": "Лофт",
+      "facade": "graphite",
+      "body": "grey",
+      "floor": "microcement",
+      "wall": "brick-white",
+      "backsplash": "glass-graphite",
+      "handle": "profile",
+      "facadeStyle": "flat"
+    },
+    {
+      "id": "classic",
+      "title": "Классика",
+      "facade": "beige",
+      "body": "white",
+      "floor": "parquet-board",
+      "wall": "wallpaper-linen",
+      "backsplash": "metro-grey",
+      "handle": "knob",
+      "facadeStyle": "framed"
+    }
+  ]
 }

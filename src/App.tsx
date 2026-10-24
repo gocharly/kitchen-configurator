@@ -1,10 +1,11 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { BODY_COLORS, FACADE_COLORS, FLOORS, WALL_FINISHES } from './domain/catalog';
+import { BACKSPLASHES, BODY_COLORS, FACADE_COLORS, FACADE_STYLES, FLOORS, HANDLES, STYLE_PRESETS, WALL_FINISHES } from './domain/catalog';
 import {
   DEFAULT_KITCHEN,
   addOpening,
   applyKitchenTemplate,
   moveModule,
+  applyStylePreset,
   paintKitchen,
   removeModule,
   removeOpening,
@@ -20,6 +21,7 @@ import { buildDrawing, type SheetId } from './drawing/drawingModel';
 import { downloadSvg } from './drawing/downloadSvg';
 import { KitchenViewport, type ViewportHandle } from './scene/KitchenViewport';
 import { CheckoutPanel } from './ui/CheckoutPanel';
+import { ChoicePicker } from './ui/ChoicePicker';
 import { ColorPicker } from './ui/ColorPicker';
 import { DrawingPanel } from './ui/DrawingPanel';
 import { EstimateCard } from './ui/EstimateCard';
@@ -180,6 +182,12 @@ export function App() {
             )}
             {shownSection === 'decor' && (
               <div className="decor-groups">
+                <ChoicePicker
+                  label="Стиль"
+                  options={STYLE_PRESETS}
+                  selectedId={null}
+                  onSelect={(presetId) => setKitchen((current) => applyStylePreset(current, presetId))}
+                />
                 <ColorPicker
                   label="Фасад"
                   options={FACADE_COLORS}
@@ -192,11 +200,29 @@ export function App() {
                   selectedId={kitchen.bodyColorId}
                   onSelect={(bodyColorId) => setKitchen((current) => paintKitchen(current, { bodyColorId }))}
                 />
+                <ChoicePicker
+                  label="Стиль фасада"
+                  options={FACADE_STYLES}
+                  selectedId={kitchen.facadeStyleId}
+                  onSelect={(facadeStyleId) => setKitchen((current) => paintKitchen(current, { facadeStyleId }))}
+                />
+                <ChoicePicker
+                  label="Ручки"
+                  options={HANDLES}
+                  selectedId={kitchen.handleId}
+                  onSelect={(handleId) => setKitchen((current) => paintKitchen(current, { handleId }))}
+                />
                 <SurfacePicker
                   label="Пол"
                   options={FLOORS}
                   selectedId={kitchen.floorId}
                   onSelect={(floorId) => setKitchen((current) => paintKitchen(current, { floorId }))}
+                />
+                <SurfacePicker
+                  label="Фартук"
+                  options={BACKSPLASHES}
+                  selectedId={kitchen.backsplashId}
+                  onSelect={(backsplashId) => setKitchen((current) => paintKitchen(current, { backsplashId }))}
                 />
                 <SurfacePicker
                   label="Стены"

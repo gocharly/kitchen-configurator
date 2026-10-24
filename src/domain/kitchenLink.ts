@@ -1,4 +1,4 @@
-import { BODY_COLORS, FACADE_COLORS, FLOORS, MODULE_SPECS, WALL_FINISHES } from './catalog';
+import { BACKSPLASHES, BODY_COLORS, FACADE_COLORS, FACADE_STYLES, FLOORS, HANDLES, MODULE_SPECS, WALL_FINISHES } from './catalog';
 import { WALLS, type Kitchen, type WallId } from './kitchen';
 import { OPENING_SPECS, type Opening, type OpeningKind } from './openings';
 import { normalizeRotation, type FreeModule } from './freeModules';
@@ -14,6 +14,9 @@ interface LinkPayload {
   b: string;
   fl: string;
   w: string;
+  bs?: string;
+  h?: string;
+  fs?: string;
   m: Partial<Record<WallId, LinkRun>>;
   o: LinkOpening[];
   s?: LinkFree[];
@@ -43,6 +46,9 @@ export function encodeKitchenLink(kitchen: Kitchen): string {
   const payload: LinkPayload = { r: [length, width, height], f: kitchen.facadeColorId, b: kitchen.bodyColorId,
     fl: kitchen.floorId,
     w: kitchen.wallFinishId,
+    bs: kitchen.backsplashId,
+    h: kitchen.handleId,
+    fs: kitchen.facadeStyleId,
     m: runs,
     o: kitchen.openings.map((o) => [o.kind, o.wall, o.offset, o.width, o.height, o.sill]),
   };
@@ -119,5 +125,8 @@ export function decodeKitchenLink(token: string): Kitchen | null {
     bodyColorId: pickColorId(BODY_COLORS, payload.b),
     floorId: pickColorId(FLOORS, payload.fl),
     wallFinishId: pickColorId(WALL_FINISHES, payload.w),
+    backsplashId: pickColorId(BACKSPLASHES, payload.bs),
+    handleId: pickColorId(HANDLES, payload.h),
+    facadeStyleId: pickColorId(FACADE_STYLES, payload.fs),
   });
 }
