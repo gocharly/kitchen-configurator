@@ -25,14 +25,15 @@ const EYE_HEIGHT_M = 1.6;
 const EYE_TARGET_HEIGHT_M = 1.25;
 const EYE_INSET_FROM_FRONT_M = 0.25;
 const NIGHT_TRANSITION_MS = 380;
+const TONE_EXPOSURE = 0.9;
 const LIGHTING = {
-  day: { background: '#e9ebee', environment: 0.55, sun: 1.5, sunColor: '#fff4e6', fill: 0.55 },
+  day: { background: '#e9ebee', environment: 0.38, sun: 1.25, sunColor: '#fff1de', fill: 0.34 },
   evening: { background: '#1d2128', environment: 0.1, sun: 0.22, sunColor: '#9db1ff', fill: 0.1 },
 } as const;
 const SHADOW_SOFTNESS = 6;
 const MULTISAMPLE_COUNT = 4;
 const OCCLUSION_RADIUS_M = 0.45;
-const OCCLUSION_SCALE = 1.4;
+const OCCLUSION_SCALE = 1.9;
 const DENOISE_RADIUS_PX = 10;
 const DENOISE_RINGS = 3;
 const DENOISE_SAMPLES = 24;
@@ -104,6 +105,7 @@ function createRig(container: HTMLElement): ViewportRig {
   renderer.shadowMap.autoUpdate = false;
   renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.toneMapping = THREE.NeutralToneMapping;
+  renderer.toneMappingExposure = TONE_EXPOSURE;
   container.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
@@ -435,6 +437,7 @@ interface KitchenViewportProps {
   leftInsetPx: number;
   bottomInsetPx: number;
   isEvening: boolean;
+  isReadOnly?: boolean;
 }
 
 function findOpenableAt(rig: ViewportRig, event: PointerEvent): THREE.Object3D | null {
@@ -454,7 +457,7 @@ function restoreOpenPanels(group: THREE.Group, openKeys: Set<string>): void {
 }
 
 export const KitchenViewport = forwardRef<ViewportHandle, KitchenViewportProps>(function KitchenViewport(
-  { kitchen, selectedModuleId, onSelect, onDragModule, onMoveOpening, selectionToolbar, leftInsetPx, bottomInsetPx, isEvening },
+  { kitchen, selectedModuleId, onSelect, onDragModule, onMoveOpening, selectionToolbar, leftInsetPx, bottomInsetPx, isEvening, isReadOnly = false },
   handleRef,
 ) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -465,11 +468,13 @@ export const KitchenViewport = forwardRef<ViewportHandle, KitchenViewportProps>(
   const isDraggingRef = useRef(false);
   const openKeysRef = useRef(new Set<string>());
   const [anchor, setAnchor] = useState<{ x: number; y: number } | null>(null);
+  const isReadOnlyRef = useRef(isReadOnly);
   const onSelectRef = useRef(onSelect);
   const onDragModuleRef = useRef(onDragModule);
   const onMoveOpeningRef = useRef(onMoveOpening);
   kitchenRef.current = kitchen;
   selectedIdRef.current = selectedModuleId;
+  isReadOnlyRef.current = isReadOnly;
   onSelectRef.current = onSelect;
   onDragModuleRef.current = onDragModule;
   onMoveOpeningRef.current = onMoveOpening;
@@ -546,6 +551,10 @@ export const KitchenViewport = forwardRef<ViewportHandle, KitchenViewportProps>(
     };
 
     const handlePointerDown = (event: PointerEvent) => {
+      if (isReadOnlyRef.current) {
+        press = { x: event.clientX, y: event.clientY, onItem: false };
+        return;
+      }
       const hit = findItemHit(rig, event);
       press = { x: event.clientX, y: event.clientY, onItem: hit !== null };
       if (!hit) return;
@@ -591,6 +600,10 @@ export const KitchenViewport = forwardRef<ViewportHandle, KitchenViewportProps>(
         return;
       }
       if (!finishedPress || finishedPress.onItem) return;
+      if (isReadOnlyRef.current) {
+        if (Math.hypot(event.clientX - finishedPress.x, event.clientY - finishedPress.y) < CLICK_TOLERANCE_PX) togglePanelAt(event);
+        return;
+      }
       const moved = Math.hypot(event.clientX - finishedPress.x, event.clientY - finishedPress.y);
       if (moved < CLICK_TOLERANCE_PX) onSelectRef.current(null);
     };

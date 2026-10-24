@@ -1,22 +1,27 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Kitchen } from '../domain/kitchen';
-import { buildKitchenLinkUrl } from './kitchenUrl';
+import { buildKitchenLinkUrl, type LinkMode } from './kitchenUrl';
 
 const FEEDBACK_DURATION_MS = 2000;
 
 type CopyState = 'idle' | 'copied' | 'failed';
 
-const LABELS: Record<CopyState, string> = {
-  idle: 'Скопировать ссылку',
+const IDLE_LABELS: Record<LinkMode, string> = {
+  edit: 'Скопировать ссылку',
+  view: 'Ссылка для просмотра',
+};
+
+const RESULT_LABELS = {
   copied: 'Ссылка скопирована',
   failed: 'Не удалось скопировать',
 };
 
 interface CopyLinkButtonProps {
   kitchen: Kitchen;
+  mode: LinkMode;
 }
 
-export function CopyLinkButton({ kitchen }: CopyLinkButtonProps) {
+export function CopyLinkButton({ kitchen, mode }: CopyLinkButtonProps) {
   const [state, setState] = useState<CopyState>('idle');
   const timerRef = useRef<number | undefined>(undefined);
 
@@ -24,7 +29,7 @@ export function CopyLinkButton({ kitchen }: CopyLinkButtonProps) {
 
   const copyLink = async () => {
     try {
-      await navigator.clipboard.writeText(buildKitchenLinkUrl(kitchen));
+      await navigator.clipboard.writeText(buildKitchenLinkUrl(kitchen, mode));
       setState('copied');
     } catch (error) {
       console.error('Kitchen link was not copied', error);
@@ -36,7 +41,7 @@ export function CopyLinkButton({ kitchen }: CopyLinkButtonProps) {
 
   return (
     <button type="button" className="catalog-button copy-link" onClick={copyLink}>
-      {LABELS[state]}
+      {state === 'idle' ? IDLE_LABELS[mode] : RESULT_LABELS[state]}
     </button>
   );
 }

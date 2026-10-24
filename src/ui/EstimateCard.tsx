@@ -10,11 +10,12 @@ import { ModulePreview } from './ModulePreview';
 
 interface EstimateCardProps {
   kitchen: Kitchen;
-  onOrder: () => void;
-  onPrint: () => void;
+  onOrder?: () => void;
+  onPrint?: () => void;
+  isReadOnly?: boolean;
 }
 
-export function EstimateCard({ kitchen, onOrder, onPrint }: EstimateCardProps) {
+export function EstimateCard({ kitchen, onOrder, onPrint, isReadOnly = false }: EstimateCardProps) {
   const [isOpen, setIsOpen] = useState(false);
   const estimate = calculateEstimate(kitchen);
   const specIdByModuleId = new Map(listPlacedModules(kitchen).map(({ module }) => [module.id, module.specId]));
@@ -55,8 +56,10 @@ export function EstimateCard({ kitchen, onOrder, onPrint }: EstimateCardProps) {
               </li>
             )}
           </ul>
+          {!isReadOnly && (
           <div className="estimate-actions">
-            <CopyLinkButton kitchen={kitchen} />
+            <CopyLinkButton kitchen={kitchen} mode="edit" />
+            <CopyLinkButton kitchen={kitchen} mode="view" />
             <div className="estimate-file-actions">
               <button
                 type="button"
@@ -73,6 +76,7 @@ export function EstimateCard({ kitchen, onOrder, onPrint }: EstimateCardProps) {
               Оформить заказ
             </button>
           </div>
+          )}
           </div>
         </div>
       </div>

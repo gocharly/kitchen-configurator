@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { BACKSPLASHES, BODY_COLORS, FACADE_COLORS, FACADE_STYLES, FLOORS, HANDLES, STYLE_PRESETS, WALL_FINISHES } from './domain/catalog';
 import {
   DEFAULT_KITCHEN,
+  type Kitchen,
   addOpening,
   applyKitchenTemplate,
   moveModule,
@@ -37,9 +38,10 @@ import { SectionRail, type RailSection } from './ui/SectionRail';
 import { SelectionToolbar } from './ui/SelectionToolbar';
 import { SurfacePicker } from './ui/SurfacePicker';
 import { TemplatePanel } from './ui/TemplatePanel';
-import { ViewBar, type ViewMode } from './ui/ViewBar';
+import { ViewBar } from './ui/ViewBar';
 import { readKitchenFromAddress, writeKitchenToAddress } from './ui/kitchenUrl';
-import { downloadBlob } from './ui/downloadFile';
+import { useViewControls } from './ui/useViewControls';
+import { KitchenViewer } from './KitchenViewer';
 import { useKitchenHistory } from './ui/useKitchenHistory';
 
 type SectionId = 'templates' | 'room' | 'openings' | 'decor' | 'modules' | 'composition' | 'drawing' | 'checkout';
@@ -69,7 +71,7 @@ const WIDE_SCREEN_MIN_PX = 1100;
 const FLYOUT_EXIT_MS = 160;
 const PHONE_MAX_WIDTH_PX = 720;
 
-export function App() {
+function KitchenEditor({ initialKitchen }: { initialKitchen: Kitchen | null }) {
   const {
     kitchen,
     updateKitchen: setKitchen,
@@ -77,15 +79,13 @@ export function App() {
     redo,
     canUndo,
     canRedo,
-  } = useKitchenHistory(() => readKitchenFromAddress() ?? DEFAULT_KITCHEN);
+  } = useKitchenHistory(() => initialKitchen ?? DEFAULT_KITCHEN);
   const [activeSection, setActiveSection] = useState<SectionId | null>(() =>
     window.innerWidth >= WIDE_SCREEN_MIN_PX ? 'modules' : null,
   );
   const [activeWall, setActiveWall] = useState<WallId>('back');
   const [activeSheet, setActiveSheet] = useState<SheetId>('plan');
   const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
-  const [view, setView] = useState<ViewMode>('perspective');
-  const [isEvening, setIsEvening] = useState(false);
   const [isPrinting, setIsPrinting] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [shownSection, setShownSection] = useState<SectionId | null>(activeSection);
@@ -94,12 +94,9 @@ export function App() {
   const overlayRef = useRef<HTMLDivElement>(null);
   const drawingRef = useRef<SVGSVGElement>(null);
   const viewportRef = useRef<ViewportHandle>(null);
+  const controls = useViewControls(viewportRef, () => setSelectedModuleId(null));
 
   useEffect(() => writeKitchenToAddress(kitchen), [kitchen]);
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = isEvening ? 'night' : 'day';
-  }, [isEvening]);
 
   useEffect(() => {
     const allowDrop = (event: DragEvent) => event.preventDefault();
@@ -145,21 +142,6 @@ export function App() {
   }, [activeSection]);
 
   const toggleSection = (id: string) => setActiveSection((current) => (current === id ? null : (id as SectionId)));
-  const changeView = (next: ViewMode) => {
-    setView(next);
-    if (next === 'top') viewportRef.current?.showTop();
-    else if (next === 'eye') viewportRef.current?.showEye();
-    else viewportRef.current?.showPerspective();
-  };
-  const saveSnapshot = () => {
-    setSelectedModuleId(null);
-    window.requestAnimationFrame(() =>
-      window.requestAnimationFrame(async () => {
-        const image = await viewportRef.current?.captureImage();
-        if (image) downloadBlob(image, `kuhnya-${new Date().toISOString().slice(0, 10)}.png`);
-      }),
-    );
-  };
   const openProjectText = (text: string) => {
     const result = readProjectFile(text);
     if (result.kind === 'rejected') {
@@ -193,7 +175,7 @@ export function App() {
             selectedModuleId={selectedModuleId}
             leftInsetPx={leftInsetPx}
             bottomInsetPx={bottomInsetPx}
-            isEvening={isEvening}
+            isEvening={controls.isEvening}
             onSelect={setSelectedModuleId}
             onDragModule={(moduleId, cx, cz) => setKitchen((current) => dragModule(current, moduleId, { cx, cz }))}
             onMoveOpening={(openingId, offset) =>
@@ -326,12 +308,12 @@ export function App() {
       <EstimateCard kitchen={kitchen} onOrder={() => setActiveSection('checkout')} onPrint={() => setIsPrinting(true)} />
       {activeSection !== 'drawing' && (
         <ViewBar
-          view={view}
-          isEvening={isEvening}
-          onViewChange={changeView}
-          onToggleEvening={() => setIsEvening((current) => !current)}
-          onSnapshot={saveSnapshot}
-          onZoom={(factor) => viewportRef.current?.zoomBy(factor)}
+          view={controls.view}
+          isEvening={controls.isEvening}
+          onViewChange={controls.changeView}
+          onToggleEvening={controls.toggleEvening}
+          onSnapshot={controls.saveSnapshot}
+          onZoom={controls.zoomBy}
         />
       )}
       {notice && <Notice text={notice} onDone={() => setNotice(null)} />}
@@ -339,4 +321,10 @@ export function App() {
     {isPrinting && <PrintSheet kitchen={kitchen} />}
     </>
   );
+}
+
+export function App() {
+  const [address] = useState(readKitchenFromAddress);
+  if (address?.isViewOnly) return <KitchenViewer kitchen={address.kitchen} />;
+  return <KitchenEditor initialKitchen={address?.kitchen ?? null} />;
 }
