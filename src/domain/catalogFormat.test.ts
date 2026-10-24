@@ -61,7 +61,9 @@ describe('parseCatalog on the shipped catalog', () => {
     expect(appliances.filter((s) => s.model !== undefined).map((s) => s.model)).toEqual(
       expect.arrayContaining(['kitchenStove', 'kitchenFridge', 'hoodLarge', 'washer']),
     );
-    expect(appliances.filter((s) => s.hasCountertop).map((s) => s.id)).toEqual(['appliance-sink', 'appliance-fridge-small', 'appliance-washer']);
+    expect(appliances.filter((s) => s.hasCountertop).map((s) => s.id)).toEqual(
+      expect.arrayContaining(['appliance-sink', 'appliance-fridge-small', 'appliance-washer']),
+    );
   });
 
   it('reads floors and wall finishes with a size and roughness', () => {

@@ -150,9 +150,8 @@ function buildGrate(span: GrateSpan, surface: number, materials: Materials): THR
   return group;
 }
 
-function buildGasHob(frame: ModelFrame, layout: StoveLayout, materials: Materials): THREE.Group {
+function buildGasBurners(frame: ModelFrame, layout: StoveLayout, materials: Materials): THREE.Group {
   const group = new THREE.Group();
-  group.add(createBox([layout.width, UPSTAND_HEIGHT_MM, UPSTAND_DEPTH_MM], [layout.x, layout.hobTop, 0], materials.steel, 2));
   BURNERS.forEach((burner) => {
     const center: [number, number] = [layout.x + layout.width * burner.column, frame.depth * burner.row];
     group.add(buildBurner(center, burner.radius, layout.hobTop, materials));
@@ -163,6 +162,13 @@ function buildGasHob(frame: ModelFrame, layout: StoveLayout, materials: Material
     const span = { x: layout.x + layout.width * column - width / 2, width, z: GRATE_FRONT_MARGIN_MM, depth: frame.depth - 2 * GRATE_FRONT_MARGIN_MM, burnerZs };
     group.add(buildGrate(span, layout.hobTop, materials));
   });
+  return group;
+}
+
+function buildGasHob(frame: ModelFrame, layout: StoveLayout, materials: Materials): THREE.Group {
+  const group = new THREE.Group();
+  group.add(createBox([layout.width, UPSTAND_HEIGHT_MM, UPSTAND_DEPTH_MM], [layout.x, layout.hobTop, 0], materials.steel, 2));
+  group.add(buildGasBurners(frame, layout, materials));
   return group;
 }
 
@@ -195,4 +201,19 @@ export function buildGasStove(frame: ModelFrame, context: ModelContext): THREE.G
 export function buildElectricStove(frame: ModelFrame, context: ModelContext): THREE.Group {
   const { enamel, blackGlass } = context.materials;
   return buildStove(frame, context, { body: enamel, door: enamel, plate: blackGlass, buildHob: buildGlassHob });
+}
+
+export type CooktopVariant = 'glass' | 'gas';
+
+const COOKTOP_PLATE_MM = 6;
+const COOKTOP_MARGIN_MM = 40;
+
+export function buildCooktopSurface(variant: CooktopVariant, size: { width: number; depth: number }, topY: number, materials: Materials): THREE.Group {
+  const group = new THREE.Group();
+  const plate = variant === 'glass' ? materials.blackGlass : materials.steel;
+  group.add(createBox([size.width - 2 * COOKTOP_MARGIN_MM, COOKTOP_PLATE_MM, size.depth - 2 * COOKTOP_MARGIN_MM], [COOKTOP_MARGIN_MM, topY, COOKTOP_MARGIN_MM], plate, 2));
+  const frame: ModelFrame = { width: size.width, height: 0, depth: size.depth, elevation: topY + COOKTOP_PLATE_MM };
+  const layout: StoveLayout = { x: COOKTOP_MARGIN_MM, width: size.width - 2 * COOKTOP_MARGIN_MM, panelBottom: topY, hobTop: topY + COOKTOP_PLATE_MM };
+  group.add(variant === 'glass' ? buildGlassHob(frame, layout, materials) : buildGasBurners(frame, layout, materials));
+  return group;
 }

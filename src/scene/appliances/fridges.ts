@@ -161,6 +161,19 @@ function layoutSingleDoor(frame: ModelFrame, plinth: number): FridgeDoor[] {
   return [{ x: SIDE_GAP_MM, width: frame.width - 2 * SIDE_GAP_MM, y, height, hinge: 'left', handleLength: 260, handleY: y + height - 170 }];
 }
 
+function layoutTallSingleDoor(frame: ModelFrame, plinth: number): FridgeDoor[] {
+  const y = frame.elevation + plinth + DOOR_GAP_MM;
+  const height = frame.height - plinth - 2 * DOOR_GAP_MM;
+  const handleLength = Math.min(700, height * 0.4);
+  return [{ x: SIDE_GAP_MM, width: frame.width - 2 * SIDE_GAP_MM, y, height, hinge: 'left', handleLength, handleY: y + height * 0.55 }];
+}
+
+export function buildTallFridge(frame: ModelFrame, context: ModelContext): THREE.Group {
+  const { steel } = context.materials;
+  const style = { shell: steel, door: steel, plinth: 60 };
+  return buildFridge(frame, context, style, layoutTallSingleDoor(frame, style.plinth));
+}
+
 export function buildFreestandingFridge(frame: ModelFrame, context: ModelContext): THREE.Group {
   const { steel } = context.materials;
   const style = { shell: steel, door: steel, plinth: 60 };

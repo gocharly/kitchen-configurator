@@ -349,11 +349,11 @@
       "fronts": [
         {
           "kind": "opening",
-          "ratio": 0.62
+          "ratio": 0.83
         },
         {
           "kind": "drawer",
-          "ratio": 0.38
+          "ratio": 0.17
         }
       ],
       "glass": false,
@@ -361,7 +361,8 @@
       "corner": false,
       "countertop": true,
       "sku": "BASE-OVEN-{width}",
-      "price": "width * 9"
+      "price": "width * 9",
+      "model": "insetAppliances"
     },
     {
       "id": "base-sink-1-door",
@@ -426,13 +427,13 @@
     {
       "id": "base-dishwasher",
       "type": "base",
-      "category": "bottom",
-      "title": "Стол под посудомойку",
+      "category": "appliances",
+      "title": "Посудомойка встроенная",
       "row": "lower",
       "widths": {
         "min": 450,
         "max": 600,
-        "step": 50
+        "step": 150
       },
       "defaultWidth": 600,
       "height": 716,
@@ -451,7 +452,8 @@
       "corner": false,
       "countertop": true,
       "sku": "BASE-DISHWASHER-{width}",
-      "price": "width * 6"
+      "price": "width * 6",
+      "model": "dishwasherBuiltIn"
     },
     {
       "id": "base-washer",
@@ -1375,11 +1377,11 @@
         },
         {
           "kind": "opening",
-          "ratio": 0.36
+          "ratio": 0.28
         },
         {
           "kind": "drawer",
-          "ratio": 0.34
+          "ratio": 0.42
         }
       ],
       "glass": false,
@@ -1387,13 +1389,14 @@
       "corner": false,
       "countertop": false,
       "sku": "TALL-OVEN-{width}",
-      "price": "width * 18"
+      "price": "width * 18",
+      "model": "insetAppliances"
     },
     {
       "id": "tall-appliance",
       "type": "tall",
       "category": "tall",
-      "title": "Пенал под технику",
+      "title": "Пенал под духовку и СВЧ",
       "row": "lower",
       "widths": {
         "min": 600,
@@ -1413,11 +1416,15 @@
         },
         {
           "kind": "opening",
-          "ratio": 0.4
+          "ratio": 0.18
+        },
+        {
+          "kind": "opening",
+          "ratio": 0.28
         },
         {
           "kind": "doors",
-          "ratio": 0.35
+          "ratio": 0.29
         }
       ],
       "glass": false,
@@ -1425,7 +1432,8 @@
       "corner": false,
       "countertop": false,
       "sku": "TALL-APPLIANCE-{width}",
-      "price": "width * 18"
+      "price": "width * 18",
+      "model": "insetAppliances"
     },
     {
       "id": "tall-fridge",
@@ -1519,11 +1527,11 @@
         },
         {
           "kind": "opening",
-          "ratio": 0.34
+          "ratio": 0.255
         },
         {
           "kind": "drawer",
-          "ratio": 0.36
+          "ratio": 0.445
         }
       ],
       "glass": false,
@@ -1531,7 +1539,8 @@
       "corner": false,
       "countertop": false,
       "sku": "TALL-HIGH-OVEN-{width}",
-      "price": "width * 20"
+      "price": "width * 20",
+      "model": "insetAppliances"
     },
     {
       "id": "appliance-sink",
@@ -1570,9 +1579,9 @@
       "title": "Плита",
       "row": "lower",
       "widths": {
-        "min": 600,
-        "max": 600,
-        "step": 50
+        "min": 500,
+        "max": 900,
+        "step": 100
       },
       "defaultWidth": 600,
       "height": 754,
@@ -1764,9 +1773,9 @@
       "title": "Плита электрическая",
       "row": "lower",
       "widths": {
-        "min": 600,
-        "max": 600,
-        "step": 50
+        "min": 500,
+        "max": 900,
+        "step": 100
       },
       "defaultWidth": 600,
       "height": 754,
@@ -1785,7 +1794,7 @@
       "corner": false,
       "countertop": false,
       "sku": "STOVE-EL-{width}",
-      "price": "width * 42",
+      "price": "width * 40",
       "model": "kitchenStoveElectric"
     },
     {
@@ -2803,6 +2812,301 @@
       "sku": "WINE-RACK-{width}",
       "price": "width * 9",
       "model": "wineRack"
+    },
+    {
+      "id": "appliance-dishwasher-free",
+      "type": "base",
+      "category": "appliances",
+      "title": "Посудомойка отдельная",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 816,
+      "depths": [
+        600
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "DISHWASHER-{width}",
+      "price": "width * 55",
+      "model": "dishwasherFree"
+    },
+    {
+      "id": "appliance-wine-cooler",
+      "type": "base",
+      "category": "appliances",
+      "title": "Винный шкаф под столешницу",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 816,
+      "depths": [
+        600
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "WINE-COOLER-{width}",
+      "price": "width * 60",
+      "model": "wineCooler"
+    },
+    {
+      "id": "appliance-hob-induction",
+      "type": "base",
+      "category": "appliances",
+      "title": "Шкаф с индукционной панелью",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 900,
+        "step": 100
+      },
+      "defaultWidth": 600,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "drawer",
+          "ratio": 0.25
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.375
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.375
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "HOB-INDUCTION-{width}",
+      "price": "width * 30",
+      "model": "cooktopInduction"
+    },
+    {
+      "id": "appliance-hob-gas",
+      "type": "base",
+      "category": "appliances",
+      "title": "Шкаф с газовой панелью",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 900,
+        "step": 100
+      },
+      "defaultWidth": 600,
+      "height": 716,
+      "depths": [
+        560
+      ],
+      "elevation": 100,
+      "fronts": [
+        {
+          "kind": "drawer",
+          "ratio": 0.25
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.375
+        },
+        {
+          "kind": "drawer",
+          "ratio": 0.375
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": true,
+      "sku": "HOB-GAS-{width}",
+      "price": "width * 28",
+      "model": "cooktopGas"
+    },
+    {
+      "id": "appliance-fridge-tall",
+      "type": "tall",
+      "category": "appliances",
+      "title": "Холодильник однодверный",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 1850,
+      "depths": [
+        650
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "FRIDGE-TALL-{width}",
+      "price": "width * 50",
+      "model": "kitchenFridgeTall"
+    },
+    {
+      "id": "appliance-freezer",
+      "type": "tall",
+      "category": "appliances",
+      "title": "Морозильная камера",
+      "row": "lower",
+      "widths": {
+        "min": 600,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 1850,
+      "depths": [
+        650
+      ],
+      "elevation": 0,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "FREEZER-{width}",
+      "price": "width * 45",
+      "model": "kitchenFridgeTall"
+    },
+    {
+      "id": "appliance-hood-slanted",
+      "type": "wall",
+      "category": "appliances",
+      "title": "Вытяжка наклонная",
+      "row": "upper",
+      "widths": {
+        "min": 500,
+        "max": 900,
+        "step": 100
+      },
+      "defaultWidth": 600,
+      "height": 400,
+      "depths": [
+        450
+      ],
+      "elevation": 1500,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "HOOD-SLANTED-{width}",
+      "price": "width * 30",
+      "model": "hoodSlanted"
+    },
+    {
+      "id": "appliance-hood-built-in",
+      "type": "wall",
+      "category": "appliances",
+      "title": "Вытяжка встраиваемая",
+      "row": "upper",
+      "widths": {
+        "min": 600,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 716,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "doors",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "HOOD-BUILT-IN-{width}",
+      "price": "width * 25",
+      "model": "hoodBuiltIn"
+    },
+    {
+      "id": "top-microwave",
+      "type": "wall",
+      "category": "top",
+      "title": "Верхний под СВЧ",
+      "row": "upper",
+      "widths": {
+        "min": 600,
+        "max": 600,
+        "step": 50
+      },
+      "defaultWidth": 600,
+      "height": 358,
+      "depths": [
+        302
+      ],
+      "elevation": 1400,
+      "fronts": [
+        {
+          "kind": "opening",
+          "ratio": 1
+        }
+      ],
+      "glass": false,
+      "sink": false,
+      "corner": false,
+      "countertop": false,
+      "sku": "TOP-MICROWAVE-{width}",
+      "price": "width * 12",
+      "model": "insetAppliances"
     }
   ],
   "finishes": {

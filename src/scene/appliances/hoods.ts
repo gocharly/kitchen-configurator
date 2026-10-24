@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { MM, createBox } from '../cabinetFronts';
+import { MM, buildCarcass, buildFront, createBox } from '../cabinetFronts';
 import type { ModelContext, ModelFrame } from './applianceShapes';
 
 const CANOPY_HEIGHT_MM = 140;
@@ -48,5 +48,43 @@ export function buildFlatHood(frame: ModelFrame, context: ModelContext): THREE.G
   group.add(createBox(glassSize, [FLAT_GLASS_INSET_MM, frame.elevation - FILTER_THICKNESS_MM + 1, FLAT_GLASS_BACK_MM], blackGlass));
   const chimneyBottom = frame.elevation + FLAT_SLAB_HEIGHT_MM - CHIMNEY_OVERLAP_MM;
   group.add(createBox([frame.width, frame.height - FLAT_SLAB_HEIGHT_MM + CHIMNEY_OVERLAP_MM, FLAT_CHIMNEY_DEPTH_MM], [0, chimneyBottom, 0], steel, 3));
+  return group;
+}
+
+const SLANT_THICKNESS_MM = 60;
+const SLANT_FRONT_STRIP_MM = 18;
+const VISOR_HEIGHT_MM = 40;
+const VISOR_DEPTH_MM = 280;
+const VISOR_SIDE_INSET_MM = 20;
+
+function createSlantedGlassMesh(frame: ModelFrame, material: THREE.Material): THREE.Mesh {
+  const shape = new THREE.Shape();
+  shape.moveTo(0, frame.height * MM);
+  shape.lineTo(0, (frame.height - SLANT_THICKNESS_MM) * MM);
+  shape.lineTo(frame.depth * MM, 0);
+  shape.lineTo(frame.depth * MM, SLANT_FRONT_STRIP_MM * MM);
+  shape.lineTo(0, frame.height * MM);
+  const geometry = new THREE.ExtrudeGeometry(shape, { depth: frame.width * MM, bevelEnabled: false });
+  geometry.rotateY(-Math.PI / 2);
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.position.set(frame.width * MM, frame.elevation * MM, 0);
+  mesh.castShadow = true;
+  return mesh;
+}
+
+export function buildSlantedHood(frame: ModelFrame, context: ModelContext): THREE.Group {
+  const { steel, blackGlass } = context.materials;
+  const group = new THREE.Group();
+  group.add(createSlantedGlassMesh(frame, blackGlass));
+  group.add(createBox([frame.width, SLANT_FRONT_STRIP_MM, SLANT_FRONT_STRIP_MM], [0, frame.elevation, frame.depth - SLANT_FRONT_STRIP_MM], steel, 2));
+  return group;
+}
+
+export function buildBuiltInHood(frame: ModelFrame, context: ModelContext): THREE.Group {
+  const { materials, item } = context;
+  const group = new THREE.Group();
+  group.add(buildCarcass(item, materials), buildFront(item, materials));
+  const visorOrigin: [number, number, number] = [VISOR_SIDE_INSET_MM, frame.elevation - VISOR_HEIGHT_MM, frame.depth - VISOR_DEPTH_MM + VISOR_HEIGHT_MM];
+  group.add(createBox([frame.width - 2 * VISOR_SIDE_INSET_MM, VISOR_HEIGHT_MM, VISOR_DEPTH_MM], visorOrigin, materials.steel, 3));
   return group;
 }

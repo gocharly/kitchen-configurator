@@ -1,9 +1,13 @@
 import * as THREE from 'three';
 import type { ModelContext, ModelFrame } from './appliances/applianceShapes';
-import { buildBuiltInFridge, buildFreestandingFridge, buildSideBySideFridge, buildUnderCounterFridge } from './appliances/fridges';
-import { buildDomeHood, buildFlatHood } from './appliances/hoods';
+import { buildInductionCabinet, buildGasCooktopCabinet } from './appliances/cooktopCabinets';
+import { buildBuiltInDishwasher, buildFreeDishwasher } from './appliances/dishwashers';
+import { buildBuiltInFridge, buildFreestandingFridge, buildSideBySideFridge, buildTallFridge, buildUnderCounterFridge } from './appliances/fridges';
+import { buildBuiltInHood, buildDomeHood, buildFlatHood, buildSlantedHood } from './appliances/hoods';
+import { buildInsetAppliances } from './appliances/insetAppliances';
 import { buildElectricStove, buildGasStove } from './appliances/stoves';
 import { buildWasher } from './appliances/washer';
+import { buildWineCooler } from './appliances/wineCooler';
 import { buildBarStool, buildBench, buildKitchenSofa, buildLowStool, buildPaddedChair, buildWoodChair } from './furniture/seating';
 import { buildOpenShelving, buildTrolley, buildWineRack } from './furniture/storage';
 import { buildBarTable, buildRectTable, buildRoundTable } from './furniture/tables';
@@ -20,6 +24,15 @@ const MODEL_BUILDERS: Record<string, ApplianceBuilder> = {
   hoodLarge: buildDomeHood,
   hoodModern: buildFlatHood,
   washer: buildWasher,
+  kitchenFridgeTall: buildTallFridge,
+  hoodSlanted: buildSlantedHood,
+  hoodBuiltIn: buildBuiltInHood,
+  dishwasherFree: buildFreeDishwasher,
+  dishwasherBuiltIn: buildBuiltInDishwasher,
+  wineCooler: buildWineCooler,
+  insetAppliances: buildInsetAppliances,
+  cooktopInduction: buildInductionCabinet,
+  cooktopGas: buildGasCooktopCabinet,
   tableRect: buildRectTable,
   tableRound: buildRoundTable,
   tableBar: buildBarTable,

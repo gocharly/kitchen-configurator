@@ -264,15 +264,25 @@ function buildFrontBand(band: FrontBand, bandRect: Rect, context: FrontContext):
   return buildDoorLeaves(band, bandRect, context);
 }
 
-export function buildFront(item: LayoutItem, materials: Materials): THREE.Group {
+export interface FrontBandRect extends Rect {
+  band: FrontBand;
+  bandIndex: number;
+}
+
+export function listFrontBandRects(item: LayoutItem): FrontBandRect[] {
   const { spec, module } = item;
-  const group = new THREE.Group();
   let bandTop = spec.elevation + spec.height;
-  spec.front.forEach((band, bandIndex) => {
+  return spec.front.map((band, bandIndex) => {
     const bandHeight = Math.round(spec.height * band.ratio);
-    const bandRect: Rect = { x: item.offset, y: bandTop - bandHeight, width: module.width, height: bandHeight };
-    group.add(buildFrontBand(band, bandRect, { item, materials, frontZ: spec.depth, bandIndex }));
     bandTop -= bandHeight;
+    return { band, bandIndex, x: item.offset, y: bandTop, width: module.width, height: bandHeight };
+  });
+}
+
+export function buildFront(item: LayoutItem, materials: Materials): THREE.Group {
+  const group = new THREE.Group();
+  listFrontBandRects(item).forEach(({ band, bandIndex, ...bandRect }) => {
+    group.add(buildFrontBand(band, bandRect, { item, materials, frontZ: item.spec.depth, bandIndex }));
   });
   return group;
 }
