@@ -1098,6 +1098,7 @@ ul {
   }
 
   .view-bar .bar-button-text {
+    justify-content: center;
     padding: 0;
   }
 
