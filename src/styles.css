@@ -1065,8 +1065,8 @@ ul {
   }
 
   .flyout {
-    width: calc(100% - 60px);
-    max-height: 52vh;
+    width: 100%;
+    max-height: min(52vh, max(200px, calc(100dvh - 456px)));
   }
 
   .estimate-card {
@@ -1095,6 +1095,11 @@ ul {
 
   .history-share {
     padding: 0;
+  }
+
+  .view-bar .bar-button {
+    min-width: 40px;
+    height: 40px;
   }
 
   .view-bar .bar-button-text {
