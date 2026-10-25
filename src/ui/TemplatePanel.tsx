@@ -2,7 +2,7 @@ import { KITCHEN_TEMPLATES } from '../domain/templates';
 import { applyKitchenTemplate, calculateEstimate, type Kitchen } from '../domain/kitchen';
 import { KitchenPreview } from './KitchenPreview';
 import { ProjectActions } from './ProjectActions';
-import { formatRubles } from './formatRubles';
+import { formatPrice } from './formatPrice';
 
 interface TemplatePanelProps {
   kitchen: Kitchen;
@@ -23,7 +23,7 @@ export function TemplatePanel({ kitchen, onApply, onOpenProjectText }: TemplateP
             </span>
             <span className="module-title">{template.title}</span>
             <span className="module-caption">
-              {template.kitchen.room.length} × {template.kitchen.room.width} мм, {formatRubles(calculateEstimate(template.kitchen).total)}
+              {template.kitchen.room.length} × {template.kitchen.room.width} мм, {formatPrice(calculateEstimate(template.kitchen).total)}
             </span>
           </button>
         </li>

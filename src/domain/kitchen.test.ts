@@ -1,3 +1,4 @@
+import { rublesToTenge } from './currency';
 import { describe, expect, it } from 'vitest';
 import {
   DEFAULT_KITCHEN,
@@ -82,7 +83,7 @@ describe('corner modules', () => {
 
   it('counts the L-shaped countertop in the estimate', () => {
     const estimate = calculateEstimate(addAll(wideKitchen, ['base-corner-990']));
-    expect(estimate.countertopPrice).toBe(Math.round((6000 * (2 * 990 - 560)) / 1000));
+    expect(estimate.countertopPrice).toBe(rublesToTenge(Math.round((6000 * (2 * 990 - 560)) / 1000)));
   });
 });
 
@@ -216,19 +217,19 @@ describe('calculateEstimate', () => {
   it('prices modules by width and adds the countertop for base and sink', () => {
     const kitchen = paintKitchen(addAll(emptyKitchen, ['base-1-door', 'tall-closed']), { handleId: 'none' });
     const estimate = calculateEstimate(kitchen);
-    expect(estimate.lines.map((l) => l.price)).toEqual([5400, 10800]);
-    expect(estimate.countertopPrice).toBe(3600);
-    expect(estimate.total).toBe(19800);
+    expect(estimate.lines.map((l) => l.price)).toEqual([rublesToTenge(5400), rublesToTenge(10800)]);
+    expect(estimate.countertopPrice).toBe(rublesToTenge(3600));
+    expect(estimate.total).toBe(rublesToTenge(5400) + rublesToTenge(10800) + rublesToTenge(3600));
   });
 
   it('prices handles per piece and the framed facade style as a factor', () => {
     const plain = addAll(emptyKitchen, ['base-1-door', 'tall-closed']);
     const handleCount = 3;
     expect(calculateEstimate(plain).extraLines).toHaveLength(1);
-    expect(calculateEstimate(plain).extraLines[0].price).toBe(handleCount * 350);
+    expect(calculateEstimate(plain).extraLines[0].price).toBe(handleCount * rublesToTenge(350));
     expect(calculateEstimate(paintKitchen(plain, { handleId: 'none' })).extraLines).toEqual([]);
     const framed = paintKitchen(plain, { facadeStyleId: 'framed', handleId: 'none' });
-    expect(calculateEstimate(framed).lines.map((l) => l.price)).toEqual([6210, 12420]);
+    expect(calculateEstimate(framed).lines.map((l) => l.price)).toEqual([Math.round(rublesToTenge(5400) * 1.15), Math.round(rublesToTenge(10800) * 1.15)]);
   });
 
   it('applies a style preset to every finish at once', () => {
@@ -364,8 +365,8 @@ describe('fillers', () => {
     const [filler] = listFillers(kitchen);
     expect(filler).toMatchObject({ elevation: 100, height: 716, depth: 560, hasCountertop: true });
     const estimate = calculateEstimate(kitchen);
-    expect(estimate.lines.at(-1)).toMatchObject({ title: 'Добор', sku: 'FILLER-100', width: 100, price: 800 });
-    expect(estimate.countertopPrice).toBe(15000);
+    expect(estimate.lines.at(-1)).toMatchObject({ title: 'Добор', sku: 'FILLER-100', width: 100, price: rublesToTenge(800) });
+    expect(estimate.countertopPrice).toBe(rublesToTenge(15000));
   });
 
   it('does not change the module layout', () => {

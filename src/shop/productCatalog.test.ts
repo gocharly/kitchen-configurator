@@ -1,3 +1,4 @@
+import { rublesToTenge } from '../domain/currency';
 import { describe, expect, it } from 'vitest';
 import productsFile from './products.json';
 import { PRODUCTS, ProductCatalogError, findProduct, parseProductCatalog } from './productCatalog';
@@ -16,7 +17,7 @@ function expectError(mutate: (file: any) => void, fragment: string): void {
 describe('product catalog', () => {
   it('reads the shipped products', () => {
     expect(PRODUCTS).toHaveLength(7);
-    expect(findProduct('straight-2400')).toMatchObject({ title: 'Кухня прямая 2,4 м', price: 36000, description: null })
+    expect(findProduct('straight-2400')).toMatchObject({ title: 'Кухня прямая 2,4 м', price: rublesToTenge(36000), description: null })
     expect(findProduct('straight-2400')?.images).toHaveLength(3);
     expect(findProduct('nope')).toBeNull();
   });

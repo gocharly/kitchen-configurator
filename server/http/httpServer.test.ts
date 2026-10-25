@@ -1,3 +1,4 @@
+import { rublesToTenge } from '../../src/domain/currency';
 import type { AddressInfo } from 'node:net';
 import { afterEach, describe, expect, it } from 'vitest';
 import { DEFAULT_KITCHEN } from '../../src/domain/kitchen';
@@ -88,8 +89,8 @@ describe('POST /api/orders for a shop product', () => {
     const response = await post('/api/orders', { product: 'straight-2400', name: 'Иван', phone: '+7 900 123-45-67', price: 1 });
     expect(response.status).toBe(201);
     const payload = await readJson(response);
-    expect(payload.order).toMatchObject({ status: 'new', total: 36000, kitchenToken: '' });
-    expect(payload.order.lines[0]).toMatchObject({ sku: 'K-STRAIGHT-2400', price: 36000 });
+    expect(payload.order).toMatchObject({ status: 'new', total: rublesToTenge(36000), kitchenToken: '' });
+    expect(payload.order.lines[0]).toMatchObject({ sku: 'K-STRAIGHT-2400', price: rublesToTenge(36000) });
   });
 
   it('rejects an unknown product', async () => {

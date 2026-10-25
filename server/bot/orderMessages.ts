@@ -1,7 +1,8 @@
 import type { InlineKeyboardButton, InlineKeyboardMarkup } from 'grammy/types';
+import { CURRENCY_CODE } from '../../src/domain/currency';
 import type { Order, OrderStatus } from '../orders/types';
 
-const rubles = new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 });
+const money = new Intl.NumberFormat('ru-KZ', { style: 'currency', currency: CURRENCY_CODE, maximumFractionDigits: 0 });
 
 export const STATUS_LABELS: Record<OrderStatus, string> = {
   new: 'новый',
@@ -17,7 +18,7 @@ const CALLBACK_PATTERN = /^order:(\d+):([a-z_]+)$/;
 export const ORDERS_LIST_CALLBACK = 'orders';
 
 export function formatMoney(amount: number): string {
-  return rubles.format(amount);
+  return money.format(amount);
 }
 
 export function buildOrderCallback(orderId: number, action: OrderAction): string {

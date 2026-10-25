@@ -6,7 +6,7 @@ describe('estimate csv', () => {
   const rows = buildEstimateCsv(DEFAULT_KITCHEN).replace('﻿', '').trim().split('\r\n');
 
   it('starts with a header and ends with the total', () => {
-    expect(rows[0]).toBe('Артикул;Наименование;Ширина, мм;Цена, руб.');
+    expect(rows[0]).toBe('Артикул;Наименование;Ширина, мм;Цена, ₸');
     expect(rows[rows.length - 1]).toBe(`;Итого;;${calculateEstimate(DEFAULT_KITCHEN).total}`);
   });
 

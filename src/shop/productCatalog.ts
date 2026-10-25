@@ -1,3 +1,4 @@
+import { CURRENCY_CODE, rublesToTenge } from '../domain/currency';
 import productsFile from './products.json';
 
 export type KitchenShape = 'straight' | 'corner' | 'u-shape';
@@ -79,7 +80,7 @@ function readProduct(value: unknown, index: number): Product {
     title: readText(entry.title, `${path}(${id}).title`),
     shape: shape as KitchenShape,
     size: readText(entry.size, `${path}(${id}).size`),
-    price,
+    price: rublesToTenge(price),
     sku: readText(entry.sku, `${path}(${id}).sku`),
     images: readImages(entry.images, `${path}(${id}).images`),
     description,
@@ -99,7 +100,8 @@ export function parseProductCatalog(raw: unknown): ProductCatalog {
     if (seen.has(product.id)) throw new ProductCatalogError('products', `id "${product.id}" is used twice`);
     seen.add(product.id);
   });
-  return { currency: readText(root.currency, 'currency'), products };
+  readText(root.currency, 'currency');
+  return { currency: CURRENCY_CODE, products };
 }
 
 const catalog = parseProductCatalog(productsFile);

@@ -4,7 +4,7 @@ import { buildEstimateCsv } from '../domain/estimateCsv';
 import { calculateEstimate, listPlacedModules, type Kitchen } from '../domain/kitchen';
 import { CopyLinkButton } from './CopyLinkButton';
 import { downloadBlob } from './downloadFile';
-import { formatRubles } from './formatRubles';
+import { formatPrice } from './formatPrice';
 import { Icon } from './icons';
 import { ModulePreview } from './ModulePreview';
 
@@ -23,7 +23,7 @@ export function EstimateCard({ kitchen, onOrder, onPrint, isReadOnly = false }: 
     <section className="floating-bar estimate-card" aria-label="Смета">
       <button type="button" className="estimate-toggle" aria-expanded={isOpen} onClick={() => setIsOpen(!isOpen)}>
         <span className="estimate-heading">Смета</span>
-        <span className="estimate-price estimate-sum">{formatRubles(estimate.total)}</span>
+        <span className="estimate-price estimate-sum">{formatPrice(estimate.total)}</span>
         <Icon name="down" />
       </button>
       <div className="estimate-collapse" data-open={isOpen} inert={!isOpen}>
@@ -40,19 +40,19 @@ export function EstimateCard({ kitchen, onOrder, onPrint, isReadOnly = false }: 
                 <span className="estimate-name">
                   {line.width > 0 ? `${line.title} ${line.width}` : line.title}
                 </span>
-                <span className="estimate-price">{formatRubles(line.price)}</span>
+                <span className="estimate-price">{formatPrice(line.price)}</span>
               </li>
             ))}
             {estimate.extraLines.map((line) => (
               <li key={line.moduleId} className="estimate-line">
                 <span>{line.title}</span>
-                <span className="estimate-price">{formatRubles(line.price)}</span>
+                <span className="estimate-price">{formatPrice(line.price)}</span>
               </li>
             ))}
             {estimate.countertopPrice > 0 && (
               <li className="estimate-line">
                 <span>Столешница</span>
-                <span className="estimate-price">{formatRubles(estimate.countertopPrice)}</span>
+                <span className="estimate-price">{formatPrice(estimate.countertopPrice)}</span>
               </li>
             )}
           </ul>

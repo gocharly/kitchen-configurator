@@ -1,7 +1,7 @@
 import { calculateEstimate, type Kitchen } from '../domain/kitchen';
 import { DrawingSheet } from '../drawing/DrawingSheet';
 import { SHEETS, buildDrawing } from '../drawing/drawingModel';
-import { formatRubles } from './formatRubles';
+import { formatPrice } from './formatPrice';
 
 interface PrintSheetProps {
   kitchen: Kitchen;
@@ -32,7 +32,7 @@ export function PrintSheet({ kitchen }: PrintSheetProps) {
                 <td>{line.sku}</td>
                 <td>{line.title}</td>
                 <td>{line.width > 0 ? line.width : ''}</td>
-                <td>{formatRubles(line.price)}</td>
+                <td>{formatPrice(line.price)}</td>
               </tr>
             ))}
             {estimate.countertopPrice > 0 && (
@@ -40,7 +40,7 @@ export function PrintSheet({ kitchen }: PrintSheetProps) {
                 <td />
                 <td>Столешница</td>
                 <td />
-                <td>{formatRubles(estimate.countertopPrice)}</td>
+                <td>{formatPrice(estimate.countertopPrice)}</td>
               </tr>
             )}
           </tbody>
@@ -49,7 +49,7 @@ export function PrintSheet({ kitchen }: PrintSheetProps) {
               <td />
               <td>Итого</td>
               <td />
-              <td>{formatRubles(estimate.total)}</td>
+              <td>{formatPrice(estimate.total)}</td>
             </tr>
           </tfoot>
         </table>

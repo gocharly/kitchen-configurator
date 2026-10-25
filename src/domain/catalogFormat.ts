@@ -1,3 +1,5 @@
+import { CURRENCY_CODE, rublesToTenge } from './currency';
+
 export const CATALOG_SCHEMA = 'openkitchen3d/catalog@0.1';
 
 export type RowName = 'lower' | 'upper';
@@ -359,7 +361,7 @@ function readPriceFunction(value: unknown, variable: string, path: string, sampl
       throw new CatalogError(path, `price for ${variable}=${sample} must be a finite number not below 0, got ${result}`);
     }
   });
-  return (input) => Math.round(evaluate({ [variable]: input }));
+  return (input) => rublesToTenge(Math.round(evaluate({ [variable]: input })));
 }
 
 function readFamily(value: unknown, index: number, categoryIds: Set<string>): ModuleSpec {
@@ -423,7 +425,7 @@ function readHandles(value: unknown): HandleOption[] {
       title: asText(handle.title, `${at}.title`),
       kind: asOneOf(handle.kind, `${at}.kind`, HANDLE_KINDS),
       lengthMm: asNumber(handle.length, `${at}.length`, 0),
-      price: asNumber(handle.price, `${at}.price`, 0),
+      price: rublesToTenge(asNumber(handle.price, `${at}.price`, 0)),
     };
   });
   readUniqueIds(handles, 'finishes.handle');
@@ -513,7 +515,7 @@ export function parseCatalog(raw: unknown): Catalog {
     id: asText(root.id, 'id'),
     version: asText(root.version, 'version'),
     locale: asText(root.locale, 'locale'),
-    currency: asText(root.currency, 'currency'),
+    currency: CURRENCY_CODE,
     categories,
     specs,
     facadeColors,

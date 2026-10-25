@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { OrderStatusId, PublicOrder } from '../domain/publicOrder';
-import { formatRubles } from '../ui/formatRubles';
+import { formatPrice } from '../ui/formatPrice';
 import { OrderApiError, buildQrUrl, fetchOrder } from './orderApi';
 
 const POLL_INTERVAL_MS = 10_000;
@@ -60,7 +60,7 @@ function OrderDetails({ token, order }: { token: string; order: PublicOrder }) {
       <p className="order-hint">{STATUS_HINTS[order.status]}</p>
       {order.status === 'awaiting_payment' && order.hasQr && (
         <div className="order-payment">
-          <p className="order-amount">Сумма к оплате {formatRubles(order.total)}</p>
+          <p className="order-amount">Сумма к оплате {formatPrice(order.total)}</p>
           <img className="order-qr" src={buildQrUrl(token, order.createdAt)} alt="QR для оплаты" />
         </div>
       )}
@@ -69,19 +69,19 @@ function OrderDetails({ token, order }: { token: string; order: PublicOrder }) {
         {order.lines.map((line, index) => (
           <li key={index} className="estimate-line">
             <span>{line.width > 0 ? `${line.title} ${line.width}` : line.title}</span>
-            <span className="estimate-price">{formatRubles(line.price)}</span>
+            <span className="estimate-price">{formatPrice(line.price)}</span>
           </li>
         ))}
         {order.countertopPrice > 0 && (
           <li className="estimate-line">
             <span>Столешница</span>
-            <span className="estimate-price">{formatRubles(order.countertopPrice)}</span>
+            <span className="estimate-price">{formatPrice(order.countertopPrice)}</span>
           </li>
         )}
       </ul>
       <div className="estimate-total">
         <span>Итого</span>
-        <span className="estimate-price">{formatRubles(order.total)}</span>
+        <span className="estimate-price">{formatPrice(order.total)}</span>
       </div>
       {order.kitchenToken && (
         <a className="catalog-button order-link" href={`/#k=${order.kitchenToken}`}>

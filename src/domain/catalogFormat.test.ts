@@ -1,3 +1,4 @@
+import { rublesToTenge } from './currency';
 import { describe, expect, it } from 'vitest';
 import catalogFile from '../catalog/ru-starter.json';
 import { CatalogError, compileExpression, parseCatalog } from './catalogFormat';
@@ -49,10 +50,10 @@ describe('parseCatalog on the shipped catalog', () => {
     expect(spec?.sku(450)).toBe('BASE-1-DOOR-450');
   });
 
-  it('prices by the expression and rounds to rubles', () => {
+  it('prices by the expression and converts to tenge', () => {
     const spec = catalog.specs.find((s) => s.id === 'base-1-door');
-    expect(spec?.priceFor(600)).toBe(5400);
-    expect(catalog.countertop.priceFor(1000)).toBe(6000);
+    expect(spec?.priceFor(600)).toBe(rublesToTenge(5400));
+    expect(catalog.countertop.priceFor(1000)).toBe(rublesToTenge(6000));
     expect(catalog.countertop.priceFor(0)).toBe(0);
   });
 

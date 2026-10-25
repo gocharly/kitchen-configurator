@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { calculateEstimate, listPlacedModules, type Kitchen } from '../domain/kitchen';
 import { encodeKitchenLink } from '../domain/kitchenLink';
 import { OrderApiError, createOrder } from '../order/orderApi';
-import { formatRubles } from './formatRubles';
+import { formatPrice } from './formatPrice';
 import { KitchenPreview } from './KitchenPreview';
 import { TextField } from './TextField';
 
@@ -50,7 +50,7 @@ export function CheckoutPanel({ kitchen }: CheckoutPanelProps) {
       <div className="order-summary">
         <KitchenPreview kitchen={kitchen} />
         <div className="order-summary-text">
-          <span className="module-title">{formatRubles(calculateEstimate(kitchen).total)}</span>
+          <span className="module-title">{formatPrice(calculateEstimate(kitchen).total)}</span>
           <span className="module-caption">Модулей: {moduleCount}</span>
         </div>
       </div>

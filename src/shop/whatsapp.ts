@@ -1,4 +1,4 @@
-import { formatRubles } from '../ui/formatRubles';
+import { formatPrice } from '../ui/formatPrice';
 import type { Product } from './productCatalog';
 
 export const GENERAL_MESSAGE = 'Здравствуйте! Хочу подобрать кухню.';
@@ -8,7 +8,7 @@ export function buildProductMessage(product: Product, productUrl: string): strin
     'Здравствуйте! Хочу заказать кухню:',
     product.title,
     `Размер: ${product.size}`,
-    `Цена: ${formatRubles(product.price)}`,
+    `Цена: ${formatPrice(product.price)}`,
     productUrl,
   ].join('\n');
 }

@@ -37,7 +37,7 @@ describe('buildProductMessage', () => {
     expect(lines[1]).toBe('Кухня прямая 2,4 м');
     expect(lines[2]).toBe('Размер: 2400 мм');
     expect(lines[3]).toContain('36');
-    expect(lines[3]).toContain('₽');
+    expect(lines[3]).toContain('₸');
     expect(lines[4]).toBe('https://shop.example/kitchen/straight-2400');
   });
 });

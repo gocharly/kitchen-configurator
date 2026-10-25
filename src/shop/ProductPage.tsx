@@ -1,5 +1,5 @@
 import { Link } from '../site/Link';
-import { formatRubles } from '../ui/formatRubles';
+import { formatPrice } from '../ui/formatPrice';
 import { Gallery } from './Gallery';
 import { ProductTile } from './ProductTile';
 import { PRODUCTS, SHAPE_TITLES, findProduct, type Product } from './productCatalog';
@@ -23,7 +23,7 @@ function SuggestCard({ product }: { product: Product }) {
       <ProductTile product={product} />
       <span className="suggest-info">
         <span className="suggest-title">{product.title}</span>
-        <span className="suggest-price">{formatRubles(product.price)}</span>
+        <span className="suggest-price">{formatPrice(product.price)}</span>
       </span>
     </Link>
   );
@@ -56,7 +56,7 @@ export function ProductPage({ productId }: { productId: string }) {
         <Gallery product={product} />
         <div className="product-info">
           <h1 className="product-title">{product.title}</h1>
-          <p className="product-price">{formatRubles(product.price)}</p>
+          <p className="product-price">{formatPrice(product.price)}</p>
           <p className="product-lead">
             {SHAPE_TITLES[product.shape]}, размер {product.size}
           </p>
@@ -106,7 +106,7 @@ export function ProductPage({ productId }: { productId: string }) {
         </div>
       </section>
       <div className="order-bar">
-        <span className="order-bar-price">{formatRubles(product.price)}</span>
+        <span className="order-bar-price">{formatPrice(product.price)}</span>
         <WhatsAppLink message={message} className="wa-button order-bar-button">
           Заказать
         </WhatsAppLink>

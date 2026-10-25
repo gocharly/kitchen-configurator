@@ -1,3 +1,4 @@
+import { rublesToTenge } from '../../src/domain/currency';
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_KITCHEN } from '../../src/domain/kitchen';
 import { encodeKitchenLink } from '../../src/domain/kitchenLink';
@@ -31,7 +32,7 @@ describe('createOrder', () => {
     const order = await service.createOrder({ kitchenToken: KITCHEN_TOKEN, source: 'site', contact: CONTACT });
     expect(order).toMatchObject({ id: 1, token: 'token-1', status: 'new', source: 'site', hasQr: false });
     expect(order.total).toBe(order.lines.reduce((sum, l) => sum + l.price, 0) + order.countertopPrice);
-    expect(order.lines[0]).toEqual({ sku: 'TALL-CLOSED-600', title: 'Пенал закрытый', width: 600, price: 10800 });
+    expect(order.lines[0]).toEqual({ sku: 'TALL-CLOSED-600', title: 'Пенал закрытый', width: 600, price: rublesToTenge(10800) });
     expect(order.contact).toEqual(CONTACT);
   });
 

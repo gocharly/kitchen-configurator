@@ -1,5 +1,5 @@
 import { Link } from '../site/Link';
-import { formatRubles } from '../ui/formatRubles';
+import { formatPrice } from '../ui/formatPrice';
 import { ProductTile } from './ProductTile';
 import type { Product } from './productCatalog';
 import { WhatsAppLink } from './WhatsAppLink';
@@ -20,7 +20,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <Link to={`/kitchen/${product.id}`}>{product.title}</Link>
       </h3>
       <p className="product-card-size">{product.size}</p>
-      <p className="product-card-price">{formatRubles(product.price)}</p>
+      <p className="product-card-price">{formatPrice(product.price)}</p>
       <WhatsAppLink message={buildProductMessage(product, productUrl)} className="wa-button product-card-order">
         Заказать
       </WhatsAppLink>

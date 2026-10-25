@@ -2,7 +2,7 @@ import { calculateEstimate, type Kitchen } from './kitchen';
 
 const SEPARATOR = ';';
 const BYTE_ORDER_MARK = '﻿';
-const HEADER = ['Артикул', 'Наименование', 'Ширина, мм', 'Цена, руб.'];
+const HEADER = ['Артикул', 'Наименование', 'Ширина, мм', 'Цена, ₸'];
 
 function escapeCell(value: string | number): string {
   const text = String(value);
