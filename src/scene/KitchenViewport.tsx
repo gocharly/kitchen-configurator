@@ -7,7 +7,7 @@ import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { layoutKitchen, listSpaceTaken, locateModuleCenter, type Kitchen, type WallId } from '../domain/kitchen';
-import { LAST_QUALITY_LEVEL, QUALITY_LEVELS, createFrameCostMonitor, pickStartQualityLevel, rememberQualityLevel, type FrameCostMonitor } from './renderQuality';
+import { LAST_QUALITY_LEVEL, QUALITY_LEVELS, createFrameCostMonitor, createQualityCalibration, pickStartQualityLevel, rememberQualityLevel, type FrameCostMonitor } from './renderQuality';
 import { applyNightAmount, buildKitchenGroup, disposeKitchenGroup } from './buildKitchenGroup';
 import {
   PANEL_ANIMATION_MS,
@@ -53,6 +53,7 @@ interface ViewportRig {
   monitor: FrameCostMonitor;
   qualityLevel: number;
   areShadowsStale: boolean;
+  isCalibrating: boolean;
   renderer: THREE.WebGLRenderer;
   scene: THREE.Scene;
   camera: THREE.PerspectiveCamera;
@@ -131,7 +132,7 @@ function createRig(container: HTMLElement): ViewportRig {
 
   const state = { occlusionScale: QUALITY_LEVELS[0].occlusionScale };
   const { composer, occlusion } = createComposer(renderer, scene, camera, () => state.occlusionScale);
-  const rig: ViewportRig = { container, renderer, scene, camera, controls, composer, occlusion, state, light, fill, monitor: createFrameCostMonitor(() => degradeQuality(rig)), qualityLevel: 0, areShadowsStale: true, render: () => undefined, onRendered: null, cameraFrame: 0, insetFrame: 0, inset: { left: 0, bottom: 0 }, insetTarget: { left: 0, bottom: 0 }, hasUserMovedCamera: false, nightAmount: 0, nightFrame: 0, kitchenGroup: null };
+  const rig: ViewportRig = { container, renderer, scene, camera, controls, composer, occlusion, state, light, fill, monitor: createFrameCostMonitor(() => degradeQuality(rig)), qualityLevel: 0, areShadowsStale: true, isCalibrating: false, render: () => undefined, onRendered: null, cameraFrame: 0, insetFrame: 0, inset: { left: 0, bottom: 0 }, insetTarget: { left: 0, bottom: 0 }, hasUserMovedCamera: false, nightAmount: 0, nightFrame: 0, kitchenGroup: null };
   rig.render = () => {
     if (rig.areShadowsStale) {
       renderer.shadowMap.needsUpdate = true;
@@ -140,7 +141,7 @@ function createRig(container: HTMLElement): ViewportRig {
     const startedAt = performance.now();
     composer.render();
     rig.onRendered?.();
-    window.requestAnimationFrame(() => rig.monitor.record(performance.now() - startedAt));
+    if (!rig.isCalibrating) window.requestAnimationFrame(() => rig.monitor.record(performance.now() - startedAt));
   };
   applyQualityLevel(rig, pickStartQualityLevel());
   controls.addEventListener('change', rig.render);
@@ -327,6 +328,28 @@ function applyQualityLevel(rig: ViewportRig, index: number): void {
   resizeRig(rig, rig.container);
 }
 
+function calibrateRig(rig: ViewportRig, onDone: () => void): () => void {
+  const calibration = createQualityCalibration();
+  rig.isCalibrating = true;
+  let frameId = 0;
+  let previousTime: number | null = null;
+  const step = (now: number) => {
+    const verdict = previousTime === null ? 'continue' : calibration.record(now - previousTime, rig.qualityLevel < LAST_QUALITY_LEVEL);
+    if (verdict === 'accept') {
+      rig.isCalibrating = false;
+      rememberQualityLevel(rig.qualityLevel);
+      onDone();
+      return;
+    }
+    if (verdict === 'degrade') degradeQuality(rig);
+    previousTime = verdict === 'degrade' ? null : now;
+    rig.render();
+    frameId = window.requestAnimationFrame(step);
+  };
+  frameId = window.requestAnimationFrame(step);
+  return () => window.cancelAnimationFrame(frameId);
+}
+
 function degradeQuality(rig: ViewportRig): void {
   if (rig.qualityLevel >= LAST_QUALITY_LEVEL) return;
   applyQualityLevel(rig, rig.qualityLevel + 1);
@@ -468,6 +491,7 @@ export const KitchenViewport = forwardRef<ViewportHandle, KitchenViewportProps>(
   const isDraggingRef = useRef(false);
   const openKeysRef = useRef(new Set<string>());
   const [anchor, setAnchor] = useState<{ x: number; y: number } | null>(null);
+  const [isReady, setIsReady] = useState(false);
   const isReadOnlyRef = useRef(isReadOnly);
   const onSelectRef = useRef(onSelect);
   const onDragModuleRef = useRef(onDragModule);
@@ -484,6 +508,7 @@ export const KitchenViewport = forwardRef<ViewportHandle, KitchenViewportProps>(
     if (!container) return;
     const rig = createRig(container);
     rigRef.current = rig;
+    const stopCalibration = calibrateRig(rig, () => setIsReady(true));
     const observer = new ResizeObserver(() => resizeRig(rig, container));
     observer.observe(container);
     resizeRig(rig, container);
@@ -617,6 +642,7 @@ export const KitchenViewport = forwardRef<ViewportHandle, KitchenViewportProps>(
       canvas.removeEventListener('pointermove', handlePointerMove);
       canvas.removeEventListener('pointerup', handlePointerUp);
       canvas.removeEventListener('pointercancel', handlePointerUp);
+      stopCalibration();
       animationFrames.forEach((frame) => window.cancelAnimationFrame(frame));
       window.cancelAnimationFrame(rig.cameraFrame);
       window.cancelAnimationFrame(rig.insetFrame);
@@ -716,6 +742,7 @@ export const KitchenViewport = forwardRef<ViewportHandle, KitchenViewportProps>(
   return (
     <div className="viewport-frame">
       <div className="viewport" ref={containerRef} />
+      <div className="viewport-loading" data-hidden={isReady} aria-hidden={isReady}>Загрузка</div>
       {anchor && selectionToolbar && (
         <div className="selection-anchor" style={{ left: anchor.x, top: anchor.y }}>
           {selectionToolbar}

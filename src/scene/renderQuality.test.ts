@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { LAST_QUALITY_LEVEL, QUALITY_LEVELS, createFrameCostMonitor } from './renderQuality';
+import { LAST_QUALITY_LEVEL, QUALITY_LEVELS, createFrameCostMonitor, createQualityCalibration } from './renderQuality';
 
 describe('frame cost monitor', () => {
   beforeEach(() => {
@@ -64,5 +64,25 @@ describe('quality levels', () => {
       expect(Number(level.hasOcclusion)).toBeLessThanOrEqual(Number(previous.hasOcclusion));
     });
     expect(LAST_QUALITY_LEVEL).toBe(QUALITY_LEVELS.length - 1);
+  });
+});
+
+describe('createQualityCalibration', () => {
+  const feed = (calibration: ReturnType<typeof createQualityCalibration>, interval: number, count: number, canDegrade = true) =>
+    Array.from({ length: count }, () => calibration.record(interval, canDegrade));
+
+  it('accepts after enough fast frames', () => {
+    expect(feed(createQualityCalibration(), 16, 11).at(-1)).toBe('accept');
+  });
+
+  it('degrades on slow frames and warms up again', () => {
+    const calibration = createQualityCalibration();
+    const verdicts = feed(calibration, 60, 11);
+    expect(verdicts.at(-1)).toBe('degrade');
+    expect(feed(calibration, 16, 3).every((verdict) => verdict === 'continue')).toBe(true);
+  });
+
+  it('accepts slow frames on the lowest level', () => {
+    expect(feed(createQualityCalibration(), 60, 11, false).at(-1)).toBe('accept');
   });
 });

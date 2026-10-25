@@ -60,3 +60,37 @@ export function createFrameCostMonitor(onSlow: () => void): FrameCostMonitor {
     },
   };
 }
+
+const CALIBRATION_WARMUP_FRAMES = 3;
+const CALIBRATION_SAMPLE_COUNT = 8;
+const CALIBRATION_FRAME_LIMIT = 240;
+export const CALIBRATION_TARGET_FRAME_MS = 22;
+
+export type CalibrationVerdict = 'continue' | 'accept' | 'degrade';
+
+export interface QualityCalibration {
+  record: (frameIntervalMs: number, canDegrade: boolean) => CalibrationVerdict;
+}
+
+export function createQualityCalibration(): QualityCalibration {
+  let intervals: number[] = [];
+  let skipped = 0;
+  let total = 0;
+  return {
+    record(frameIntervalMs, canDegrade) {
+      total += 1;
+      if (total > CALIBRATION_FRAME_LIMIT) return 'accept';
+      if (skipped < CALIBRATION_WARMUP_FRAMES) {
+        skipped += 1;
+        return 'continue';
+      }
+      intervals.push(frameIntervalMs);
+      if (intervals.length < CALIBRATION_SAMPLE_COUNT) return 'continue';
+      const median = [...intervals].sort((a, b) => a - b)[intervals.length >> 1];
+      intervals = [];
+      if (median <= CALIBRATION_TARGET_FRAME_MS || !canDegrade) return 'accept';
+      skipped = 0;
+      return 'degrade';
+    },
+  };
+}
