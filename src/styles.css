@@ -1065,7 +1065,7 @@ ul {
   }
 
   .flyout {
-    width: 100%;
+    width: calc(100% - 60px);
     max-height: 52vh;
   }
 
