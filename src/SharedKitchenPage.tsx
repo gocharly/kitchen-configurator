@@ -2,48 +2,14 @@ import { useEffect, useState } from 'react';
 import type { Kitchen } from './domain/kitchen';
 import { decodeKitchenLink } from './domain/kitchenLink';
 import { KitchenViewer } from './KitchenViewer';
-import { claimShare, type ClaimShareResult } from './share/shareApi';
+import { loadShare } from './share/shareApi';
 
-type PageState = { kind: 'loading' } | { kind: 'ready'; kitchen: Kitchen } | { kind: 'error'; reason: 'used' | 'missing' | 'failed' };
+type PageState = { kind: 'loading' } | { kind: 'ready'; kitchen: Kitchen } | { kind: 'error'; reason: 'missing' | 'failed' };
 
-const STORAGE_PREFIX = 'kitchen-share-';
 const MESSAGES = {
-  used: { title: 'Ссылка уже использована', hint: 'Попросите отправителя создать новую ссылку.' },
-  missing: { title: 'Ссылка не найдена или устарела', hint: 'Попросите отправителя создать новую ссылку.' },
-  failed: { title: 'Не удалось загрузить кухню', hint: 'Проверьте соединение и попробуйте ещё раз. Ссылка при этом не расходуется.' },
+  missing: { title: 'Ссылка не найдена', hint: 'Проверьте адрес или попросите отправителя прислать ссылку заново.' },
+  failed: { title: 'Не удалось загрузить кухню', hint: 'Проверьте соединение и попробуйте ещё раз.' },
 };
-
-const pendingClaims = new Map<string, Promise<ClaimShareResult>>();
-
-function claimOnce(id: string): Promise<ClaimShareResult> {
-  const pending = pendingClaims.get(id) ?? claimShare(id);
-  pendingClaims.set(id, pending);
-  return pending.then((result) => {
-    if (result.kind === 'failed') pendingClaims.delete(id);
-    return result;
-  });
-}
-
-function readStoredToken(id: string): string | null {
-  try {
-    return window.sessionStorage.getItem(STORAGE_PREFIX + id);
-  } catch {
-    return null;
-  }
-}
-
-function storeToken(id: string, token: string): void {
-  try {
-    window.sessionStorage.setItem(STORAGE_PREFIX + id, token);
-  } catch {
-    return;
-  }
-}
-
-function toState(token: string): PageState {
-  const kitchen = decodeKitchenLink(token);
-  return kitchen ? { kind: 'ready', kitchen } : { kind: 'error', reason: 'missing' };
-}
 
 interface SharedKitchenPageProps {
   id: string;
@@ -55,20 +21,12 @@ export function SharedKitchenPage({ id }: SharedKitchenPageProps) {
 
   useEffect(() => {
     let isCurrent = true;
-    const stored = readStoredToken(id);
-    if (stored) {
-      setState(toState(stored));
-      return;
-    }
     setState({ kind: 'loading' });
-    claimOnce(id).then((result) => {
+    loadShare(id).then((result) => {
       if (!isCurrent) return;
-      if (result.kind === 'ready') {
-        storeToken(id, result.token);
-        setState(toState(result.token));
-        return;
-      }
-      setState({ kind: 'error', reason: result.kind });
+      if (result.kind !== 'ready') return setState({ kind: 'error', reason: result.kind });
+      const kitchen = decodeKitchenLink(result.token);
+      setState(kitchen ? { kind: 'ready', kitchen } : { kind: 'error', reason: 'missing' });
     });
     return () => {
       isCurrent = false;

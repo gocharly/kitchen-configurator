@@ -1,10 +1,9 @@
 import { SHARE_API_URL, SHARE_REQUEST_TIMEOUT_MS } from './shareConfig';
 
 export type CreateShareResult = { kind: 'created'; id: string } | { kind: 'failed' };
-export type ClaimShareResult = { kind: 'ready'; token: string } | { kind: 'used' } | { kind: 'missing' } | { kind: 'failed' };
+export type LoadShareResult = { kind: 'ready'; token: string } | { kind: 'missing' } | { kind: 'failed' };
 
 const HTTP_NOT_FOUND = 404;
-const HTTP_GONE = 410;
 
 async function fetchWithTimeout(url: string, init?: RequestInit): Promise<Response> {
   const controller = new AbortController();
@@ -33,17 +32,16 @@ export async function createShare(kitchenToken: string): Promise<CreateShareResu
   }
 }
 
-export async function claimShare(id: string): Promise<ClaimShareResult> {
+export async function loadShare(id: string): Promise<LoadShareResult> {
   try {
     const response = await fetchWithTimeout(`${SHARE_API_URL}/share/${encodeURIComponent(id)}`);
-    if (response.status === HTTP_GONE) return { kind: 'used' };
     if (response.status === HTTP_NOT_FOUND) return { kind: 'missing' };
     if (!response.ok) return { kind: 'failed' };
     const body: unknown = await response.json();
     const payload = typeof body === 'object' && body !== null ? (body as { payload?: unknown }).payload : undefined;
     return typeof payload === 'string' ? { kind: 'ready', token: payload } : { kind: 'failed' };
   } catch (error) {
-    console.error(`Share ${id} was not claimed`, error);
+    console.error(`Share ${id} was not loaded`, error);
     return { kind: 'failed' };
   }
 }

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { claimShare, createShare } from './shareApi';
+import { loadShare, createShare } from './shareApi';
 
 function respond(status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
@@ -34,24 +34,22 @@ describe('share api', () => {
     expect(await createShare('token')).toEqual({ kind: 'failed' });
   });
 
-  it('claims a share and returns the kitchen token', async () => {
+  it('loads a share and returns the kitchen token', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(respond(200, { payload: 'kitchen-token' })));
-    expect(await claimShare('id')).toEqual({ kind: 'ready', token: 'kitchen-token' });
+    expect(await loadShare('id')).toEqual({ kind: 'ready', token: 'kitchen-token' });
   });
 
-  it('tells a used share from a missing one', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(respond(410, { error: 'share_used' })));
-    expect(await claimShare('id')).toEqual({ kind: 'used' });
+  it('reports a missing share', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(respond(404, { error: 'share_missing' })));
-    expect(await claimShare('id')).toEqual({ kind: 'missing' });
+    expect(await loadShare('id')).toEqual({ kind: 'missing' });
   });
 
   it('treats a server error, a bad body and a lost connection as a failed load', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(respond(500, {})));
-    expect(await claimShare('id')).toEqual({ kind: 'failed' });
+    expect(await loadShare('id')).toEqual({ kind: 'failed' });
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(respond(200, { payload: 5 })));
-    expect(await claimShare('id')).toEqual({ kind: 'failed' });
+    expect(await loadShare('id')).toEqual({ kind: 'failed' });
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('offline')));
-    expect(await claimShare('id')).toEqual({ kind: 'failed' });
+    expect(await loadShare('id')).toEqual({ kind: 'failed' });
   });
 });

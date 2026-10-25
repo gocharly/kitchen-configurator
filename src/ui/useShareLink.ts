@@ -5,7 +5,7 @@ import { createShare } from '../share/shareApi';
 import { buildShareUrl } from './kitchenUrl';
 
 const MESSAGES = {
-  copied: 'Одноразовая ссылка скопирована. Её можно открыть один раз.',
+  copied: 'Ссылка скопирована. По ней всегда откроется эта кухня, только для просмотра.',
   failed: 'Не удалось создать ссылку. Проверьте соединение и попробуйте ещё раз.',
   manual: 'Ссылка создана. Скопируйте её из окна.',
 };
@@ -47,7 +47,7 @@ export function useShareLink(kitchen: Kitchen, onNotice: (text: string) => void)
 async function finishWithoutClipboard(urlPromise: Promise<string>, onNotice: (text: string) => void): Promise<void> {
   try {
     const url = await urlPromise;
-    window.prompt('Скопируйте одноразовую ссылку', url);
+    window.prompt('Скопируйте ссылку', url);
     onNotice(MESSAGES.manual);
   } catch {
     onNotice(MESSAGES.failed);
